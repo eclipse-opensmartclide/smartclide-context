@@ -18,7 +18,7 @@ package de.atb.context.services;
 import de.atb.context.services.config.SWServiceConfiguration;
 import de.atb.context.services.config.models.ISWService;
 import de.atb.context.services.config.models.SWService;
-import de.atb.context.services.interfaces.IService;
+import de.atb.context.services.interfaces.IPrimitiveService;
 
 import java.net.URL;
 
@@ -86,7 +86,7 @@ public class SWServiceContainer implements ISWService {
 	}
 
 	@Override
-	public final Class<? extends IService> getProxyClass() {
+	public final Class<? extends IPrimitiveService> getProxyClass() {
 		if (hasService()) {
 			return service.getProxyClass();
 		}
@@ -94,7 +94,7 @@ public class SWServiceContainer implements ISWService {
 	}
 
 	@Override
-	public final Class<? extends IService> getServerClass() {
+	public final Class<? extends IPrimitiveService> getServerClass() {
 		if (hasService()) {
 			return service.getServerClass();
 		}

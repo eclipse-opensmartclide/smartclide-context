@@ -15,6 +15,7 @@ package de.atb.context.services.config.models;
  */
 
 
+import de.atb.context.services.interfaces.IPrimitiveService;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.slf4j.Logger;
@@ -118,9 +119,9 @@ public class SWService implements ISWService {
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public final Class<? extends IService> getServerClass() {
+	public final Class<? extends IPrimitiveService> getServerClass() {
 		try {
-			return (Class<? extends IService>) Class
+			return (Class<? extends IPrimitiveService>) Class
 					.forName(this.serverClass);
 		} catch (ClassNotFoundException e) {
 			logger.warn(e.getMessage(), e);
@@ -128,7 +129,7 @@ public class SWService implements ISWService {
 		return null;
 	}
 
-	public final void setServerClass(final Class<? extends IService> serverClass) {
+	public final void setServerClass(final Class<? extends IPrimitiveService> serverClass) {
 		this.serverClass = serverClass.getName();
 	}
 
@@ -149,7 +150,7 @@ public class SWService implements ISWService {
 		return null;
 	}
 
-	public final void setProxyClass(final Class<? extends IService> proxyClass) {
+	public final void setProxyClass(final Class<? extends IPrimitiveService> proxyClass) {
 		this.proxyClass = proxyClass.getName();
 	}
 
