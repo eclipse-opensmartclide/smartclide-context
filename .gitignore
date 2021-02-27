@@ -11,3 +11,6 @@ pom.xml.versionsBackup
 .project
 .classpath
 .factorypath
+
+#lucene
+indexes
