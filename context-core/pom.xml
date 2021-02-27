@@ -154,6 +154,17 @@
             <artifactId>cxf-rt-transports-http-hc</artifactId>
             <version>3.4.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>4.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>stax2-api</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+
         <!-- end Apache CXF ! -->
 
         <!-- SimpleXMLFramework ! -->
