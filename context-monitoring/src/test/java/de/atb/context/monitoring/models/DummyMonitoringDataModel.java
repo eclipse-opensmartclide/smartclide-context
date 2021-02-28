@@ -55,7 +55,7 @@ import java.util.UUID;
  * 
  */
 @RdfType("DummyMonitoringDataModel")
-@Namespace("http://diversity-project.eu/")
+@Namespace("http://www.atb-bremen.de/")
 public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonitoringDataModel, FileSystemDataSource> {
 
 	private static final long serialVersionUID = -8744217754389596169L;

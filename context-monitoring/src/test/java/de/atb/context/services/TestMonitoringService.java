@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Properties;
 
 import org.apache.cxf.endpoint.Server;
 import org.junit.AfterClass;
@@ -67,7 +68,10 @@ public class TestMonitoringService {
 
 	@BeforeClass
 	public static void beforeClass() {
-		AmIMonitoringConfiguration amionfig = new AmIMonitoringConfiguration();
+        Properties props = System.getProperties();
+        props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
+
+        AmIMonitoringConfiguration amionfig = new AmIMonitoringConfiguration();
 		String absolutefilePath = new File("").getAbsolutePath();
 		amionfig.setId("TEST_PES");
 		amionfig.setServiceConfiguration(readFile((absolutefilePath.concat(File.separator
