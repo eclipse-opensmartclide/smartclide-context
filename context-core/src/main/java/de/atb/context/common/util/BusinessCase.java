@@ -36,6 +36,12 @@ public class BusinessCase {
 	private String url;
 
     public BusinessCase() {
+        if (settings.get(NS_DUMMY_ID) == null) {
+            settings.put(NS_DUMMY_ID, new BusinessCase(NS_DUMMY_ID, NS_DUMMY_URL));
+        }
+        if (settings.get(NS_BASE_ID) == null) {
+            settings.put(NS_BASE_ID, new BusinessCase(NS_BASE_ID, NS_BASE_URL));
+        }
     }
 
     public static void getInstance() {
