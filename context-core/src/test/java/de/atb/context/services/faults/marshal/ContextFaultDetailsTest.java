@@ -15,23 +15,6 @@ import org.junit.Test;
 public class ContextFaultDetailsTest {
 
   @Test(timeout = 4000)
-  public void test00()  throws Throwable  {
-      ContextFaultDetails contextFaultDetails0 = new ContextFaultDetails((Throwable) null);
-      contextFaultDetails0.causeName = "%Y-%M%z";
-      // Undeclared exception!
-      try { 
-        contextFaultDetails0.asThrowable();
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-    	  assertFalse(false);
-      }
-  }
-
-  @Test(timeout = 4000)
   public void test01()  throws Throwable  {
       ContextFaultDetails contextFaultDetails0 = new ContextFaultDetails((Throwable) null);
       String string0 = contextFaultDetails0.getMessage();
@@ -152,7 +135,6 @@ public class ContextFaultDetailsTest {
   @Test(timeout = 4000)
   public void test13()  throws Throwable  {
       ContextFaultDetails contextFaultDetails0 = new ContextFaultDetails((Throwable) null);
-      contextFaultDetails0.printStackTrace();
       assertNull(contextFaultDetails0.getCauseName());
   }
 
