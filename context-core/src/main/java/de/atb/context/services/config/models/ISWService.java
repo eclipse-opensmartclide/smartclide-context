@@ -15,7 +15,7 @@ package de.atb.context.services.config.models;
  */
 
 
-import de.atb.context.services.interfaces.IService;
+import de.atb.context.services.interfaces.IPrimitiveService;
 
 import java.net.URL;
 
@@ -33,8 +33,8 @@ public interface ISWService {
 
 	URL getLocation();
 
-	Class<? extends IService> getProxyClass();
+	Class<? extends IPrimitiveService> getProxyClass();
 
-	Class<? extends IService> getServerClass();
+	Class<? extends IPrimitiveService> getServerClass();
 
 }
