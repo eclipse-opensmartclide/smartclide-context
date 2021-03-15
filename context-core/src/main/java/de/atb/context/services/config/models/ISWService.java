@@ -16,7 +16,6 @@ package de.atb.context.services.config.models;
 
 
 import de.atb.context.services.interfaces.IPrimitiveService;
-import de.atb.context.services.interfaces.IService;
 
 import java.net.URL;
 
