@@ -43,6 +43,9 @@ public class ApplicationScenario implements IModelInitializer {
     private IModelInitializer initializer;
     private static volatile Map<String, ApplicationScenario> settings = new HashMap<String, ApplicationScenario>();
 
+    public ApplicationScenario() {
+    }
+
     public static ApplicationScenario getInstance() {
         if (settings.get("DUMMY_SCENARIO") == null) {
             settings.put("DUMMY_SCENARIO", new ApplicationScenario(BusinessCase.getInstance(BusinessCase.NS_DUMMY_ID, BusinessCase.NS_DUMMY_URL)));

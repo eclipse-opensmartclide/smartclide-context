@@ -11,3 +11,7 @@ pom.xml.versionsBackup
 .project
 .classpath
 .factorypath
+
+#lucene
+# TODO: remove this ignore once monitoring folder has been moved
+monitoring

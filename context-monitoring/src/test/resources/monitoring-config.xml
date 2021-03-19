@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.atb-bremen.de monitoring-config.xsd">
 
 	<indexes>
-		<index id="index-dummy" location="indexes/dummy"></index>
+		<index id="index-dummy" location="target/indexes/dummy"></index>
 	</indexes>
 
 	<datasources>

@@ -35,7 +35,17 @@ public class BusinessCase {
 	private String id;
 	private String url;
 
-	public static void getInstance() {
+    private BusinessCase() {
+        if (settings.get(NS_DUMMY_ID) == null) {
+            settings.put(NS_DUMMY_ID, new BusinessCase(NS_DUMMY_ID, NS_DUMMY_URL));
+        }
+        if (settings.get(NS_BASE_ID) == null) {
+            settings.put(NS_BASE_ID, new BusinessCase(NS_BASE_ID, NS_BASE_URL));
+        }
+    }
+
+    // TODO Maybe rename this method? getInstance would imply that some kind of instance is returned, not void. It might also be easily confused with the other getInstance method, which actually returns a BusinessCase
+    public static void getInstance() {
 		if (settings.get(NS_DUMMY_ID) == null) {
 			settings.put(NS_DUMMY_ID, new BusinessCase(NS_DUMMY_ID, NS_DUMMY_URL));
 		}
@@ -44,6 +54,7 @@ public class BusinessCase {
 		}
 	}
 
+    // TODO Maybe rename this method? getInstance would imply that some kind of instance is returned, not void. It might also be easily confused with the other getInstance method, which actually returns a BusinessCase
 	public static BusinessCase getInstance(String id, String url) {
 		if (settings.get(id) == null) {
 			settings.put(id, new BusinessCase(id, url));
