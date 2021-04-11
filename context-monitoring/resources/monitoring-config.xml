@@ -6,6 +6,7 @@
     <indexes>
         <index id="index-dummy" location="indexes/dummy"></index>
         <index id="index-test" location="indexes/test"></index>
+        <index id="index-filebased" location="indexes/file"></index>
     </indexes>
 
     <datasources>
@@ -14,6 +15,12 @@
                     uri="target/test-classes/filepairmonitor"
                     options="extensionOne=1&amp;extensionTwo=2"
                     class="de.atb.context.monitoring.config.models.datasources.FilePairSystemDataSource"/>
+
+        <datasource id="datasource-filebased" type="file"
+                    monitor="de.atb.context.monitoring.monitors.file.FileSystemMonitor"
+                    uri="src/test/resources/filebasedmonitor"
+                    options="extensionOne=json&amp;extensionTwo=json"
+                    class="de.atb.context.monitoring.config.models.datasources.FileSystemDataSource"/>
     </datasources>
 
     <interpreters>
@@ -22,11 +29,18 @@
                            parser="de.atb.context.monitoring.parser.file.DummyFilePairParser"
                            analyser="de.atb.context.monitoring.analyser.file.DummyFilePairAnalyser"/>
         </interpreter>
+        <interpreter id="interpreter-filebased">
+            <configuration type="*"
+                           parser="de.atb.context.monitoring.parser.CustomFileParser"
+                           analyser="de.atb.context.monitoring.analyser.CustomFileBasedAnalyser"/>
+        </interpreter>
     </interpreters>
 
     <monitors>
         <monitor id="monitor-dummy" datasource="datasource-dummy" interpreter="interpreter-dummy"
                  index="index-dummy"/>
+        <monitor id="monitor-filebased" datasource="datasource-filebased" interpreter="interpreter-filebased"
+                 index="index-filebased"/>
     </monitors>
 
 </config>
