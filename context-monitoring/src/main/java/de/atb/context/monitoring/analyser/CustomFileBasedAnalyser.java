@@ -5,6 +5,7 @@ import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.InterpreterConfiguration;
 import de.atb.context.monitoring.config.models.datasources.FileSystemDataSource;
 import de.atb.context.monitoring.index.Indexer;
+import de.atb.context.monitoring.models.CustomFileBasedDataModel;
 import de.atb.context.monitoring.parser.IndexedFields;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import org.apache.lucene.document.DateTools;
