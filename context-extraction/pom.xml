@@ -15,7 +15,7 @@
     <name>ATB Context Extraction Core Service</name>
 
     <properties>
-        <start-class>de.atb.context.main.ServiceMain</start-class>
+        <start-class>de.atb.context.main.eu.smartclide.contexthandling.ServiceMain</start-class>
     </properties>
 
     <build>
