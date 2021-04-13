@@ -16,7 +16,9 @@
 
     <properties>
         <spring-boot.version>2.4.2</spring-boot.version>
-        <start-class>de.atb.context.main.ServiceMain</start-class>
+        <start-class>de.atb.context.main.eu.smartclide.contexthandling.ServiceMain</start-class>
+        <docker.host.url>tcp://192.168.15.17:2376</docker.host.url>
+        <docker.host.certPath>${user.home}/safire/docker-client-certs</docker.host.certPath>
     </properties>
 
     <build>

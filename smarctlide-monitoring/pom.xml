@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>parent</artifactId>
+        <groupId>de.atb.context</groupId>
+        <version>2.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>smarctlide-monitoring</artifactId>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <jib-maven-plugin.version>2.8.0</jib-maven-plugin.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>de.atb.context</groupId>
+            <artifactId>context-monitoring</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>${jib-maven-plugin.version}</version>
+                <configuration>
+                    <from>
+                        <image>openjdk:11.0.10-jre-slim-buster</image>
+                    </from>
+                    <to>
+                        <image>ghcr.io/smartclide/${project.artifactId}:latest</image>
+                    </to>
+                    <container>
+                        <ports>
+                            <port>19001</port>
+                            <port>19002</port>
+                            <port>19004</port>
+                        </ports>
+                        <entrypoint>
+                            <arg>java</arg>
+                            <arg>-Djava.security.egd=file:/dev/./urandom</arg>
+                            <arg>-cp</arg>
+                            <arg>app/libs/*:app/resources:app/classes</arg>
+                            <arg>eu.smartclide.contexthandling.ServiceMain</arg>
+                        </entrypoint>
+                    </container>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
