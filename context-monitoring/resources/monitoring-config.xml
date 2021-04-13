@@ -5,14 +5,13 @@
 
     <indexes>
         <index id="index-dummy" location="indexes/dummy"></index>
-        <index id="index-test" location="indexes/test"></index>
         <index id="index-filebased" location="indexes/file"></index>
     </indexes>
 
     <datasources>
         <datasource id="datasource-dummy" type="file"
                     monitor="de.atb.context.monitoring.monitors.file.FilePairSystemMonitor"
-                    uri="target/test-classes/filepairmonitor"
+                    uri="src/test/resources/filepairmonitor"
                     options="extensionOne=1&amp;extensionTwo=2"
                     class="de.atb.context.monitoring.config.models.datasources.FilePairSystemDataSource"/>
 
