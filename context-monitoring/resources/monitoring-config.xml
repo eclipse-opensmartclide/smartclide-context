@@ -18,7 +18,7 @@
         <datasource id="datasource-filebased" type="file"
                     monitor="de.atb.context.monitoring.monitors.file.FileSystemMonitor"
                     uri="src/test/resources/filebasedmonitor"
-                    options="extensionOne=json&amp;extensionTwo=json"
+                    options=""
                     class="de.atb.context.monitoring.config.models.datasources.FileSystemDataSource"/>
     </datasources>
 
