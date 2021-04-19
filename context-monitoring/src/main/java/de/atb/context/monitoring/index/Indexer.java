@@ -291,7 +291,7 @@ public class Indexer {
         try {
             FSDirectory dir = FSDirectory.open(tmpDir.toPath());
             this.writer = new IndexWriter(dir, indexWriterConfig);
-
+            this.writer.commit();
             // Index does not exist => create!
         } catch (FileNotFoundException fnfe) {
             this.logger.info("Lucene index at '" + this.index.getLocation() + "' does not exist yet, creating it.");
