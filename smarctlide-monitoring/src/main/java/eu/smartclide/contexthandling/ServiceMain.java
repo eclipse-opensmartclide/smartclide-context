@@ -109,24 +109,5 @@ public class ServiceMain {
         monitoringDataRepository = new AmIMonitoringDataRepositoryServiceWrapper(reposService);
         System.out.println(monitoringDataRepository.ping());
         startService();
-
-/*        new Thread(() -> {
-            while (true)
-                try {
-                    List<DataModel> data = monitoringDataRepository.getMonitoringData(ApplicationScenario.getInstance(BusinessCase.getInstance("DUMMY_SCENARIO", BusinessCase.NS_BASE_URL + "bc-dummy/")), ProntoDataModel.class, 1);
-                    if (!data.isEmpty()) {
-                        List<MonitoredOrdersInformation> ordersData =
-                                data.get(0).getProntoMachineList().get(0).getProntoOrdersList();
-
-                        List<MonitoredMixerStatusInformation> mixerData =
-                                data.get(0).getProntoMachineList().get(0).getProntoMixerStatusList();
-
-                        Thread.sleep(10000L);
-                    }
-                } catch (InterruptedException e) {
-                    logger.error(e.getMessage(), e);
-                }
-        }).start();
-*/
     }
 }
