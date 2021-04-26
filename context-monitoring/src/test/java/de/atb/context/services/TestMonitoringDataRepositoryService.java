@@ -76,8 +76,8 @@ public class TestMonitoringDataRepositoryService {
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
 		String absolutefilePath = new File("").getAbsolutePath();
-		configFile = new File(
-				absolutefilePath.concat(File.separator + "resources"+ File.separator + "services-config.xml"));
+        configFile = new File(
+            absolutefilePath.concat(File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "services-config.xml"));
 		String filepath = configFile.getPath();
 		SWServiceContainer serviceContainer = new SWServiceContainer(
 				"AmI-repository", filepath);

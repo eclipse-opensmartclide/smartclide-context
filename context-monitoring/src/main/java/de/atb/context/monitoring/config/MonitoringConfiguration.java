@@ -90,9 +90,9 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
         try {
             final Serializer serializer = new Persister();
 
-            String drmHandle = sysCaller.openDRMobject("monitoring-config.xml", "read");
+            String drmHandle = sysCaller.openDRMobject("monitoring-config.xml", configurationLookupPath,"read");
             if (drmHandle != null) {
-                byte[] readConfig = sysCaller.getDRMobject("monitoring-config.xml");
+                byte[] readConfig = sysCaller.getDRMobject("monitoring-config.xml", configurationLookupPath);
                 if (readConfig != null) {
                     is = new ByteArrayInputStream(readConfig);
                     this.configurationBean = serializer.read(
