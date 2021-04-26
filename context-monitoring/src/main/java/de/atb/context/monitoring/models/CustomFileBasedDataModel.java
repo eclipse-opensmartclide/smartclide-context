@@ -7,6 +7,8 @@ import de.atb.context.common.util.BusinessCase;
 import de.atb.context.monitoring.config.models.datasources.FileSystemDataSource;
 import de.atb.context.monitoring.rdf.RdfHelper;
 import de.atb.context.persistence.ModelOutputLanguage;
+import lombok.Getter;
+import lombok.Setter;
 import org.simpleframework.xml.Root;
 import thewebsemantic.Id;
 import thewebsemantic.Namespace;
@@ -18,18 +20,20 @@ import java.util.UUID;
 @RdfType("CustomFileBasedDataModel")
 @Namespace(BusinessCase.NS_DUMMY_URL)
 @Root
+@Getter
+@Setter
 public class CustomFileBasedDataModel implements IMonitoringDataModel<CustomFileBasedDataModel, FileSystemDataSource> {
 
     private Date monitoredAt;
-    protected String documentIndexId = "index/file";
-    protected String documentUri;
-    protected String identifier;
-    protected FileSystemDataSource dataSource;
-    protected String implementingClassName = CustomFileBasedDataModel.class.getName();
-    protected String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
-    protected String source;
-    protected String message;
-    protected String userInfo;
+    private String documentIndexId = "index/file";
+    private String documentUri;
+    private String identifier;
+    private FileSystemDataSource dataSource;
+    private String implementingClassName = CustomFileBasedDataModel.class.getName();
+    private String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
+    private String source;
+    private String message;
+    private String userInfo;
 
     @Id
     @Override
@@ -41,64 +45,8 @@ public class CustomFileBasedDataModel implements IMonitoringDataModel<CustomFile
     }
 
     @Override
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    @Override
-    public String getMonitoringDataVersion() {
-        return this.monitoringDataVersion;
-    }
-
-    @Override
-    public Date getMonitoredAt() {
-        return monitoredAt;
-    }
-
-    public void setMonitoredAt(Date monitoredAt) {
-        if (monitoredAt != null) {
-            this.monitoredAt = (Date) monitoredAt.clone();
-        } else {
-            this.monitoredAt = null;
-        }
-    }
-
-    @Override
-    public String getDocumentIndexId() {
-        return this.documentIndexId;
-    }
-
-    public void setDocumentIndexId(String documentIndexId) {
-        this.documentIndexId = documentIndexId;
-    }
-
-    @Override
-    public String getDocumentUri() {
-        return this.documentUri;
-    }
-
-    public void setDocumentUri(String documentUri) {
-        this.documentUri = documentUri;
-    }
-
-    @Override
-    public String getImplementingClassName() {
-        return this.implementingClassName;
-    }
-
-    @Override
     public String getContextIdentifierClassName() {
         return null;
-    }
-
-    @Override
-    public FileSystemDataSource getDataSource() {
-        return this.dataSource;
-    }
-
-    @Override
-    public void setDataSource(FileSystemDataSource ds) {
-        this.dataSource = ds;
     }
 
     @Override
@@ -139,29 +87,5 @@ public class CustomFileBasedDataModel implements IMonitoringDataModel<CustomFile
     @Override
     public Model toRdfModel() {
         return RdfHelper.createRdfModel(this);
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getUserInfo() {
-        return userInfo;
-    }
-
-    public void setUserInfo(String userInfo) {
-        this.userInfo = userInfo;
     }
 }

@@ -40,6 +40,8 @@ import de.atb.context.common.util.BusinessCase;
 import de.atb.context.monitoring.config.models.datasources.FileSystemDataSource;
 import de.atb.context.monitoring.rdf.RdfHelper;
 import de.atb.context.persistence.ModelOutputLanguage;
+import lombok.Getter;
+import lombok.Setter;
 import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
@@ -56,47 +58,23 @@ import java.util.UUID;
  */
 @RdfType("DummyMonitoringDataModel")
 @Namespace("http://www.atb-bremen.de/")
+@Getter
+@Setter
 public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonitoringDataModel, FileSystemDataSource> {
 
 	private static final long serialVersionUID = -8744217754389596169L;
 
-	protected String documentIndexId = "index/dummy";
-	protected String documentUri = "/var/tmp/dummy.doc";
-	protected String implementingClassName = DummyMonitoringDataModel.class.getName();
+    private String documentIndexId = "index/dummy";
+    private String documentUri = "/var/tmp/dummy.doc";
+    private String implementingClassName = DummyMonitoringDataModel.class.getName();
 
-	protected Date monitoredAt = new Date();
-	protected String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
-	protected FileSystemDataSource dataSource;
+    private Date monitoredAt = new Date();
+    private String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
+    private FileSystemDataSource dataSource;
 
-	protected String dummyName = "myDummyName";
-	protected String dummyValue = "myDummyVaLuE!";
-	protected String identifier;
-
-	public final String getDummyName() {
-		return this.dummyName;
-	}
-
-	public final void setDummyName(final String dummyName) {
-		this.dummyName = dummyName;
-	}
-
-	public final String getDummyValue() {
-		return this.dummyValue;
-	}
-
-	public final void setDummyValue(final String dummyValue) {
-		this.dummyValue = dummyValue;
-	}
-
-	@Override
-	public final FileSystemDataSource getDataSource() {
-		return this.dataSource;
-	}
-
-	@Override
-	public final void setDataSource(final FileSystemDataSource ds) {
-		this.dataSource = ds;
-	}
+    private String dummyName = "myDummyName";
+    private String dummyValue = "myDummyVaLuE!";
+    private String identifier;
 
 	/*
 	 * (non-Javadoc)
@@ -158,41 +136,6 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * IMonitoringDataModel#getDocumentIndexId
-	 * ()
-	 */
-	@Override
-	public final String getDocumentIndexId() {
-		return this.documentIndexId;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * IMonitoringDataModel#getDocumentUri
-	 * ()
-	 */
-	@Override
-	public final String getDocumentUri() {
-		return this.documentUri;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IMonitoringDataModel#
-	 * getImplementingClass()
-	 */
-	@Override
-	public final String getImplementingClassName() {
-		return this.getClass().getName();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * IMonitoringDataModel#getMonitoredAt
 	 * ()
 	 */
@@ -209,34 +152,11 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 	 * (non-Javadoc)
 	 * 
 	 * @see IMonitoringDataModel#
-	 * getMonitoringDataVersion()
-	 */
-	@Override
-	public final String getMonitoringDataVersion() {
-		return this.monitoringDataVersion;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IMonitoringDataModel#
 	 * triggersContextChange()
 	 */
 	@Override
 	public final boolean triggersContextChange() {
 		return true;
-	}
-
-	public final void setDocumentIndexId(final String documentIndexId) {
-		this.documentIndexId = documentIndexId;
-	}
-
-	public final void setDocumentUri(final String documentUri) {
-		this.documentUri = documentUri;
-	}
-
-	public final void setImplementingClass(final String clazz) {
-		this.implementingClassName = clazz;
 	}
 
 	public final void setMonitoredAt(final Date monitoredAt) {
@@ -245,10 +165,6 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 		} else {
 			this.monitoredAt = null;
 		}
-	}
-
-	public final void setMonitoringDataVersion(final String version) {
-		this.monitoringDataVersion = version;
 	}
 
 	/*
@@ -265,11 +181,6 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 			this.identifier = UUID.randomUUID().toString();
 		}
 		return this.identifier;
-	}
-
-	@Override
-	public final void setIdentifier(final String identifier) {
-		this.identifier = identifier;
 	}
 
 	public final String generateIdentifier() {
