@@ -107,9 +107,9 @@ public abstract class ApplicationScenarioConfiguration<B extends IConfigurationB
     public final void load(final String path) {
         logger.info("Loading %s.xml from path '%s'", scenario.toString(), path);
 
-        String drmHandle = sysCaller.openDRMobject("appscenario-config.xml", "read");
+        String drmHandle = sysCaller.openDRMobject("appscenario-config.xml", configurationCompleteFilePath,"read");
         if (drmHandle != null) {
-            byte[] readConfig = sysCaller.getDRMobject("appscenario-config.xml");
+            byte[] readConfig = sysCaller.getDRMobject("appscenario-config.xml", configurationCompleteFilePath);
             if (readConfig != null) {
                 try (
                     InputStream is = new ByteArrayInputStream(readConfig);
@@ -145,7 +145,7 @@ public abstract class ApplicationScenarioConfiguration<B extends IConfigurationB
         try {
             serializer.write(getConfig(), source);
 
-            String drmHandle = sysCaller.openDRMobject("appscen-config.xml", "write");
+            String drmHandle = sysCaller.openDRMobject("appscen-config.xml", configurationCompleteFilePath,"write");
             sysCaller.writeDRMobject(drmHandle, source.toByteArray());
             sysCaller.closeDRMobject(drmHandle);
 
