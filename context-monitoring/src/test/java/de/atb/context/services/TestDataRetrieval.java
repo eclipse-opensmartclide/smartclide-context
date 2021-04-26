@@ -45,10 +45,10 @@ public class TestDataRetrieval {
 		String absolutefilePath = new File("").getAbsolutePath();
 		amionfig.setId("TEST_PES");
 		amionfig.setServiceConfiguration(readFile((absolutefilePath.concat(File.separator
-				+ "resources" + File.separator + "monitoring-config.xml"))));
+            + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "monitoring-config.xml"))));
 
 		File configFile = new File(
-				absolutefilePath.concat(File.separator + "resources" + File.separator + "services-config.xml"));
+				absolutefilePath.concat(File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "services-config.xml"));
 		String filepath = configFile.getPath();
 		SWServiceContainer serviceContainer = new SWServiceContainer(
 				"AmI-repository", filepath);
