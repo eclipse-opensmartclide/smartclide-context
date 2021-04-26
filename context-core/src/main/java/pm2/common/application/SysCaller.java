@@ -17,18 +17,18 @@ public interface SysCaller {
 
     String getLastError();
 
-    String openDRMobject(String sObjName, String sPerms);
+    String openDRMobject(String sObjName, String sPath, String sPerms);
 
     boolean closeDRMobject(String sHandle);
 
-    byte[] readDRMobject(String sHandle);
+    byte[] readDRMobject(String sHandle, String path);
 
-    byte[] readDRMobject2(String handle, int count, int offset);
+    byte[] readDRMobject2(String handle, String path, int count, int offset);
 
     boolean writeDRMobject(String sHandle, byte[] buf);
 
-    byte[] getDRMobject(String sName);
+    byte[] getDRMobject(String sName, String path);
 
-    boolean putDRMobject(String sName, byte[] buf);
+    boolean putDRMobject(String sName, String path, byte[] buf);
 
 }
