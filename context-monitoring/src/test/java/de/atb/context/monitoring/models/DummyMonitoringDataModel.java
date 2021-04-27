@@ -42,11 +42,10 @@ import de.atb.context.monitoring.rdf.RdfHelper;
 import de.atb.context.persistence.ModelOutputLanguage;
 import lombok.Getter;
 import lombok.Setter;
-import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -68,13 +67,17 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
     private String documentUri = "/var/tmp/dummy.doc";
     private String implementingClassName = DummyMonitoringDataModel.class.getName();
 
-    private Date monitoredAt = new Date();
+    private LocalDateTime monitoredAt = LocalDateTime.now();
     private String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
     private FileSystemDataSource dataSource;
 
     private String dummyName = "myDummyName";
     private String dummyValue = "myDummyVaLuE!";
-    private String identifier;
+    private UUID identifier;
+
+    public DummyMonitoringDataModel() {
+        this.identifier = UUID.randomUUID();
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -135,56 +138,12 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * IMonitoringDataModel#getMonitoredAt
-	 * ()
-	 */
-	@Override
-	public final Date getMonitoredAt() {
-		if (this.monitoredAt != null) {
-			return (Date) this.monitoredAt.clone();
-		} else {
-			return null;
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see IMonitoringDataModel#
 	 * triggersContextChange()
 	 */
 	@Override
 	public final boolean triggersContextChange() {
 		return true;
-	}
-
-	public final void setMonitoredAt(final Date monitoredAt) {
-		if (monitoredAt != null) {
-			this.monitoredAt = (Date) monitoredAt.clone();
-		} else {
-			this.monitoredAt = null;
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * IMonitoringDataModel#getIdentifier
-	 * ()
-	 */
-	@Override
-	@Id
-	public final String getIdentifier() {
-		if (this.identifier == null) {
-			this.identifier = UUID.randomUUID().toString();
-		}
-		return this.identifier;
-	}
-
-	public final String generateIdentifier() {
-		return UUID.randomUUID().toString();
 	}
 
 	/*
@@ -218,5 +177,4 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 	@Override
 	public void initialize() {
 	}
-
 }

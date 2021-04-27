@@ -24,11 +24,10 @@ import de.atb.context.persistence.ModelOutputLanguage;
 import lombok.Getter;
 import lombok.Setter;
 import org.simpleframework.xml.Root;
-import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RdfType("CustomFileBasedDataModel")
@@ -38,10 +37,10 @@ import java.util.UUID;
 @Setter
 public class CustomFileBasedDataModel implements IMonitoringDataModel<CustomFileBasedDataModel, FileSystemDataSource> {
 
-    private Date monitoredAt;
+    private LocalDateTime monitoredAt;
     private String documentIndexId = "index/file";
     private String documentUri;
-    private String identifier;
+    private UUID identifier;
     private FileSystemDataSource dataSource;
     private String implementingClassName = CustomFileBasedDataModel.class.getName();
     private String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
@@ -49,13 +48,8 @@ public class CustomFileBasedDataModel implements IMonitoringDataModel<CustomFile
     private String message;
     private String userInfo;
 
-    @Id
-    @Override
-    public String getIdentifier() {
-        if (this.identifier == null) {
-            this.identifier = UUID.randomUUID().toString();
-        }
-        return this.identifier;
+    public CustomFileBasedDataModel() {
+        this.identifier = UUID.randomUUID();
     }
 
     @Override
@@ -80,7 +74,6 @@ public class CustomFileBasedDataModel implements IMonitoringDataModel<CustomFile
 
     @Override
     public void initialize() {
-
     }
 
     @Override

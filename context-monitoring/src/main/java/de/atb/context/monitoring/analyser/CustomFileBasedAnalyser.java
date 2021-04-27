@@ -22,7 +22,6 @@ import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.CustomFileBasedDataModel;
 import de.atb.context.monitoring.parser.IndexedFields;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -34,13 +33,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.LinkedList;
 import java.util.List;
 
 public class CustomFileBasedAnalyser extends FileAnalyser<CustomFileBasedDataModel> {
 
     private final Logger logger = LoggerFactory.getLogger(CustomFileBasedAnalyser.class);
+    private final JSONParser parser = new JSONParser();
 
     public CustomFileBasedAnalyser(DataSource dataSource, InterpreterConfiguration interpreterConfiguration, Indexer indexer, Document document, AmIMonitoringConfiguration amiConfiguration) {
         super(dataSource, interpreterConfiguration, indexer, document, amiConfiguration);
@@ -51,7 +52,6 @@ public class CustomFileBasedAnalyser extends FileAnalyser<CustomFileBasedDataMod
         logger.debug("Analysing '" + file.getAbsolutePath() + "'");
 
         List<CustomFileBasedDataModel> customFileBasedDataModels = new LinkedList<>();
-        JSONParser parser = new JSONParser();
 
         try {
             // read json file and parse data to JSONArray
@@ -76,8 +76,8 @@ public class CustomFileBasedAnalyser extends FileAnalyser<CustomFileBasedDataMod
                 customFileBasedDataModel.setDocumentIndexId(IndexedFields.IndexId
                     .getString(this.document));
                 try {
-                    customFileBasedDataModel.setMonitoredAt(DateTools.stringToDate(IndexedFields.MonitoredAt.getString(this.document)));
-                } catch (ParseException e) {
+                    customFileBasedDataModel.setMonitoredAt(LocalDateTime.parse(IndexedFields.MonitoredAt.getString(this.document)));
+                } catch (DateTimeParseException e) {
                     logger.error(e.getMessage(), e);
                 }
                 customFileBasedDataModel.setDataSource(this.dataSource
@@ -92,7 +92,7 @@ public class CustomFileBasedAnalyser extends FileAnalyser<CustomFileBasedDataMod
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         } catch (org.json.simple.parser.ParseException e) {
-            e.printStackTrace();
+            logger.error(e.toString());
         }
         return customFileBasedDataModels;
     }

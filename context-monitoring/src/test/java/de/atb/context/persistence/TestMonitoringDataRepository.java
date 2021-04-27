@@ -50,6 +50,7 @@ import org.junit.*;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.ZoneId;
 import java.util.*;
 
 /**
@@ -176,7 +177,7 @@ public class TestMonitoringDataRepository {
 		monitoringRepos.reset(BusinessCase.getInstance(BusinessCase.NS_DUMMY_ID, BusinessCase.NS_DUMMY_URL));
 
 		DummyMonitoringDataModel old = new DummyMonitoringDataModel();
-		old.setMonitoredAt(getDateFromLastWeek());
+		old.setMonitoredAt(getDateFromLastWeek().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		monitoringRepos.persist(old);
 
 		DummyMonitoringDataModel dummy = new DummyMonitoringDataModel();
@@ -205,7 +206,7 @@ public class TestMonitoringDataRepository {
 		model = models.get(0);
 		Assert.assertTrue(validateModel(model, dummy));
 
-		Date startDate = new Date(old.getMonitoredAt().getTime() - 10000L);
+		Date startDate = new Date((old.getMonitoredAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()) - 10000L);
 		Date endDate = new Date();
 
 		timeFrame = new TimeFrame(startDate, endDate);
@@ -295,8 +296,8 @@ public class TestMonitoringDataRepository {
 
 		monitoringRepos.persist(dummy);
 		monitoringRepos.persist(dummy2);
-		String id1 = dummy.getIdentifier();
-		String id2 = dummy2.getIdentifier();
+		String id1 = dummy.getIdentifier().toString();
+		String id2 = dummy2.getIdentifier().toString();
 
 		List<String> ids = monitoringRepos.getLastIds(
 				ApplicationScenario.getInstance(),
@@ -335,13 +336,13 @@ public class TestMonitoringDataRepository {
 		monitoringRepos.reset(BusinessCase.getInstance(BusinessCase.NS_DUMMY_ID, BusinessCase.NS_DUMMY_URL));
 
 		DummyMonitoringDataModel old = new DummyMonitoringDataModel();
-		old.setMonitoredAt(getDateFromLastWeek());
+		old.setMonitoredAt(getDateFromLastWeek().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		monitoringRepos.persist(old);
-		String id1 = old.getIdentifier();
+		String id1 = old.getIdentifier().toString();
 
 		DummyMonitoringDataModel dummy = new DummyMonitoringDataModel();
 		monitoringRepos.persist(dummy);
-		String id2 = dummy.getIdentifier();
+		String id2 = dummy.getIdentifier().toString();
 
 		TimeFrame timeFrame = new TimeFrame(null, new Date());
 		List<String> ids = new ArrayList<String>();
@@ -375,7 +376,7 @@ public class TestMonitoringDataRepository {
 				+ ") did not contain id for dummy 2 = '" + id2 + "'",
 				ids.contains(id2));
 
-		Date startDate = new Date(old.getMonitoredAt().getTime() - 10000L);
+		Date startDate = new Date((old.getMonitoredAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()) - 10000L);
 		Date endDate = new Date();
 
 		timeFrame = new TimeFrame(startDate, endDate);

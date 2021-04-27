@@ -292,8 +292,8 @@ public class Indexer {
             FSDirectory dir = FSDirectory.open(tmpDir.toPath());
             this.writer = new IndexWriter(dir, indexWriterConfig);
             this.writer.commit();
-            // Index does not exist => create!
         } catch (FileNotFoundException fnfe) {
+            // Index does not exist => create!
             this.logger.info("Lucene index at '" + this.index.getLocation() + "' does not exist yet, creating it.");
             this.logger.warn(fnfe.getMessage());
             try {
@@ -302,24 +302,12 @@ public class Indexer {
                 this.writer.commit();
             } catch (Throwable e) {
                 this.logger.error("Could not access the Index: " + this.index.getLocation(), e);
-                if (this.writer != null) {
-                    try {
-                        this.writer.close();
-                    } catch (Exception ex) {
-                        this.logger.error(e.getMessage(), ex);
-                    }
-                }
+                closeIndexWriter();
                 return;
             }
         } catch (IOException e) {
             this.logger.error("Could not access the Index: " + this.index.getLocation(), e);
-            if (this.writer != null) {
-                try {
-                    this.writer.close();
-                } catch (Exception we) {
-                    this.logger.error(we.getMessage(), we);
-                }
-            }
+            closeIndexWriter();
             return;
         }
         if (this.logger.isInfoEnabled()) {

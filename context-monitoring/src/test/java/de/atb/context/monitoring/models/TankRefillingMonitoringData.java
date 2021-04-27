@@ -14,9 +14,9 @@ package de.atb.context.monitoring.models;
  * #L%
  */
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +28,10 @@ import de.atb.context.common.util.BusinessCase;
 import de.atb.context.monitoring.config.models.datasources.FileSystemDataSource;
 import de.atb.context.monitoring.rdf.RdfHelper;
 import de.atb.context.persistence.ModelOutputLanguage;
+import lombok.Getter;
+import lombok.Setter;
 import org.simpleframework.xml.Root;
 
-import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 import thewebsemantic.Transient;
@@ -47,21 +48,20 @@ import com.hp.hpl.jena.rdf.model.Model;
 @RdfType("TankRefilling")
 @Namespace(BusinessCase.NS_DUMMY_URL)
 @Root
+@Getter
+@Setter
 public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRefillingMonitoringData, FileSystemDataSource> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6988279358987251276L;
 
 	protected String documentIndexId;
 	protected String documentUri;
 
 	protected String implementingClassName = TankRefillingMonitoringData.class.getName();
-	protected Date monitoredAt;
+	protected LocalDateTime monitoredAt;
 	protected FileSystemDataSource dataSource;
 	protected String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
-	protected String identifier;
+	protected UUID identifier;
 
 	@Transient
 	private Map<Long, Map<String, SensoricalTankInformation>> timeStampMapping = new HashMap<Long, Map<String, SensoricalTankInformation>>();
@@ -75,6 +75,10 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	 */
 	protected List<Tank> tanks = new ArrayList<Tank>();
 
+    public TankRefillingMonitoringData() {
+        this.identifier = UUID.randomUUID();
+    }
+
 	/**
 	 * Adds another monitored Tank to the list of monitored tanks.
 	 * 
@@ -83,16 +87,6 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	 */
 	public void addTank(Tank tank) {
 		this.tanks.add(tank);
-	}
-
-	@Override
-	public FileSystemDataSource getDataSource() {
-		return this.dataSource;
-	}
-
-	@Override
-	public void setDataSource(FileSystemDataSource ds) {
-		this.dataSource = ds;
 	}
 
 	/*
@@ -129,107 +123,6 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	@Override
 	public BusinessCase getBusinessCase() {
 		return BusinessCase.getInstance(BusinessCase.NS_DUMMY_ID, BusinessCase.NS_DUMMY_URL);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.atb.proseco.monitoring.models.IMonitoringDataModel#getDocumentIndexId
-	 * ()
-	 */
-	@Override
-	public String getDocumentIndexId() {
-		return this.documentIndexId;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.atb.proseco.monitoring.models.IMonitoringDataModel#getDocumentUri
-	 * ()
-	 */
-	@Override
-	public String getDocumentUri() {
-		return this.documentUri;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.atb.proseco.monitoring.IMonitoringData#getImplementedClass()
-	 */
-	@Override
-	public String getImplementingClassName() {
-		return this.implementingClassName;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.atb.proseco.monitoring.models.IMonitoringDataModel#getMonitoredAt
-	 * ()
-	 */
-	@Override
-	public Date getMonitoredAt() {
-		if (this.monitoredAt != null) {
-			return (Date) this.monitoredAt.clone();
-		} else {
-			return null;
-		}
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.atb.proseco.monitoring.models.IMonitoringDataModel#
-	 * getMonitoringDataVersion()
-	 */
-	@Override
-	public String getMonitoringDataVersion() {
-		return this.monitoringDataVersion;
-	}
-
-	/**
-	 * Gets the List of Tanks that were monitored. Each tank has
-	 * {@linkplain SensoricalTankInformation} attached, describing the different
-	 * sensorical information monitored.
-	 * 
-	 * @return a List of Tanks monitored.
-	 */
-	public List<Tank> getTanks() {
-		return this.tanks;
-	}
-
-	public void setDocumentIndexId(String documentIndexId) {
-		this.documentIndexId = documentIndexId;
-	}
-
-	public void setDocumentUri(String documentUri) {
-		this.documentUri = documentUri;
-	}
-
-	public void setImplementingClass(String clazz) {
-		this.implementingClassName = clazz;
-	}
-
-	public void setMonitoredAt(Date monitoredAt) {
-		if (monitoredAt != null) {
-			this.monitoredAt = (Date) monitoredAt.clone();
-		} else {
-			this.monitoredAt = null;
-		}
-	}
-
-	public void setMonitoringDataVersion(String version) {
-		this.monitoringDataVersion = version;
-	}
-
-	public void setTanks(List<Tank> tanks) {
-		this.tanks = tanks;
 	}
 
 	/*
@@ -279,27 +172,6 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.atb.proseco.monitoring.models.IMonitoringDataModel#getIdentifier
-	 * ()
-	 */
-	@Id
-	@Override
-	public String getIdentifier() {
-		if (this.identifier == null) {
-			this.identifier = UUID.randomUUID().toString();
-		}
-		return this.identifier;
-	}
-
-	@Override
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see de.atb.proseco.monitoring.models.IMonitoringDataModel#
 	 * getApplicationScenario()
 	 */
@@ -317,22 +189,6 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	@Override
 	public String getContextIdentifierClassName() {
 		return null /*TankRefillingContextIdentifier.class.getName()*/;
-	}
-
-	public List<Long> getTimestamps() {
-		return sortedTimestamps;
-	}
-
-	public List<String> getTankNames() {
-		return tankNames;
-	}
-
-	public SensoricalTankInformation getSensoricalTankInformation(Long timeStamp, String tankName) {
-		if (timeStampMapping != null) {
-			Map<String, SensoricalTankInformation> subMap = timeStampMapping.get(timeStamp);
-			return subMap.get(tankName);
-		}
-		return null;
 	}
 
 	/*
