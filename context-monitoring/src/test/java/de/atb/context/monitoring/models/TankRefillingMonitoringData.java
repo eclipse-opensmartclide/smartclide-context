@@ -54,14 +54,14 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	private static final long serialVersionUID = 6988279358987251276L;
 
-	protected String documentIndexId;
-	protected String documentUri;
+    private String documentIndexId;
+    private String documentUri;
 
-	protected String implementingClassName = TankRefillingMonitoringData.class.getName();
-	protected LocalDateTime monitoredAt;
-	protected FileSystemDataSource dataSource;
-	protected String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
-	protected UUID identifier;
+    private String implementingClassName = TankRefillingMonitoringData.class.getName();
+    private LocalDateTime monitoredAt;
+    private FileSystemDataSource dataSource;
+    private String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
+    private UUID identifier;
 
 	@Transient
 	private Map<Long, Map<String, SensoricalTankInformation>> timeStampMapping = new HashMap<Long, Map<String, SensoricalTankInformation>>();
@@ -73,7 +73,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	/**
 	 * The List of tanks that were monitored.
 	 */
-	protected List<Tank> tanks = new ArrayList<Tank>();
+    private List<Tank> tanks = new ArrayList<Tank>();
 
     public TankRefillingMonitoringData() {
         this.identifier = UUID.randomUUID();
