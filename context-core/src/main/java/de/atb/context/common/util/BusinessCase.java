@@ -14,6 +14,10 @@ package de.atb.context.common.util;
  * #L%
  */
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +28,8 @@ import java.util.Map;
  * @version $LastChangedRevision: 634 $
  *
  */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
 public class BusinessCase {
 	public static final String NS_BASE_ID = "context";
 	public static final String NS_BASE_URL = "http://atb-bremen.de/";
@@ -32,7 +38,9 @@ public class BusinessCase {
 	public static final String NS_DUMMY_URL = BusinessCase.NS_BASE_URL + "bc-dummy/";
 
 	private static volatile Map<String, BusinessCase> settings = new HashMap<String, BusinessCase>();
+    @XmlElement
 	private String id;
+    @XmlElement
 	private String url;
 
     private BusinessCase() {

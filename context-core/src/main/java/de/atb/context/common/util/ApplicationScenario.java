@@ -20,6 +20,7 @@ import de.atb.context.learning.models.IModelInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,15 +32,22 @@ import java.util.Map;
  * @author scholze, huesig
  * @version $LastChangedRevision: 701 $
  */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
 public class ApplicationScenario implements IModelInitializer {
+    @XmlTransient
     private final Logger logger = LoggerFactory
             .getLogger(ApplicationScenario.class);
 
     private BusinessCase businessCase;
+    @XmlElement
     private String modelInitializerClassName;
+    @XmlElement
     private String configurationClassName;
+    @XmlElement
     private String configurationDialogClassName;
     private Class<? extends ApplicationScenarioConfiguration<?>> configurationClass;
+    @XmlTransient
     private IModelInitializer initializer;
     private static volatile Map<String, ApplicationScenario> settings = new HashMap<String, ApplicationScenario>();
 
