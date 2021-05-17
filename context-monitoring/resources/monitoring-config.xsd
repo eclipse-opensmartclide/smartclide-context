@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Please remove this file once dockerization branch contains all the necessary changes from this file.
+     TODO: make changes accordingly in test/resources/monitoring-config.xsd file
+-->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
            targetNamespace="http://www.atb-bremen.de">
     <xs:element name="config">
