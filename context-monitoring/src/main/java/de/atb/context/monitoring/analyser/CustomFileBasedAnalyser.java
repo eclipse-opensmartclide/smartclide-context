@@ -9,7 +9,7 @@ package de.atb.context.monitoring.analyser;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -26,6 +26,7 @@ import org.apache.lucene.document.Document;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,12 +88,8 @@ public class CustomFileBasedAnalyser extends FileAnalyser<CustomFileBasedDataMod
                 customFileBasedDataModels.add(customFileBasedDataModel);
 
             } // end of for loop
-        } catch (FileNotFoundException e) {
+        } catch (IOException | ParseException e) {
             logger.error(e.getMessage(), e);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        } catch (org.json.simple.parser.ParseException e) {
-            logger.error(e.toString());
         }
         return customFileBasedDataModels;
     }
