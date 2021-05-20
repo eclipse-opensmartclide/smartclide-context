@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Please remove this file once dockerization branch contains all the necessary changes from this file.
+     TODO: make changes accordingly in test/resources/monitoring-filepair-config.xml file
+-->
 <config xmlns="https://www.atb-bremen.de"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.atb-bremen.de monitoring-config.xsd">

@@ -14,12 +14,13 @@ package de.atb.context.monitoring.models;
  * #L%
  */
 
-import java.util.Date;
-
-import de.atb.context.monitoring.IMonitoringData;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
+import de.atb.context.monitoring.IMonitoringData;
 import de.atb.context.monitoring.config.models.DataSource;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * IMonitoringDataModel
@@ -30,13 +31,13 @@ import de.atb.context.monitoring.config.models.DataSource;
  */
 public interface IMonitoringDataModel<T, D extends DataSource> extends IMonitoringData<T> {
 
-    String getIdentifier();
+    UUID getIdentifier();
 
-    void setIdentifier(String identifier);
+    void setIdentifier(UUID identifier);
 
     String getMonitoringDataVersion();
 
-    Date getMonitoredAt();
+    LocalDateTime getMonitoredAt();
 
     String getDocumentIndexId();
 

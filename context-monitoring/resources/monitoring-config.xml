@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Please remove this file once dockerization branch contains all the necessary changes from this file.
+     TODO: make changes accordingly in test/resources/monitoring-config.xml file
+-->
 <config xmlns="http://www.atb-bremen.de"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.atb-bremen.de monitoring-config.xsd">
 
     <indexes>
-        <index id="index-dummy" location="target/indexes/dummy"></index>
-        <index id="index-test" location="target/indexes/test"></index>
+        <index id="index-dummy" location="indexes/dummy"></index>
+        <index id="index-filebased" location="indexes/file"></index>
     </indexes>
 
     <datasources>
         <datasource id="datasource-dummy" type="file"
                     monitor="de.atb.context.monitoring.monitors.file.FilePairSystemMonitor"
-                    uri="target/test-classes/filepairmonitor"
+                    uri="src/test/resources/filepairmonitor"
                     options="extensionOne=1&amp;extensionTwo=2"
                     class="de.atb.context.monitoring.config.models.datasources.FilePairSystemDataSource"/>
+
+        <datasource id="datasource-filebased" type="file"
+                    monitor="de.atb.context.monitoring.monitors.file.FileSystemMonitor"
+                    uri="src/test/resources/filebasedmonitor"
+                    options=""
+                    class="de.atb.context.monitoring.config.models.datasources.FileSystemDataSource"/>
     </datasources>
 
     <interpreters>
@@ -22,11 +31,18 @@
                            parser="de.atb.context.monitoring.parser.file.DummyFilePairParser"
                            analyser="de.atb.context.monitoring.analyser.file.DummyFilePairAnalyser"/>
         </interpreter>
+        <interpreter id="interpreter-filebased">
+            <configuration type="*"
+                           parser="de.atb.context.monitoring.parser.CustomFileParser"
+                           analyser="de.atb.context.monitoring.analyser.CustomFileBasedAnalyser"/>
+        </interpreter>
     </interpreters>
 
     <monitors>
         <monitor id="monitor-dummy" datasource="datasource-dummy" interpreter="interpreter-dummy"
                  index="index-dummy"/>
+        <monitor id="monitor-filebased" datasource="datasource-filebased" interpreter="interpreter-filebased"
+                 index="index-filebased"/>
     </monitors>
 
 </config>
