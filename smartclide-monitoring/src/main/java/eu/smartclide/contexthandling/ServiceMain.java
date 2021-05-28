@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Properties;
@@ -49,24 +50,24 @@ public class ServiceMain {
 
         org.apache.log4j.BasicConfigurator.configure();
 
-        String smartclideConfigPath = "resources";
+        Path smartclideConfigPath = Path.of("resources");
 
         // Environment Variable
         String smartclideHome = System.getenv("SMARTCLIDE_HOME");
         if (smartclideHome != null && Files.exists(Paths.get(smartclideHome))) {
-            smartclideConfigPath = smartclideHome + File.separator + "config";
+            smartclideConfigPath = Path.of(smartclideHome, "config");
         // Linux config directory /var/lib/smartclide
         } else if (Files.exists(Paths.get("/var/lib/smartclide"))) {
             smartclideHome = "/var/lib/smartclide";
-            smartclideConfigPath = smartclideHome + File.separator + "config";
+            smartclideConfigPath = Path.of(smartclideHome, "config");
         // Linux config directory /opt/smartclide/config
         } else if (Files.exists(Paths.get("/opt/smartclide"))) {
             smartclideHome = "/opt/smartclide";
-            smartclideConfigPath = smartclideHome + File.separator + "config";
+            smartclideConfigPath = Path.of(smartclideHome, "config");
         // Windows COnfigu Directories
         } else if (Files.exists(Paths.get("C:\\ProgramData\\smartclide"))) {
             smartclideHome = "C:\\ProgramData\\smartclide";
-            smartclideConfigPath = smartclideHome + File.separator + "config";
+            smartclideConfigPath = Path.of(smartclideHome, "config");
         }
 
         AmIMonitoringConfiguration amionfig = new AmIMonitoringConfiguration();
