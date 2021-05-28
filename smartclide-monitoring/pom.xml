@@ -12,8 +12,6 @@
     <artifactId>smartclide-monitoring</artifactId>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
         <jib-maven-plugin.version>2.8.0</jib-maven-plugin.version>
     </properties>
 
