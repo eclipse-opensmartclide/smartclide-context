@@ -22,7 +22,6 @@ import de.atb.context.services.faults.ContextFault;
 import de.atb.context.services.manager.ServiceManager;
 import de.atb.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-import org.apache.cxf.endpoint.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,7 +38,6 @@ import java.util.Properties;
 @SpringBootApplication
 public class ServiceMain {
     private static final Logger logger = LoggerFactory.getLogger(ServiceMain.class);
-    private static Server server;
     private static IAmIMonitoringService service;
     private static AmIMonitoringDataRepositoryServiceWrapper monitoringDataRepository;
     private static IAmIMonitoringDataRepositoryService<IMonitoringDataModel<?, ?>> reposService;
@@ -80,7 +78,7 @@ public class ServiceMain {
         SWServiceContainer serviceContainer = new SWServiceContainer(
                 "AmI-repository", filepath);
         ServiceManager.getLSWServiceContainer().add(serviceContainer);
-        server = ServiceManager.registerWebservice(serviceContainer);
+        ServiceManager.registerWebservice(serviceContainer);
 
 
         for (SWServiceContainer container : ServiceManager.getLSWServiceContainer()) {
@@ -90,7 +88,7 @@ public class ServiceMain {
             }
         }
 
-        server = ServiceManager.registerWebservice(AmIMonitoringService.class);
+        ServiceManager.registerWebservice(AmIMonitoringService.class);
         service = ServiceManager.getWebservice(IAmIMonitoringService.class);
         service.configureService(amionfig);
     }
