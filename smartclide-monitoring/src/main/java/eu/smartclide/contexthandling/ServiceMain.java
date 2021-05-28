@@ -124,8 +124,12 @@ public class ServiceMain {
     public static void main(String[] args) {
         initialize();
 
-        monitoringDataRepository = new AmIMonitoringDataRepositoryServiceWrapper(reposService);
-        logger.debug(monitoringDataRepository.ping());
-        startService();
+        if (reposService != null) {
+            monitoringDataRepository = new AmIMonitoringDataRepositoryServiceWrapper(reposService);
+            logger.debug(monitoringDataRepository.ping());
+            startService();
+        } else {
+            logger.error("Service could not be started, repository service is null");
+        }
     }
 }
