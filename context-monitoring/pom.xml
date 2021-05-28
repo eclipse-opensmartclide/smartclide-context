@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>context-monitoring</artifactId>
+
     <packaging>jar</packaging>
 
     <name>ATB Context Monitoring Core Services</name>
