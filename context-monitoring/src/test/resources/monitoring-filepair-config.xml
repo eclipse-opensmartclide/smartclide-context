@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<config xmlns="https://www.atb-bremen.de"
+<config xmlns="http://www.atb-bremen.de"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.atb-bremen.de monitoring-config.xsd">
 
     <indexes>
-        <index id="index-dummy" location="indexes/dummy"></index>
+        <index id="index-dummy" location="indexes/dummy"/>
     </indexes>
 
     <datasources>
