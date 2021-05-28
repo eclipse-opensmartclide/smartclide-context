@@ -210,7 +210,7 @@
         <module>context-core</module>
         <module>context-monitoring</module>
         <module>context-extraction</module>
-        <module>smarctlide-monitoring</module>
+        <module>smartclide-monitoring</module>
     </modules>
 
 </project>
