@@ -16,8 +16,6 @@
 
     <properties>
         <spring-boot.version>2.4.2</spring-boot.version>
-        <docker.host.url>tcp://192.168.15.17:2376</docker.host.url>
-        <docker.host.certPath>${user.home}/safire/docker-client-certs</docker.host.certPath>
     </properties>
 
     <build>
