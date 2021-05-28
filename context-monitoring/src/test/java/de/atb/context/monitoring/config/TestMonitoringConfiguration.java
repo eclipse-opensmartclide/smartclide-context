@@ -3,6 +3,7 @@ package de.atb.context.monitoring.config;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 import de.atb.context.monitoring.config.MonitoringConfiguration;
@@ -31,9 +32,8 @@ public class TestMonitoringConfiguration {
 
 	@BeforeClass
 	public static void beforeClass() {
-        String absolutefilePath = new File("").getAbsolutePath();
-        settings = MonitoringConfiguration.getInstance("monitoring-config.xml", absolutefilePath.concat(File.separator
-            + "src" + File.separator + "test" + File.separator + "resources"));
+        String absolutefilePath = Path.of("src", "test", "resources").toAbsolutePath().toString();
+        settings = MonitoringConfiguration.getInstance("monitoring-config.xml", absolutefilePath);
 		dataSources = settings.getDataSources();
 		monitors = settings.getMonitors();
 		interpreters = settings.getInterpreters();

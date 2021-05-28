@@ -19,6 +19,7 @@ import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.monitors.ThreadedMonitor;
 
 import java.io.File;
+import java.nio.file.Path;
 
 /**
  * TestFilePairSystemMonitor
@@ -39,10 +40,9 @@ public class TestFilePairSystemMonitor {
 
 	@BeforeClass
 	public static void beforeClass() throws ConfigurationException {
-        String absolutefilePath = new File("").getAbsolutePath();
+        String absolutefilePath = Path.of("src", "test", "resources").toAbsolutePath().toString();
 
-		config = MonitoringConfiguration.getInstance("monitoring-filepair-config.xml", absolutefilePath.concat(File.separator
-            + "src" + File.separator + "test" + File.separator + "resources"));
+		config = MonitoringConfiguration.getInstance("monitoring-filepair-config.xml", absolutefilePath);
 
 		monitor = config.getMonitor("monitor-dummy");
 		Assert.assertTrue("No monitors 'monitor-dummy' specified!", config.getMonitor("monitor-dummy") != null);
