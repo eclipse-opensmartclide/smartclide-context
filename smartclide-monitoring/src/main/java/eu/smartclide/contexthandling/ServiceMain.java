@@ -62,7 +62,7 @@ public class ServiceMain {
         } else if (Files.exists(Paths.get("/opt/smartclide"))) {
             smartclideHome = "/opt/smartclide";
             smartclideConfigPath = Path.of(smartclideHome, "config");
-        // Windows COnfigu Directories
+        // Windows Config Directories
         } else if (Files.exists(Paths.get("C:\\ProgramData\\smartclide"))) {
             smartclideHome = "C:\\ProgramData\\smartclide";
             smartclideConfigPath = Path.of(smartclideHome, "config");
