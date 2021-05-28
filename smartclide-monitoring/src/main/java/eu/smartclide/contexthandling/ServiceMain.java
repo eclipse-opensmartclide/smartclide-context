@@ -13,6 +13,14 @@ package eu.smartclide.contexthandling;
  * #L%
  */
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
+import java.util.Properties;
+
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.services.AmIMonitoringService;
 import de.atb.context.services.IAmIMonitoringDataRepositoryService;
@@ -26,20 +34,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Objects;
-import java.util.Properties;
-
 @SpringBootApplication
 public class ServiceMain {
+
     private static final Logger logger = LoggerFactory.getLogger(ServiceMain.class);
     private static IAmIMonitoringService service;
-    private static AmIMonitoringDataRepositoryServiceWrapper monitoringDataRepository; //TODO addDataModel as parameter as soon as this is defined for SmartCLIDE
+    // TODO addDataModel as parameter as soon as this is defined for SmartCLIDE
+    private static AmIMonitoringDataRepositoryServiceWrapper monitoringDataRepository;
     private static IAmIMonitoringDataRepositoryService<IMonitoringDataModel<?, ?>> reposService;
 
     private static void initialize() {
@@ -52,37 +53,31 @@ public class ServiceMain {
 
         // Environment Variable
         String smartclideHome = System.getenv("SMARTCLIDE_HOME");
-        if (smartclideHome != null && Files.exists(Paths.get(smartclideHome))) {
+        if (smartclideHome != null && Files.isDirectory(Paths.get(smartclideHome))) {
             smartclideConfigPath = Path.of(smartclideHome, "config");
-        // Linux config directory /var/lib/smartclide
-        } else if (Files.exists(Paths.get("/var/lib/smartclide"))) {
-            smartclideHome = "/var/lib/smartclide";
-            smartclideConfigPath = Path.of(smartclideHome, "config");
-        // Linux config directory /opt/smartclide/config
-        } else if (Files.exists(Paths.get("/opt/smartclide"))) {
-            smartclideHome = "/opt/smartclide";
-            smartclideConfigPath = Path.of(smartclideHome, "config");
-        // Windows Config Directories
-        } else if (Files.exists(Paths.get("C:\\ProgramData\\smartclide"))) {
-            smartclideHome = "C:\\ProgramData\\smartclide";
-            smartclideConfigPath = Path.of(smartclideHome, "config");
+            // Linux config directory /var/lib/smartclide
+        } else if (Files.isDirectory(Paths.get("/var/lib/smartclide"))) {
+            smartclideConfigPath = Path.of("/var/lib/smartclide", "config");
+            // Linux config directory /opt/smartclide/config
+        } else if (Files.isDirectory(Paths.get("/opt/smartclide"))) {
+            smartclideConfigPath = Path.of("/opt/smartclide", "config");
+            // Windows Config Directories
+        } else if (Files.isDirectory(Paths.get("C:\\ProgramData\\smartclide"))) {
+            smartclideConfigPath = Path.of("C:\\ProgramData\\smartclide", "config");
         }
 
-        AmIMonitoringConfiguration amionfig = new AmIMonitoringConfiguration();
-        amionfig.setId("SMARTCLIDE");
-        amionfig.setServiceConfiguration(readFile(smartclideConfigPath + File.separator + "monitoring-config.xml"));
+        AmIMonitoringConfiguration amiConfig = new AmIMonitoringConfiguration();
+        amiConfig.setId("SMARTCLIDE");
+        amiConfig.setServiceConfiguration(readFile(smartclideConfigPath.resolve("monitoring-config.xml").toString()));
 
-        File configFile = new File(
-                smartclideConfigPath + File.separator + "services-config.xml");
-        String filepath = configFile.getPath();
-        SWServiceContainer serviceContainer = new SWServiceContainer(
-                "AmI-repository", filepath);
+        SWServiceContainer serviceContainer =
+                new SWServiceContainer("AmI-repository", smartclideConfigPath.resolve("services-config.xml").toString());
         ServiceManager.getLSWServiceContainer().add(serviceContainer);
         ServiceManager.registerWebservice(serviceContainer);
 
-
         for (SWServiceContainer container : ServiceManager.getLSWServiceContainer()) {
-            if (Objects.requireNonNull(container.getServerClass()).toString()
+            if (Objects.requireNonNull(container.getServerClass())
+                    .toString()
                     .contains("AmIMonitoringDataRepository")) {
                 reposService = ServiceManager.getWebservice(container);
             }
@@ -90,16 +85,16 @@ public class ServiceMain {
 
         ServiceManager.registerWebservice(AmIMonitoringService.class);
         service = ServiceManager.getWebservice(IAmIMonitoringService.class);
-        service.configureService(amionfig);
+        service.configureService(amiConfig);
     }
 
     private static String readFile(String filename) {
         try {
             return Files.readString(Path.of(filename), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+            return "";
         }
-        return "";
     }
 
     private static void startService() {
