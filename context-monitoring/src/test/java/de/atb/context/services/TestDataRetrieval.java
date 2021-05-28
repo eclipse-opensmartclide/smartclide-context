@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -41,17 +42,17 @@ public class TestDataRetrieval {
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
+        final Path configDir = Path.of("src", "test", "resources").toAbsolutePath();
+        final String monitoringConfig = configDir.resolve("monitoring-config.xml").toString();
+        final String serviceConfig = configDir.resolve("services-config.xml").toString();
+
 		AmIMonitoringConfiguration amionfig = new AmIMonitoringConfiguration();
 		String absolutefilePath = new File("").getAbsolutePath();
 		amionfig.setId("TEST_PES");
-		amionfig.setServiceConfiguration(readFile((absolutefilePath.concat(File.separator
-            + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "monitoring-config.xml"))));
+		amionfig.setServiceConfiguration(readFile(monitoringConfig));
 
-		File configFile = new File(
-				absolutefilePath.concat(File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "services-config.xml"));
-		String filepath = configFile.getPath();
 		SWServiceContainer serviceContainer = new SWServiceContainer(
-				"AmI-repository", filepath);
+				"AmI-repository", serviceConfig);
 		ServiceManager.registerWebservice(serviceContainer);
 		ServiceManager.getLSWServiceContainer().add(serviceContainer);
 
