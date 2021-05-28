@@ -39,7 +39,7 @@ import java.util.Properties;
 public class ServiceMain {
     private static final Logger logger = LoggerFactory.getLogger(ServiceMain.class);
     private static IAmIMonitoringService service;
-    private static AmIMonitoringDataRepositoryServiceWrapper monitoringDataRepository;
+    private static AmIMonitoringDataRepositoryServiceWrapper monitoringDataRepository; //TODO addDataModel as parameter as soon as this is defined for SmartCLIDE
     private static IAmIMonitoringDataRepositoryService<IMonitoringDataModel<?, ?>> reposService;
 
     private static void initialize() {
