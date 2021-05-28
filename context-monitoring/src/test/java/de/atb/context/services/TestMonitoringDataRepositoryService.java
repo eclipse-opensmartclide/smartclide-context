@@ -42,14 +42,14 @@ import de.atb.context.persistence.TestMonitoringDataRepository;
 import de.atb.context.persistence.processors.DummyMonitoringDataPersistencePostProcessor;
 import de.atb.context.persistence.processors.DummyMonitoringDataPersistencePreProcessor;
 import de.atb.context.services.faults.ContextFault;
-import de.atb.context.services.manager.ServiceManager;
 import org.apache.cxf.endpoint.Server;
 import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import de.atb.context.services.manager.ServiceManager;
 
 import java.io.File;
-import java.time.ZoneId;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -75,10 +75,7 @@ public class TestMonitoringDataRepositoryService {
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
-		String absolutefilePath = new File("").getAbsolutePath();
-        configFile = new File(
-            absolutefilePath.concat(File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "services-config.xml"));
-		String filepath = configFile.getPath();
+        String filepath = Path.of("src", "test", "resources", "services-config.xml").toAbsolutePath().toString();
 		SWServiceContainer serviceContainer = new SWServiceContainer(
 				"AmI-repository", filepath);
 		server = ServiceManager.registerWebservice(serviceContainer);
@@ -133,13 +130,13 @@ public class TestMonitoringDataRepositoryService {
 		service.reset(BusinessCase.getInstance(BusinessCase.NS_DUMMY_ID, BusinessCase.NS_DUMMY_URL));
 
 		DummyMonitoringDataModel dummy = new DummyMonitoringDataModel();
-		UUID id = dummy.getIdentifier();
+		String id = dummy.getIdentifier();
 
 		service.persist(dummy.toRdfString(), dummy.getClass().getName(),
 				dummy.getApplicationScenario());
 		String rdfString = service.getMonitoringData(
 				ApplicationScenario.getInstance(),
-				DummyMonitoringDataModel.class.getName(), id.toString());
+				DummyMonitoringDataModel.class.getName(), id);
 
 		Assert.assertTrue(rdfString != null);
 		DummyMonitoringDataModel dummy2 = RdfHelper.createMonitoringData(
@@ -155,7 +152,7 @@ public class TestMonitoringDataRepositoryService {
 		Assert.assertTrue(service.reset(BusinessCase.getInstance(BusinessCase.NS_DUMMY_ID, BusinessCase.NS_DUMMY_URL)));
 
 		DummyMonitoringDataModel one = new DummyMonitoringDataModel();
-		one.setMonitoredAt(getDateFromLastWeek().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		one.setMonitoredAt(getDateFromLastWeek());
 		DummyMonitoringDataModel two = new DummyMonitoringDataModel();
 
 		service.persist(one.toRdfString(),
@@ -206,7 +203,7 @@ public class TestMonitoringDataRepositoryService {
 		Assert.assertTrue(TestMonitoringDataRepository.validateModel(model,
 				dummy));
 
-		Date startDate = new Date((one.getMonitoredAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()) - 10000L);
+		Date startDate = new Date(one.getMonitoredAt().getTime() - 10000L);
 		Date endDate = new Date();
 
 		timeFrame = new TimeFrame(startDate, endDate);
