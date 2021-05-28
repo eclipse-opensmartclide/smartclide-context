@@ -15,6 +15,7 @@ import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -47,7 +48,6 @@ public class TestDataRetrieval {
         final String serviceConfig = configDir.resolve("services-config.xml").toString();
 
 		AmIMonitoringConfiguration amionfig = new AmIMonitoringConfiguration();
-		String absolutefilePath = new File("").getAbsolutePath();
 		amionfig.setId("TEST_PES");
 		amionfig.setServiceConfiguration(readFile(monitoringConfig));
 
@@ -73,13 +73,11 @@ public class TestDataRetrieval {
 		File f = new File(filename);
 		try {
 			byte[] bytes = Files.readAllBytes(f.toPath());
-			return new String(bytes, "UTF-8");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			return new String(bytes, StandardCharsets.UTF_8);
 		} catch (IOException e) {
-			e.printStackTrace();
+            logger.error(e.getMessage(), e);
 		}
-		return "";
+        return "";
 	}
 
 	@Test
