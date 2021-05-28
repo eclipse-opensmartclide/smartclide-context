@@ -96,10 +96,8 @@ public class ServiceMain {
     }
 
     private static String readFile(String filename) {
-        File f = new File(filename);
         try {
-            byte[] bytes = Files.readAllBytes(f.toPath());
-            return new String(bytes, StandardCharsets.UTF_8);
+            return Files.readString(Path.of(filename), StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }
