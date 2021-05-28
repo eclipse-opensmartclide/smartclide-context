@@ -1,7 +1,7 @@
 package eu.smartclide.contexthandling;
 /*-
  * #%L
- * smartclide-monitoring
+ * SmartCLIDE Monitoring
  * %%
  * Copyright (C) 2017 - 2019 ATB
  * %%

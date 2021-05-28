@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>context-extraction</artifactId>
+
     <packaging>jar</packaging>
 
     <name>ATB Context Extraction Core Service</name>
