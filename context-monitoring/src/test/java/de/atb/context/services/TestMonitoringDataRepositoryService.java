@@ -46,10 +46,10 @@ import org.apache.cxf.endpoint.Server;
 import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import de.atb.context.services.SWServiceContainer;
 import de.atb.context.services.manager.ServiceManager;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -75,10 +75,7 @@ public class TestMonitoringDataRepositoryService {
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
-		String absolutefilePath = new File("").getAbsolutePath();
-        configFile = new File(
-            absolutefilePath.concat(File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "services-config.xml"));
-		String filepath = configFile.getPath();
+        String filepath = Path.of("src", "test", "resources", "services-config.xml").toAbsolutePath().toString();
 		SWServiceContainer serviceContainer = new SWServiceContainer(
 				"AmI-repository", filepath);
 		server = ServiceManager.registerWebservice(serviceContainer);
