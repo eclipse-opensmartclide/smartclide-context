@@ -112,13 +112,6 @@ public class ServiceMain {
         } catch (ContextFault e) {
             logger.error(e.getMessage(), e);
         }
-
-        // wait a while (10s)
-        try {
-            Thread.sleep(10000L);
-        } catch (InterruptedException e) {
-            logger.error(e.getMessage(), e);
-        }
     }
 
     public static void main(String[] args) {
