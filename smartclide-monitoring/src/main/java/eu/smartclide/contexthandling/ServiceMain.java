@@ -1,7 +1,7 @@
 package eu.smartclide.contexthandling;
 /*-
  * #%L
- * smarctlide-monitoring
+ * smartclide-monitoring
  * %%
  * Copyright (C) 2017 - 2019 ATB
  * %%
@@ -126,7 +126,7 @@ public class ServiceMain {
         initialize();
 
         monitoringDataRepository = new AmIMonitoringDataRepositoryServiceWrapper(reposService);
-        System.out.println(monitoringDataRepository.ping());
+        logger.debug(monitoringDataRepository.ping());
         startService();
     }
 }
