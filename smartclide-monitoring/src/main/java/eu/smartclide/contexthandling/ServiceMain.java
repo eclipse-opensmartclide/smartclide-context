@@ -32,9 +32,7 @@ import de.atb.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
 public class ServiceMain {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceMain.class);
