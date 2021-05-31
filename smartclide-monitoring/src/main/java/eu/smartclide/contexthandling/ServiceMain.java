@@ -64,7 +64,15 @@ public class ServiceMain {
             // Windows Config Directories
         } else if (Files.isDirectory(Paths.get("C:\\ProgramData\\smartclide"))) {
             smartclideConfigPath = Path.of("C:\\ProgramData\\smartclide", "config");
+        } else {
+            // check if default folder exist
+            if (!Files.isDirectory(smartclideConfigPath)) {
+                logger.error("The config directory for the SmartCLIDE Context Handling does not exist!");
+                System.err.println("The config directory for the SmartCLIDE Context Handling does not exist!");
+                System.exit(1);
+            }
         }
+
 
         AmIMonitoringConfiguration amiConfig = new AmIMonitoringConfiguration();
         amiConfig.setId("SMARTCLIDE");
