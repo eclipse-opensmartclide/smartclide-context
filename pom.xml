@@ -28,11 +28,6 @@
 
     <repositories>
         <repository>
-            <id>jenabean</id>
-            <name>jenabean</name>
-            <url>http://jenabean.googlecode.com/svn/trunk/repo</url>
-        </repository>
-        <repository>
             <id>JBoss-Releases</id>
             <name>JBoss Releases Repository</name>
             <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
