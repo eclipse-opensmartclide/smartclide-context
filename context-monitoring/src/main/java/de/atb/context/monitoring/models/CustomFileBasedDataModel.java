@@ -28,6 +28,7 @@ import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @RdfType("CustomFileBasedDataModel")
@@ -37,10 +38,10 @@ import java.util.UUID;
 @Setter
 public class CustomFileBasedDataModel implements IMonitoringDataModel<CustomFileBasedDataModel, FileSystemDataSource> {
 
-    private LocalDateTime monitoredAt;
+    private Date monitoredAt;
     private String documentIndexId = "index/file";
     private String documentUri;
-    private UUID identifier;
+    private String identifier;
     private FileSystemDataSource dataSource;
     private String implementingClassName = CustomFileBasedDataModel.class.getName();
     private String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
@@ -49,7 +50,7 @@ public class CustomFileBasedDataModel implements IMonitoringDataModel<CustomFile
     private String userInfo;
 
     public CustomFileBasedDataModel() {
-        this.identifier = UUID.randomUUID();
+        this.identifier = UUID.randomUUID().toString();
     }
 
     @Override

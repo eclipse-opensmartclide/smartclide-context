@@ -23,6 +23,7 @@ import de.atb.context.monitoring.models.Tank;
 import de.atb.context.monitoring.models.TankRefillingMonitoringData;
 import de.atb.context.monitoring.parser.IndexedFields;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
+import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,6 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -92,7 +92,7 @@ public class TrfAnalyser extends FileAnalyser<TankRefillingMonitoringData> {
 			run.setDocumentUri(IndexedFields.Uri.getString(this.document));
 			run.setDocumentIndexId(IndexedFields.IndexId
 					.getString(this.document));
-			run.setMonitoredAt(LocalDateTime.parse(IndexedFields.MonitoredAt
+			run.setMonitoredAt(DateTools.stringToDate(IndexedFields.MonitoredAt
 					.getString(this.document)));
 			run.setDataSource(this.dataSource
 					.convertTo(FileSystemDataSource.class));
@@ -101,6 +101,8 @@ public class TrfAnalyser extends FileAnalyser<TankRefillingMonitoringData> {
 			logger.error(e.getMessage(), e);
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
+        } catch (ParseException e) {
+            logger.error(e.getMessage(), e);
 		} catch (DateTimeParseException e) {
 			logger.error(e.getMessage(), e);
 		} finally {

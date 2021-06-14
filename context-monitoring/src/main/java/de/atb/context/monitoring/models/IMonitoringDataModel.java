@@ -20,7 +20,7 @@ import de.atb.context.monitoring.IMonitoringData;
 import de.atb.context.monitoring.config.models.DataSource;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Date;
 
 /**
  * IMonitoringDataModel
@@ -31,13 +31,13 @@ import java.util.UUID;
  */
 public interface IMonitoringDataModel<T, D extends DataSource> extends IMonitoringData<T> {
 
-    UUID getIdentifier();
+    String getIdentifier();
 
-    void setIdentifier(UUID identifier);
+    void setIdentifier(String identifier);
 
     String getMonitoringDataVersion();
 
-    LocalDateTime getMonitoredAt();
+    Date getMonitoredAt();
 
     String getDocumentIndexId();
 

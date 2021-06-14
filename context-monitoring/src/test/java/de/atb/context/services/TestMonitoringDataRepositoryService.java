@@ -49,7 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.time.ZoneId;
 import java.util.*;
 
 /**
@@ -77,7 +76,7 @@ public class TestMonitoringDataRepositoryService {
 
         String absolutefilePath = new File("").getAbsolutePath();
         configFile = new File(
-            absolutefilePath.concat(File.separator + "resources"+ File.separator + "services-config.xml"));
+            absolutefilePath.concat(File.separator + "src" + File.separator + "test" + File.separator + "resources"+ File.separator + "services-config.xml"));
         String filepath = configFile.getPath();
         SWServiceContainer serviceContainer = new SWServiceContainer(
             "AmI-repository", filepath);
@@ -133,7 +132,7 @@ public class TestMonitoringDataRepositoryService {
         service.reset(BusinessCase.getInstance(BusinessCase.NS_DUMMY_ID, BusinessCase.NS_DUMMY_URL));
 
         DummyMonitoringDataModel dummy = new DummyMonitoringDataModel();
-        UUID id = dummy.getIdentifier();
+        String id = dummy.getIdentifier();
 
         service.persist(dummy.toRdfString(), dummy.getClass().getName(),
             dummy.getApplicationScenario());
@@ -155,7 +154,7 @@ public class TestMonitoringDataRepositoryService {
         Assert.assertTrue(service.reset(BusinessCase.getInstance(BusinessCase.NS_DUMMY_ID, BusinessCase.NS_DUMMY_URL)));
 
         DummyMonitoringDataModel one = new DummyMonitoringDataModel();
-        one.setMonitoredAt(getDateFromLastWeek().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        one.setMonitoredAt(getDateFromLastWeek());
         DummyMonitoringDataModel two = new DummyMonitoringDataModel();
 
         service.persist(one.toRdfString(),
@@ -206,7 +205,7 @@ public class TestMonitoringDataRepositoryService {
         Assert.assertTrue(TestMonitoringDataRepository.validateModel(model,
             dummy));
 
-        Date startDate = new Date((one.getMonitoredAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()) - 10000L);
+        Date startDate = one.getMonitoredAt();
         Date endDate = new Date();
 
         timeFrame = new TimeFrame(startDate, endDate);

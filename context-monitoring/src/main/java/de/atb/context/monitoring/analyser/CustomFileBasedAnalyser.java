@@ -35,7 +35,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -77,7 +79,13 @@ public class CustomFileBasedAnalyser extends FileAnalyser<CustomFileBasedDataMod
                 customFileBasedDataModel.setDocumentIndexId(IndexedFields.IndexId
                     .getString(this.document));
                 try {
-                    customFileBasedDataModel.setMonitoredAt(LocalDateTime.parse(IndexedFields.MonitoredAt.getString(this.document)));
+                    customFileBasedDataModel.setMonitoredAt(
+                        Date.from(
+                            LocalDateTime.parse(
+                                IndexedFields.MonitoredAt.getString(this.document)
+                            ).atZone(ZoneId.systemDefault()).toInstant()
+                        )
+                    );
                 } catch (DateTimeParseException e) {
                     logger.error(e.getMessage(), e);
                 }
