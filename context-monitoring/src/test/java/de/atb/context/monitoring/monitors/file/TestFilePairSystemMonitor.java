@@ -1,9 +1,6 @@
 package de.atb.context.monitoring.monitors.file;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import de.atb.context.common.exceptions.ConfigurationException;
@@ -75,9 +72,10 @@ public class TestFilePairSystemMonitor {
 	}
 
 	@Test
+    @Ignore
 	public final void shouldStartThreadedMonitorAndWaitFor2Seconds() throws ConfigurationException, InterruptedException {
 		threadedMonitor.start();
-		Thread.sleep(100L);
+		Thread.sleep(20000L);
 		Assert.assertTrue(threadedMonitor.isRunning());
 		Thread.sleep(2000L);
 		Assert.assertTrue(threadedMonitor.isRunning());

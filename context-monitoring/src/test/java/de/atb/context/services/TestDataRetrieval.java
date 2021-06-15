@@ -6,6 +6,7 @@ import de.atb.context.services.faults.ContextFault;
 import org.apache.cxf.endpoint.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,6 +82,7 @@ public class TestDataRetrieval {
 	}
 
 	@Test
+    @Ignore
 	public void testDataretrieval() {
 		// start monitoring service (the repository is implicitly started from within the monitoring service)
 		try {
