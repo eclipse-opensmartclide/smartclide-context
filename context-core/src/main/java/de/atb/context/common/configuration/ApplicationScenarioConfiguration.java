@@ -14,6 +14,13 @@ package de.atb.context.common.configuration;
  * #L%
  */
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+
 import de.atb.context.common.util.ApplicationScenario;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
@@ -21,8 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pm2.common.application.SysCaller;
 import pm2.common.application.SysCallerImpl;
-
-import java.io.*;
 
 /**
  * ApplicationScenarioConfiguration
@@ -105,11 +110,11 @@ public abstract class ApplicationScenarioConfiguration<B extends IConfigurationB
     }
 
     public final void load(final String path) {
-        logger.info("Loading %s.xml from path '%s'", scenario.toString(), path);
+        logger.info("Loading {}.xml from path '{}'", scenario.toString(), path);
 
-        String drmHandle = sysCaller.openDRMobject("appscenario-config.xml", "read");
+        String drmHandle = sysCaller.openDRMobject("appscenario-config.xml", configurationCompleteFilePath, "read");
         if (drmHandle != null) {
-            byte[] readConfig = sysCaller.getDRMobject("appscenario-config.xml");
+            byte[] readConfig = sysCaller.getDRMobject("appscenario-config.xml", configurationCompleteFilePath);
             if (readConfig != null) {
                 try (
                     InputStream is = new ByteArrayInputStream(readConfig);
@@ -118,7 +123,7 @@ public abstract class ApplicationScenarioConfiguration<B extends IConfigurationB
                     this.configurationB = serializer.read(
                             this.configurationClass, is);
                     is.close();
-                    logger.info("%s loaded from '%s'", scenario.toString(), path);
+                    logger.info("{} loaded from '{}'", scenario.toString(), path);
                 } catch (final FileNotFoundException fnfe) {
                     logger.error("Could not open the " + scenario.toString()
                                     + CONFIGURATION_FILE + this.configurationFileName,
@@ -145,11 +150,11 @@ public abstract class ApplicationScenarioConfiguration<B extends IConfigurationB
         try {
             serializer.write(getConfig(), source);
 
-            String drmHandle = sysCaller.openDRMobject("appscen-config.xml", "write");
+            String drmHandle = sysCaller.openDRMobject("appscen-config.xml", configurationCompleteFilePath, "write");
             sysCaller.writeDRMobject(drmHandle, source.toByteArray());
             sysCaller.closeDRMobject(drmHandle);
 
-            logger.info("%s configuration saved to %s", scenario.toString(), path);
+            logger.info("{} configuration saved to '{}'", scenario.toString(), path);
         } catch (final Exception e) {
             logger.error("Could not save the " + scenario.toString()
                     + CONFIGURATION_FILE + this.configurationFileName, e);

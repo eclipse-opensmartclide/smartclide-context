@@ -37,13 +37,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 import org.apache.cxf.endpoint.Server;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,11 +69,13 @@ public class TestMonitoringService {
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
+        final Path configDir = Path.of("src", "test", "resources").toAbsolutePath();
+        final String monitoringConfig = configDir.resolve("monitoring-config.xml").toString();
+        final String serviceConfig = configDir.resolve("services-config.xml").toString();
+
         AmIMonitoringConfiguration amionfig = new AmIMonitoringConfiguration();
-		String absolutefilePath = new File("").getAbsolutePath();
 		amionfig.setId("TEST_PES");
-		amionfig.setServiceConfiguration(readFile((absolutefilePath.concat(File.separator
-				+ "resources" + File.separator + "monitoring-config.xml"))));
+		amionfig.setServiceConfiguration(readFile(monitoringConfig));
 
 		server = ServiceManager.registerWebservice(AmIMonitoringService.class);
 		service = ServiceManager.getWebservice(IAmIMonitoringService.class);
@@ -98,15 +98,15 @@ public class TestMonitoringService {
 		try {
 			service.start();
 		} catch (ContextFault e) {
-			logger.error(e.getMessage(), e);
+			logger.error(e.getMessage());
 			Assert.fail(e.getMessage());
 		}
-		try {
+/*		try {
 			Thread.sleep(5000L);
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage(), e);
 			Assert.fail(e.getMessage());
-		}
+		}*/
 	}
 
 	@Test
@@ -130,9 +130,9 @@ public class TestMonitoringService {
 			byte[] bytes = Files.readAllBytes(f.toPath());
 			return new String(bytes, "UTF-8");
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.debug(e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+            logger.debug(e.getMessage());
 		}
 		return "";
 	}

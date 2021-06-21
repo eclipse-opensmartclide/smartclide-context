@@ -2,7 +2,7 @@ package de.atb.context.services.config;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import org.junit.Test;
 
@@ -11,19 +11,16 @@ import de.atb.context.services.config.models.ISWService;
 
 /**
  * TestServiceConfiguration
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 94 $
- * 
+ *
  */
 public class TestServiceConfiguration {
 
 	@Test
 	public void testGetInstance() {
-		String absolutefilePath = new File("").getAbsolutePath();
-		File file = new File(
-				absolutefilePath.concat(File.separator + "resources" + File.separator + "services-config.xml"));
-		String filepath = file.getPath();
+        String filepath = Path.of("src", "test", "resources", "services-config.xml").toAbsolutePath().toString();
 		SWServiceContainer serviceContainer = new SWServiceContainer(
 				"AmI-repository", filepath);
 		String val = "";

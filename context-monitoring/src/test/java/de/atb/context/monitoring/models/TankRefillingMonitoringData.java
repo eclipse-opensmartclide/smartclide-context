@@ -15,12 +15,7 @@ package de.atb.context.monitoring.models;
  */
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import de.atb.context.common.Version;
 import de.atb.context.common.util.ApplicationScenario;
@@ -58,10 +53,10 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
     private String documentUri;
 
     private String implementingClassName = TankRefillingMonitoringData.class.getName();
-    private LocalDateTime monitoredAt;
+    private Date monitoredAt;
     private FileSystemDataSource dataSource;
     private String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
-    private UUID identifier;
+    private String identifier;
 
 	@Transient
 	private Map<Long, Map<String, SensoricalTankInformation>> timeStampMapping = new HashMap<Long, Map<String, SensoricalTankInformation>>();
@@ -76,7 +71,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
     private List<Tank> tanks = new ArrayList<Tank>();
 
     public TankRefillingMonitoringData() {
-        this.identifier = UUID.randomUUID();
+        this.identifier = UUID.randomUUID().toString();
     }
 
 	/**

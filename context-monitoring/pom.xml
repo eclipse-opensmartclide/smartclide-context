@@ -10,13 +10,13 @@
     </parent>
 
     <artifactId>context-monitoring</artifactId>
+
     <packaging>jar</packaging>
 
     <name>ATB Context Monitoring Core Services</name>
 
     <properties>
         <spring-boot.version>2.4.2</spring-boot.version>
-        <start-class>de.atb.context.main.ServiceMain</start-class>
     </properties>
 
     <build>
@@ -24,19 +24,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>${start-class}</mainClass>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                        </manifest>
-                    </archive>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -126,6 +113,17 @@
             <artifactId>ejb-api</artifactId>
             <version>3.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

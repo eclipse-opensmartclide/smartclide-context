@@ -46,6 +46,7 @@ import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -67,16 +68,16 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
     private String documentUri = "/var/tmp/dummy.doc";
     private String implementingClassName = DummyMonitoringDataModel.class.getName();
 
-    private LocalDateTime monitoredAt = LocalDateTime.now();
+    private Date monitoredAt = new Date();
     private String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
     private FileSystemDataSource dataSource;
 
     private String dummyName = "myDummyName";
     private String dummyValue = "myDummyVaLuE!";
-    private UUID identifier;
+    private String identifier;
 
     public DummyMonitoringDataModel() {
-        this.identifier = UUID.randomUUID();
+        this.identifier = UUID.randomUUID().toString();
     }
 
 	/*

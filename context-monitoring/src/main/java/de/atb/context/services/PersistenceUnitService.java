@@ -73,7 +73,7 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
             }
             return success;
         } catch (ClassCastException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            logger.error(e.getMessage(), e);
+            logger.debug(e.getMessage(), e);
             throw new ContextFault(e.getMessage(), e);
         }
     }
@@ -105,7 +105,7 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
             }
             return success;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            logger.error(e.getMessage(), e);
+            logger.debug(e.getMessage(), e);
             throw new ContextFault(e.getMessage(), e);
         }
     }
@@ -132,7 +132,7 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
             }
             return success;
         } catch (Throwable t) {
-            logger.error(t.getMessage(), t);
+            logger.debug(t.getMessage(), t);
             throw new ContextFault(t.getMessage(), t);
         }
     }
@@ -156,7 +156,7 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
             }
             return success;
         } catch (Throwable t) {
-            logger.error(t.getMessage(), t);
+            logger.debug(t.getMessage(), t);
             throw new ContextFault(t.getMessage(), t);
         }
     }
@@ -183,8 +183,7 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
             }
             return success;
         } catch (Throwable t) {
-            logger.error(t.getMessage(), t);
-
+            logger.debug(t.getMessage(), t);
             throw new ContextFault(t.getMessage(), t);
         }
     }
@@ -208,7 +207,7 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
             }
             return success;
         } catch (Throwable t) {
-            logger.error(t.getMessage(), t);
+            logger.debug(t.getMessage(), t);
             throw new ContextFault(t.getMessage(), t);
         }
     }
@@ -229,7 +228,7 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
             Type bean = (Type) RdfHelper.createMonitoringData(objectString, clazzP);
             repos.triggerPreProcessors(scenario, bean);
         } catch (Throwable t) {
-            logger.error(t.getMessage(), t);
+            logger.debug(t.getMessage(), t);
             throw new ContextFault(t.getMessage(), t);
         }
     }
@@ -251,7 +250,7 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
             Type bean = (Type) RdfHelper.createMonitoringData(objectString, clazzP);
             repos.triggerPostProcessors(scenario, bean);
         } catch (Throwable t) {
-            logger.error(t.getMessage(), t);
+            logger.debug(t.getMessage(), t);
             throw new ContextFault(t.getMessage(), t);
         }
     }

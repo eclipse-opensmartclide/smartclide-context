@@ -1,5 +1,10 @@
 package de.atb.context.monitoring;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,14 +34,15 @@ import de.atb.context.monitoring.monitors.ThreadedMonitor;
  */
 public class TestMetaMonitor {
 
-	private final Logger logger = LoggerFactory.getLogger(TestMetaMonitor.class);
+	private static final Logger logger = LoggerFactory.getLogger(TestMetaMonitor.class);
 
 	private static MonitoringConfiguration config;
 	private static List<ThreadedMonitor<?, ?>> monitors = new ArrayList<ThreadedMonitor<?, ?>>();
 
 	@BeforeClass
 	public static void beforeClass() {
-		config = MonitoringConfiguration.getInstance();
+        final Path configDir = Path.of("src", "test", "resources").toAbsolutePath();
+	    config = MonitoringConfiguration.getInstance("monitoring-config.xml", configDir.toString());
 	}
 
 	@Test
@@ -88,6 +94,19 @@ public class TestMetaMonitor {
 			}
 		}
 	}
+
+    private static String readFile(String filename) {
+        File f = new File(filename);
+        try {
+            byte[] bytes = Files.readAllBytes(f.toPath());
+            return new String(bytes, "UTF-8");
+        } catch (FileNotFoundException e) {
+            logger.debug(e.getMessage());
+        } catch (IOException e) {
+            logger.debug(e.getMessage());
+        }
+        return "";
+    }
 
 	@AfterClass
 	public static void afterClass() {

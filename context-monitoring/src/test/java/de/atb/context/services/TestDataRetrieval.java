@@ -6,6 +6,7 @@ import de.atb.context.services.faults.ContextFault;
 import org.apache.cxf.endpoint.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,9 @@ import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -41,17 +44,16 @@ public class TestDataRetrieval {
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
-		AmIMonitoringConfiguration amionfig = new AmIMonitoringConfiguration();
-		String absolutefilePath = new File("").getAbsolutePath();
-		amionfig.setId("TEST_PES");
-		amionfig.setServiceConfiguration(readFile((absolutefilePath.concat(File.separator
-				+ "resources" + File.separator + "monitoring-config.xml"))));
+        final Path configDir = Path.of("src", "test", "resources").toAbsolutePath();
+        final String monitoringConfig = configDir.resolve("monitoring-config.xml").toString();
+        final String serviceConfig = configDir.resolve("services-config.xml").toString();
 
-		File configFile = new File(
-				absolutefilePath.concat(File.separator + "resources" + File.separator + "services-config.xml"));
-		String filepath = configFile.getPath();
+		AmIMonitoringConfiguration amionfig = new AmIMonitoringConfiguration();
+		amionfig.setId("TEST_PES");
+		amionfig.setServiceConfiguration(readFile(monitoringConfig));
+
 		SWServiceContainer serviceContainer = new SWServiceContainer(
-				"AmI-repository", filepath);
+				"AmI-repository", serviceConfig);
 		ServiceManager.registerWebservice(serviceContainer);
 		ServiceManager.getLSWServiceContainer().add(serviceContainer);
 
@@ -72,16 +74,15 @@ public class TestDataRetrieval {
 		File f = new File(filename);
 		try {
 			byte[] bytes = Files.readAllBytes(f.toPath());
-			return new String(bytes, "UTF-8");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			return new String(bytes, StandardCharsets.UTF_8);
 		} catch (IOException e) {
-			e.printStackTrace();
+            logger.error(e.getMessage(), e);
 		}
-		return "";
+        return "";
 	}
 
 	@Test
+    @Ignore
 	public void testDataretrieval() {
 		// start monitoring service (the repository is implicitly started from within the monitoring service)
 		try {

@@ -237,7 +237,7 @@ public class SysCallerImpl implements SysCaller {
 		return sLastError;
 	}
 
-	public String openDRMobject(String name, String perms) {
+	public String openDRMobject(String name, String path, String perms) {
 		// perms currently ignored
 		sLastError = null;
 		try {
@@ -250,7 +250,7 @@ public class SysCallerImpl implements SysCaller {
 			String handle = makeNewHandle();
 			OpenObject oo = new OpenObject(name, handle, kind);
 			openObjects.put(handle, oo);
-			if (!openResourceAccessMethod(name, kind)) {
+			if (!openResourceAccessMethod(name, path, kind)) {
 				return null;
 			}
 			return handle;
@@ -278,7 +278,7 @@ public class SysCallerImpl implements SysCaller {
 		}
 	}
 
-	public byte[] readDRMobject(String handle) {
+	public byte[] readDRMobject(String handle, String path) {
 		sLastError = null;
 		try {
 			OpenObject oo = openObjects.get(handle);
@@ -290,14 +290,14 @@ public class SysCallerImpl implements SysCaller {
 			String name = oo.getName();
 			int itemPos = oo.getItemPos();
 			int bytePos = oo.getBytePos();
-			return readResourceAccessMethod(name, kind, itemPos, bytePos);
+			return readResourceAccessMethod(name, path, kind, itemPos, bytePos);
 		} catch (Exception e) {
 			sLastError = "Exception in readObject(): " + e.getMessage();
 			return null;
 		}
 	}
 
-	public byte[] readDRMobject2(String handle, int count, int offset) {
+	public byte[] readDRMobject2(String handle, String path, int count, int offset) {
 		sLastError = null;
 		try {
 			OpenObject oo = openObjects.get(handle);
@@ -307,7 +307,7 @@ public class SysCallerImpl implements SysCaller {
 			}
 			ObjectKinds kind = oo.getKind();
 			String name = oo.getName();
-			return readResourceAccessMethod(name, kind, count, offset);
+			return readResourceAccessMethod(name, path, kind, count, offset);
 		} catch (Exception e) {
 			sLastError = "Exception in readObject2: " + e.getMessage();
 			return null;
@@ -333,7 +333,7 @@ public class SysCallerImpl implements SysCaller {
 		}
 	}
 
-	public byte[] getDRMobject(String name) {
+	public byte[] getDRMobject(String name, String path) {
 		try {
 			ProtectedObject po = protectedObjects.get(name);
 			if (po == null) {
@@ -341,8 +341,8 @@ public class SysCallerImpl implements SysCaller {
 				return null;
 			}
 			ObjectKinds kind = po.getKind();
-			openResourceAccessMethod(name, kind);
-			byte[] buf = readResourceAccessMethod(name, kind, 0, 0);
+			openResourceAccessMethod(name, path, kind);
+			byte[] buf = readResourceAccessMethod(name, path, kind, 0, 0);
 			closeResourceAccessMethod(name, kind);
 			return buf;
 		} catch (Exception e) {
@@ -351,7 +351,7 @@ public class SysCallerImpl implements SysCaller {
 		}
 	}
 
-	public boolean putDRMobject(String name, byte[] buf) {
+	public boolean putDRMobject(String name, String path, byte[] buf) {
 		try {
 			ProtectedObject po = protectedObjects.get(name);
 			if (po == null) {
@@ -359,7 +359,7 @@ public class SysCallerImpl implements SysCaller {
 				return false;
 			}
 			ObjectKinds kind = po.getKind();
-			openResourceAccessMethod(name, kind);
+			openResourceAccessMethod(name, path, kind);
 			writeResourceAccessMethod(name, kind, buf);
 			closeResourceAccessMethod(name, kind);
 			return true;
@@ -385,7 +385,7 @@ public class SysCallerImpl implements SysCaller {
 
 	// access methods for the resources
 
-	private boolean openResourceAccessMethod(String name, ObjectKinds kind) {
+	private boolean openResourceAccessMethod(String name, String path, ObjectKinds kind) {
 		ProtectedObject po = protectedObjects.get(name);
 		if (po == null) {
 			sLastError = "Unknown protected object.";
@@ -394,13 +394,13 @@ public class SysCallerImpl implements SysCaller {
 		switch (kind) {
 		case POKind_CoreService_Monitoring_conf:
 			System.out.println("Calling POKindCoreServiceMonitoringConfOpenAM ...");
-			return poki1.POKindCoreServiceConfOpenAM(name, po.getPath(), kind);
+			return poki1.POKindCoreServiceConfOpenAM(name, path, kind);
 		case POKind_CoreServices_conf:
 			System.out.println("Calling POKindCoreServicesConfOpenAM ...");
-			return poki2.POKindCoreServicesConfOpenAM(name, po.getPath(), kind);
+			return poki2.POKindCoreServicesConfOpenAM(name, path, kind);
 		case POKind_CoreService_AppScenConf:
 			System.out.println("Calling POKindCoreServiceAppScenConfOpenAM ...");
-			return poki3.POKindCoreServiceAppScenConfOpenAM(name, po.getPath(), kind);
+			return poki3.POKindCoreServiceAppScenConfOpenAM(name, path, kind);
 		case POKind_X:
 			System.out.println("Calling OpenAM for POKind_X.");
 			return false;
@@ -431,7 +431,7 @@ public class SysCallerImpl implements SysCaller {
 		return true;
 	}
 
-	private byte[] readResourceAccessMethod(String name, ObjectKinds kind, int count,
+	private byte[] readResourceAccessMethod(String name, String path, ObjectKinds kind, int count,
                                             int offset) {
 		ProtectedObject po = protectedObjects.get(name);
 		if (po == null) {
@@ -442,13 +442,13 @@ public class SysCallerImpl implements SysCaller {
 		switch (kind) {
 		case POKind_CoreService_Monitoring_conf:
 			System.out.println("Calling POKindCoreServiceMonitoringConfReadAM ...");
-			return poki1.POKindCoreServiceConfReadAM(name, po.getPath(), kind, count, offset);
+			return poki1.POKindCoreServiceConfReadAM(name, path, kind, count, offset);
 		case POKind_CoreServices_conf:
 			System.out.println("Calling POKindCoreServicesConfReadAM ...");
-			return poki2.POKindCoreServicesConfReadAM(name, po.getPath(), kind, count, offset);
+			return poki2.POKindCoreServicesConfReadAM(name, path, kind, count, offset);
 		case POKind_CoreService_AppScenConf:
 			System.out.println("Calling POKindCoreServiceAppScenConfReadAM ...");
-			return poki3.POKindCoreServiceAppScenConfReadAM(name, po.getPath(), kind, count, offset);
+			return poki3.POKindCoreServiceAppScenConfReadAM(name, path, kind, count, offset);
 		case POKind_X:
 			System.out.println("Calling ReadAM for POKind_X.");
 			return null;
