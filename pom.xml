@@ -26,19 +26,6 @@
         <java.version>11</java.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>jenabean</id>
-            <name>jenabean</name>
-            <url>http://jenabean.googlecode.com/svn/trunk/repo</url>
-        </repository>
-        <repository>
-            <id>JBoss-Releases</id>
-            <name>JBoss Releases Repository</name>
-            <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-        </repository>
-    </repositories>
-
     <build>
         <pluginManagement>
             <plugins>
