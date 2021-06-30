@@ -5,22 +5,21 @@
 
     <indexes>
         <index id="index-dummy" location="target/indexes/dummy"></index>
-        <index id="index-test" location="target/indexes/test"></index>
     </indexes>
 
     <datasources>
         <datasource id="datasource-dummy" type="file"
-                    monitor="de.atb.context.monitoring.monitors.file.FilePairSystemMonitor"
-                    uri="target/test-classes/filepairmonitor"
-                    options="extensionOne=1&amp;extensionTwo=2"
-                    class="de.atb.context.monitoring.config.models.datasources.FilePairSystemDataSource"/>
+                    monitor="de.atb.context.monitoring.monitors.file.CustomFileBasedAnalyser"
+                    uri="target/test-classes/filebasedmonitor"
+                    options="extensionOne=json"
+                    class="de.atb.context.monitoring.config.models.datasources.FileSystemDataSource"/>
     </datasources>
 
     <interpreters>
         <interpreter id="interpreter-dummy">
             <configuration type="*"
-                           parser="de.atb.context.monitoring.parser.file.DummyFilePairParser"
-                           analyser="de.atb.context.monitoring.analyser.file.DummyFilePairAnalyser"/>
+                           parser="de.atb.context.monitoring.parser.file.CustomFileParser"
+                           analyser="de.atb.context.monitoring.analyser.file.CustomFileBasedAnalyser"/>
         </interpreter>
     </interpreters>
 
