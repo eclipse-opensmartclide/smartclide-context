@@ -27,5 +27,5 @@ jobs:
         env:
           CONTAINER_REGISTRY_USERNAME: ${GITHUB_ACTOR}
           CONTAINER_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./mvnw compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}"
+        run: mvn compile jib:build -pl smartclide-context/smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}"
 
