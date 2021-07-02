@@ -21,7 +21,7 @@ jobs:
         run: mvn --batch-mode --update-snapshots verify
 
       - name: Build all Modules
-        run: mvn package
+        run: mvn clean install
 
       - name: Build Image
         env:
