@@ -23,10 +23,15 @@ jobs:
       - name: Build all Modules
         run: mvn clean install
 
+      - name: Print short SHA
+        env:
+          IMAGE_TAG: "ghcr.io/eclipse-researchlabs/smartclide/smartclide-monitoring:" + ${GITHUB_SHA::8}
+        run: echo "${IMAGE_TAG}"
+
       - name: Build Image
         env:
           CONTAINER_REGISTRY_USERNAME: ${GITHUB_ACTOR}
           CONTAINER_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          IMAGE_TAG: ${GITHUB_SHA::8}
+          IMAGE_TAG: "ghcr.io/eclipse-researchlabs/smartclide/smartclide-monitoring:" + ${GITHUB_SHA::8}
         run: mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
 
