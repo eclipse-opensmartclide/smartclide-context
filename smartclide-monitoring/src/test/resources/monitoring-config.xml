@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config xmlns="http://www.atb-bremen.de"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.atb-bremen.de monitoring-config.xsd">
+
+    <indexes>
+        <index id="index-dummy" location="target/indexes/dummy"></index>
+    </indexes>
+
+    <datasources>
+        <datasource id="datasource-dummy" type="file"
+                    monitor="de.atb.context.monitoring.monitors.file.CustomFileBasedAnalyser"
+                    uri="target/test-classes/filebasedmonitor"
+                    options="extensionOne=json"
+                    class="de.atb.context.monitoring.config.models.datasources.FileSystemDataSource"/>
+    </datasources>
+
+    <interpreters>
+        <interpreter id="interpreter-dummy">
+            <configuration type="*"
+                           parser="de.atb.context.monitoring.parser.file.CustomFileParser"
+                           analyser="de.atb.context.monitoring.analyser.file.CustomFileBasedAnalyser"/>
+        </interpreter>
+    </interpreters>
+
+    <monitors>
+        <monitor id="monitor-dummy" datasource="datasource-dummy" interpreter="interpreter-dummy"
+                 index="index-dummy"/>
+    </monitors>
+
+</config>

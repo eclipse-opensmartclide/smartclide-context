@@ -2,7 +2,7 @@ package de.atb.context.monitoring.models;
 
 /*-
  * #%L
- * ATB Context Monitoring Core Services
+ * SmartCLIDE Monitoring
  * %%
  * Copyright (C) 2015 - 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
@@ -13,6 +13,9 @@ package de.atb.context.monitoring.models;
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
+
+import java.util.Date;
+import java.util.UUID;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import de.atb.context.common.Version;
@@ -26,10 +29,6 @@ import lombok.Setter;
 import org.simpleframework.xml.Root;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
-
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.UUID;
 
 @RdfType("CustomFileBasedDataModel")
 @Namespace(BusinessCase.NS_DUMMY_URL)

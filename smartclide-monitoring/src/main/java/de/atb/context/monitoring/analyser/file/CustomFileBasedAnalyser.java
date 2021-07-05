@@ -1,8 +1,8 @@
-package de.atb.context.monitoring.analyser;
+package de.atb.context.monitoring.analyser.file;
 
 /*-
  * #%L
- * ATB Context Monitoring Core Services
+ * SmartCLIDE Monitoring
  * %%
  * Copyright (C) 2015 - 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
@@ -14,7 +14,16 @@ package de.atb.context.monitoring.analyser;
  * #L%
  */
 
-import de.atb.context.monitoring.analyser.file.FileAnalyser;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.InterpreterConfiguration;
 import de.atb.context.monitoring.config.models.datasources.FileSystemDataSource;
@@ -30,23 +39,16 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeParseException;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
 public class CustomFileBasedAnalyser extends FileAnalyser<CustomFileBasedDataModel> {
 
     private final Logger logger = LoggerFactory.getLogger(CustomFileBasedAnalyser.class);
     private final JSONParser parser = new JSONParser();
 
-    public CustomFileBasedAnalyser(DataSource dataSource, InterpreterConfiguration interpreterConfiguration, Indexer indexer, Document document, AmIMonitoringConfiguration amiConfiguration) {
+    public CustomFileBasedAnalyser(DataSource dataSource,
+                                   InterpreterConfiguration interpreterConfiguration,
+                                   Indexer indexer,
+                                   Document document,
+                                   AmIMonitoringConfiguration amiConfiguration) {
         super(dataSource, interpreterConfiguration, indexer, document, amiConfiguration);
     }
 
@@ -58,8 +60,7 @@ public class CustomFileBasedAnalyser extends FileAnalyser<CustomFileBasedDataMod
 
         try {
             // read json file and parse data to JSONArray
-            JSONArray jsonArray = (JSONArray) parser.parse(new FileReader(
-                file));
+            JSONArray jsonArray = (JSONArray) parser.parse(new FileReader(file));
 
             // for each
             for (Object object : jsonArray) {
@@ -70,27 +71,25 @@ public class CustomFileBasedAnalyser extends FileAnalyser<CustomFileBasedDataMod
                 // read data from JSON file and save it to CustomFileBasedDataModel
                 // TODO: add more fields to json file?
                 logger.debug("Json object value" + jsonObject);
-                customFileBasedDataModel.setMessage((String)jsonObject.get("message"));
-                customFileBasedDataModel.setUserInfo((String)jsonObject.get("user-info"));
-                customFileBasedDataModel.setSource((String)jsonObject.get("source"));
+                customFileBasedDataModel.setMessage((String) jsonObject.get("message"));
+                customFileBasedDataModel.setUserInfo((String) jsonObject.get("user-info"));
+                customFileBasedDataModel.setSource((String) jsonObject.get("source"));
 
                 // Add additional fields
                 customFileBasedDataModel.setDocumentUri(IndexedFields.Uri.getString(this.document));
-                customFileBasedDataModel.setDocumentIndexId(IndexedFields.IndexId
-                    .getString(this.document));
+                customFileBasedDataModel.setDocumentIndexId(IndexedFields.IndexId.getString(this.document));
                 try {
                     customFileBasedDataModel.setMonitoredAt(
-                        Date.from(
-                            LocalDateTime.parse(
-                                IndexedFields.MonitoredAt.getString(this.document)
-                            ).atZone(ZoneId.systemDefault()).toInstant()
-                        )
+                            Date.from(
+                                    LocalDateTime.parse(IndexedFields.MonitoredAt.getString(this.document))
+                                            .atZone(ZoneId.systemDefault())
+                                            .toInstant()
+                            )
                     );
                 } catch (DateTimeParseException e) {
                     logger.error(e.getMessage(), e);
                 }
-                customFileBasedDataModel.setDataSource(this.dataSource
-                    .convertTo(FileSystemDataSource.class));
+                customFileBasedDataModel.setDataSource(this.dataSource.convertTo(FileSystemDataSource.class));
 
                 // add customFileBasedDataModel to return list
                 customFileBasedDataModels.add(customFileBasedDataModel);

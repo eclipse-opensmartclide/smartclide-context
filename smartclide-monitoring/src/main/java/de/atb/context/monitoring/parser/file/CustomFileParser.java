@@ -1,8 +1,8 @@
-package de.atb.context.monitoring.parser;
+package de.atb.context.monitoring.parser.file;
 
 /*-
  * #%L
- * ATB Context Monitoring Core Services
+ * SmartCLIDE Monitoring
  * %%
  * Copyright (C) 2015 - 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
@@ -14,16 +14,18 @@ package de.atb.context.monitoring.parser;
  * #L%
  */
 
+import java.io.File;
+
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.InterpreterConfiguration;
 import de.atb.context.monitoring.index.Indexer;
-import de.atb.context.monitoring.parser.file.FileParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 
-import java.io.File;
-
 public class CustomFileParser extends FileParser {
-    public CustomFileParser(DataSource dataSource, InterpreterConfiguration interpreterConfiguration, Indexer indexer, AmIMonitoringConfiguration amiConfiguration) {
+    public CustomFileParser(DataSource dataSource,
+                            InterpreterConfiguration interpreterConfiguration,
+                            Indexer indexer,
+                            AmIMonitoringConfiguration amiConfiguration) {
         super(dataSource, interpreterConfiguration, indexer, amiConfiguration);
     }
 
@@ -31,5 +33,4 @@ public class CustomFileParser extends FileParser {
     protected boolean parseObject(File file) {
         return true;
     }
-
 }
