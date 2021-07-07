@@ -17,21 +17,24 @@ jobs:
         with:
           java-version: 11
 
-      - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots verify
+      - name: Cache Maven Packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('./**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
-      - name: Build all Modules
-        run: mvn clean install
+      - name: Build necessary modules
+        run: mvn install -pl context-monitoring -am
 
-      - name: Print short SHA
-        env:
-          IMAGE_TAG: "ghcr.io/eclipse-researchlabs/smartclide/smartclide-monitoring:" + ${GITHUB_SHA::8}
-        run: echo "${IMAGE_TAG}"
+      - name: Get image tag
+        id: get_image_tag
+        run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
 
       - name: Build Image
         env:
           CONTAINER_REGISTRY_USERNAME: ${GITHUB_ACTOR}
           CONTAINER_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          IMAGE_TAG: "ghcr.io/eclipse-researchlabs/smartclide/smartclide-monitoring:" + ${GITHUB_SHA::8}
+          IMAGE_TAG: ${{ steps.get_image_tag.outputs.sha8}}
         run: mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
 
