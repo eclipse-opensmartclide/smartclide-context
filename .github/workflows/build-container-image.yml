@@ -34,6 +34,17 @@ jobs:
       - name: Build necessary modules
         run: mvn install -pl context-monitoring -am
 
+      - name: Get image tag
+        if: ${{ github.event_name == 'push' }}
+        id: get_image_tag
+        run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+
+      - name: Build Image
+        if: ${{ github.event_name == 'push' }}
+        env:
+          IMAGE_TAG: ${{ steps.get_image_tag.outputs.sha8}}
+        run: mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
+
       - name: Get latest release info
         if: ${{ github.event_name == 'release' }}
         id: latest_release_info
@@ -41,19 +52,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: get image tag
-        id: get_image_tag
-        run: |
-          if ${{ github.event_name == 'push' }}; then
-            echo "::set-output name=imageTag::$(echo ${GITHUB_SHA} | cut -c1-8)"
-          fi
-          if ${{ github.event_name == 'release' }}; then
-            echo "::set-output name=imageTag::$(echo ${ steps.latest_release_info.outputs.name })"
-          fi
-
-      - name: Build Image
+      - name: Build Image for Release
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         env:
-          IMAGE_TAG: ${{ steps.get_image_tag.outputs.imageTag}}
-        run: |
-          echo "${IMAGE_TAG}"
-          mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
+          IMAGE_TAG: ${{ steps.latest_release_info.outputs.name }}
+        run: mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
