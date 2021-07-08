@@ -1,12 +1,19 @@
 name: build-container-image
 
 on:
-  push
+  push:
+  release:
+    types:
+      - created
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+
+    env:
+      CONTAINER_REGISTRY_USERNAME: ${GITHUB_ACTOR}
+      CONTAINER_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout
@@ -32,9 +39,20 @@ jobs:
         run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
 
       - name: Build Image
+        if: ${{ github.event_name == 'push' }}
         env:
-          CONTAINER_REGISTRY_USERNAME: ${GITHUB_ACTOR}
-          CONTAINER_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           IMAGE_TAG: ${{ steps.get_image_tag.outputs.sha8}}
         run: mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
 
+      - name: Get latest release info
+        if: ${{ github.event_name == 'release' }}
+        id: latest_release_info
+        uses: jossef/action-latest-release-info@v1.1.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Build Image for Release
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        env:
+          IMAGE_TAG: ${{ steps.latest_release_info.outputs.name }}
+        run: mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
