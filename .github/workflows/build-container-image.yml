@@ -2,6 +2,8 @@ name: build-container-image
 
 on:
   push:
+    branches:
+      - main
   release:
     types:
       - created
