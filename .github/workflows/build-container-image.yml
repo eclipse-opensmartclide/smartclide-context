@@ -47,7 +47,7 @@ jobs:
           if ${{ github.event_name == 'push' }}; then
             echo "::set-output name=imageTag::$(echo ${GITHUB_SHA} | cut -c1-8)"
           if ${{ github.event_name == 'release' }}; then
-            echo "::set-output name=imageTag::$(echo ${{ steps.latest_release_info.outputs.name }})"
+            echo "::set-output name=imageTag::$(echo ${ steps.latest_release_info.outputs.name })"
 
       - name: Build Image
         env:
