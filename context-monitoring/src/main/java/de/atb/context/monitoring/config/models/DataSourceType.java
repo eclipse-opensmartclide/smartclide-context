@@ -59,6 +59,11 @@ public enum DataSourceType {
     /**
      * Classifies a DataSource as a DatabaseDataSource.
      */
+    MessageBroker(MessageBrokerDataSource.class)
+
+    /**
+     * Classifies a DataSource as a DatabaseDataSource.
+     */
 //    Kafka(KafkaDataSource.class),
     ;
 
@@ -131,7 +136,7 @@ public enum DataSourceType {
         } else if (type == DataSourceType.Database) {
             return (T) convertTo(DatabaseDataSource.class, base);
 //        } else if (type == DataSourceType.Kafka) {
-//            return (T) convertTo(KafkaDataSource.class, base);
+//            return (T) convertTo(MessageBrokerDataSource.class, base);
         } else {
             return null;
         }
