@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * SelfLearningFaultDetails
+ * ContextFaultDetails
  *
  * @author scholze
  * @version $LastChangedRevision: 417 $

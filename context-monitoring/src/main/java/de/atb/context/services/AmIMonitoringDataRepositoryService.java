@@ -305,7 +305,7 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
     /*
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.ISelfLearningService#start()
+     * @see IPrimitiveService#start()
      */
     @Override
     public void start() throws ContextFault {
@@ -315,7 +315,7 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
     /*
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.ISelfLearningService#stop()
+     * @see IPrimitiveService#stop()
      */
     @Override
     public void stop() throws ContextFault {
@@ -325,7 +325,7 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
     /*
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.ISelfLearningService#restart()
+     * @see IPrimitiveService#restart()
      */
     @Override
     public void restart() throws ContextFault {

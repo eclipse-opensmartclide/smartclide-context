@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * SelfLearningStackTraceElement
+ * ContextStackTraceElement
  *
  * @author scholze
  * @version $LastChangedRevision: 417 $

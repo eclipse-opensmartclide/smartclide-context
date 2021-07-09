@@ -17,7 +17,7 @@ package de.atb.context.services.faults;
 import javax.xml.ws.WebFault;
 
 /**
- * SelfLearningFault
+ * ContextNotRunning
  *
  * @author scholze
  * @version $LastChangedRevision: 417 $
@@ -32,7 +32,7 @@ public class ContextNotRunning extends Exception {
 	private static final long serialVersionUID = 963073945982463366L;
 
 	/**
-	 * Constructs a new SelfLearningFault with {@code null} as its detail
+	 * Constructs a new {@link ContextFault} with {@code null} as its detail
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
@@ -41,7 +41,7 @@ public class ContextNotRunning extends Exception {
 	}
 
 	/**
-	 * Constructs a new SelfLearningFault with the specified detail message. The
+	 * Constructs a new {@link ContextFault} with the specified detail message. The
 	 * cause is not initialized, and may subsequently be initialized by a call
 	 * to {@link #initCause}.
 	 *
@@ -54,7 +54,7 @@ public class ContextNotRunning extends Exception {
 	}
 
 	/**
-	 * Constructs a new SelfLearningFault with the specified detail message and
+	 * Constructs a new {@link ContextFault} with the specified detail message and
 	 * cause.
 	 * <p>
 	 * Note that the detail message associated with {@code cause} is
@@ -74,7 +74,7 @@ public class ContextNotRunning extends Exception {
 	}
 
 	/**
-	 * Constructs a new SelfLearningFault with the specified cause and a detail
+	 * Constructs a new {@link ContextFault} with the specified cause and a detail
 	 * message of <tt>(cause==null ? null : cause.toString())</tt> (which
 	 * typically contains the class and detail message of <tt>cause</tt>). This
 	 * constructor is useful for exceptions that are little more than wrappers

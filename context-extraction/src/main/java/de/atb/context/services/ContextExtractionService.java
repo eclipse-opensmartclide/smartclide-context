@@ -112,7 +112,7 @@ public class ContextExtractionService extends DeployableService implements ICont
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.context.services.ISelfLearningService#start()
+	 * @see IPrimitiveService#start()
 	 */
 	@Override
 	public final void start() throws ContextFault {
@@ -122,7 +122,7 @@ public class ContextExtractionService extends DeployableService implements ICont
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.context.services.ISelfLearningService#end()
+	 * @see IPrimitiveService#end()
 	 */
 	@Override
 	public final void stop() throws ContextFault {
@@ -132,7 +132,7 @@ public class ContextExtractionService extends DeployableService implements ICont
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.context.services.ISelfLearningService#restart()
+	 * @see IPrimitiveService#restart()
 	 */
 	@Override
 	public final void restart() throws ContextFault {
@@ -142,7 +142,7 @@ public class ContextExtractionService extends DeployableService implements ICont
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.context.services.ISelfLearningService#ping()
+	 * @see IPrimitiveService#ping()
 	 */
 	@Override
 	public final String ping() throws ContextFault {

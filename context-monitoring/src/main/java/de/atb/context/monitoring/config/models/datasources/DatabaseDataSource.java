@@ -31,7 +31,7 @@ import java.net.URI;
  * @version $LastChangedRevision: 156 $
  */
 @RdfType("DatabaseDataSource")
-@Namespace("http://diversity-project.eu/")
+@Namespace("http://atb-bremen.de/")
 public class DatabaseDataSource extends DataSource {
 
     /**

@@ -101,7 +101,7 @@ public class SWService implements ISWService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.selflearning.services.config.models.IService#getLocation()
+	 * @see de.atb.context.services.config.models.IService#getLocation()
 	 */
 	@Override
 	public final URL getLocation() {
@@ -115,7 +115,7 @@ public class SWService implements ISWService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.selflearning.services.config.models.IService#getServerClass()
+	 * @see de.atb.context.services.config.models.IService#getServerClass()
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -136,7 +136,7 @@ public class SWService implements ISWService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.selflearning.services.config.models.IService#getProxyClass()
+	 * @see de.atb.context.services.config.models.IService#getProxyClass()
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -157,7 +157,7 @@ public class SWService implements ISWService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.selflearning.services.config.models.IService#getName()
+	 * @see de.atb.context.services.config.models.IService#getName()
 	 */
 	@Override
 	public final String getName() {

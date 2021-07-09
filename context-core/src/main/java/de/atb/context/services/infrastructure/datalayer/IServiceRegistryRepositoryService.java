@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * @author Giovanni
  */
-@WebService(name = "ServiceRegistryRepositoryService", targetNamespace = "http://diversity-project.eu/")
+@WebService(name = "ServiceRegistryRepositoryService", targetNamespace = "http://atb-bremen.de/")
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT)
 public interface IServiceRegistryRepositoryService extends
         IRepositoryService {

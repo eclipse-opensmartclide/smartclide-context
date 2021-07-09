@@ -27,7 +27,7 @@ import javax.jws.soap.SOAPBinding;
  * @author scholze
  *
  */
-@WebService(name = "MonitoringDataService", targetNamespace = "http://diversity-project.eu")
+@WebService(name = "MonitoringDataService", targetNamespace = "http://atb-bremen.de")
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT)
 public interface IMonitoringDataService extends IService {
 	@WebMethod(operationName = "config")

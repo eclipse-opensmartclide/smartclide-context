@@ -66,7 +66,7 @@ public class ConfigurationRepositoryService extends RepositoryService implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.context.services.interfaces.ISelfLearningService#start()
+	 * @see de.atb.context.services.interfaces.IService#start()
 	 */
 	@Override
 	public void start() throws ContextFault {
@@ -76,7 +76,7 @@ public class ConfigurationRepositoryService extends RepositoryService implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.context.services.interfaces.ISelfLearningService#stop()
+	 * @see de.atb.context.services.interfaces.IService#stop()
 	 */
 	@Override
 	public void stop() throws ContextFault {
@@ -86,7 +86,7 @@ public class ConfigurationRepositoryService extends RepositoryService implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.context.services.interfaces.ISelfLearningService#restart()
+	 * @see de.atb.context.services.interfaces.IService#restart()
 	 */
 	@Override
 	public void restart() throws ContextFault {
@@ -96,7 +96,7 @@ public class ConfigurationRepositoryService extends RepositoryService implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.context.services.interfaces.ISelfLearningService#ping()
+	 * @see de.atb.context.services.interfaces.IService#ping()
 	 */
 	@Override
 	public final String ping() throws ContextFault {
