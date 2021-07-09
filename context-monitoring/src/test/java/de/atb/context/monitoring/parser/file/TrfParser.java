@@ -39,7 +39,7 @@ public class TrfParser extends FileParser {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.proseco.monitoring.parser.file.FileParser#parseObject(java
+	 * @see FileParser#parseObject(java
 	 * .io.File)
 	 */
 	@Override

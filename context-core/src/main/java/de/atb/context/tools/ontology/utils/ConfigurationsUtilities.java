@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.atb.context.tools.ontology.utils;
 
 /*-
@@ -36,7 +31,7 @@ public class ConfigurationsUtilities {
             .getLogger(ConfigurationsUtilities.class);
     static String deployableConfigStringId = "Task_";
     static KMBApi kmbapi = new KMBApi();
-    static String configNamespace = ("ProSEco_Ontological_Model:");
+    static String configNamespace = ("ContextHandling_Ontological_Model:");
 
     private ConfigurationsUtilities() {}
 

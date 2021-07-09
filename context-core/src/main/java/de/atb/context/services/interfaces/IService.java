@@ -37,7 +37,7 @@ import java.util.HashMap;
  *
  * @author Giovanni
  */
-@WebService(name = "ProsecoService", targetNamespace = "http://diversity-project.eu/")
+@WebService(name = "ContextService", targetNamespace = "http://atb-bremen.de/")
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT)
 public interface IService extends IPrimitiveService {
 

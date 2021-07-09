@@ -88,7 +88,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.atb.proseco.monitoring.IMonitoringData#fromRDFModel(com.hp.hpl
+	 * IMonitoringData#fromRDFModel(com.hp.hpl
 	 * .jena.rdf.model.Model)
 	 */
 	@Override
@@ -100,7 +100,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.atb.proseco.monitoring.IMonitoringData#fromXMPString(java.lang
+	 * IMonitoringData#fromXMPString(java.lang
 	 * .String)
 	 */
 	@Override
@@ -112,7 +112,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.atb.proseco.monitoring.models.IMonitoringDataModel#getBusinessCase
+	 * IMonitoringDataModel#getBusinessCase
 	 * ()
 	 */
 	@Override
@@ -123,7 +123,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.proseco.monitoring.IMonitoringData#toRDFModel()
+	 * @see IMonitoringData#toRDFModel()
 	 */
 	@Override
 	public Model toRdfModel() {
@@ -133,7 +133,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.proseco.monitoring.IMonitoringData#toXMPString()
+	 * @see IMonitoringData#toXMPString()
 	 */
 	@Override
 	public String toRdfString() {
@@ -156,7 +156,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.proseco.monitoring.models.IMonitoringDataModel#
+	 * @see IMonitoringDataModel#
 	 * triggersContextChange()
 	 */
 	@Override
@@ -167,7 +167,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.proseco.monitoring.models.IMonitoringDataModel#
+	 * @see IMonitoringDataModel#
 	 * getApplicationScenario()
 	 */
 	@Override
@@ -178,7 +178,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.atb.proseco.monitoring.models.IMonitoringDataModel#
+	 * @see IMonitoringDataModel#
 	 * getContextIdentifierClassName()
 	 */
 	@Override
@@ -190,7 +190,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.atb.proseco.monitoring.models.IMonitoringDataModel#initialize()
+	 * IMonitoringDataModel#initialize()
 	 */
 	@Override
 	public void initialize() {

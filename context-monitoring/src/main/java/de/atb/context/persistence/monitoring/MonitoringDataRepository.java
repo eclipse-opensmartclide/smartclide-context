@@ -88,7 +88,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      * (non-Javadoc)
      *
      * @see
-     * de.atb.proseco.persistence.common.IPersistenceUnit#persist(java.
+     * IPersistenceUnit#persist(java.
      * lang.Object)
      */
     @Override
@@ -117,7 +117,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      *
      * @see
      * IMonitoringDataRepository#
-     * getMonitoringData(de.atb.proseco.common.util.BusinessCase,
+     * getMonitoringData(BusinessCase,
      * java.lang.Class, int)
      */
     @SuppressWarnings("unchecked")
@@ -163,8 +163,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      * (non-Javadoc)
      *
      * @see
-     * de.atb.proseco.persistence.IMonitoringDataRepository#getMonitoringData
-     * (de.atb.proseco.common.util.BusinessCase, int)
+     * IMonitoringDataRepository#getMonitoringData
+     * (BusinessCase, int)
      */
     @Override
     public synchronized List<Type> getMonitoringData(final ApplicationScenario applicationScenario, final Class<Type> clazz, final int count) {
@@ -220,9 +220,9 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      * (non-Javadoc)
      *
      * @see
-     * de.atb.proseco.persistence.IMonitoringDataRepository#getMonitoringData
-     * (de.atb.proseco.common.util.BusinessCase,
-     * de.atb.proseco.common.util.TimeFrame)
+     * IMonitoringDataRepository#getMonitoringData
+     * (BusinessCase,
+     * TimeFrame)
      */
     @Override
     public synchronized List<Type> getMonitoringData(final ApplicationScenario applicationScenario, final Class<Type> clazz, final TimeFrame timeFrame) {
@@ -272,8 +272,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      * (non-Javadoc)
      *
      * @see
-     * de.atb.proseco.persistence.IMonitoringDataRepository#getMonitoringData
-     * (de.atb.proseco.common.util.BusinessCase, java.lang.Class,
+     * IMonitoringDataRepository#getMonitoringData
+     * (BusinessCase, java.lang.Class,
      * java.lang.String)
      */
     @Override
@@ -333,7 +333,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      *
      * @see
      * IMonitoringDataRepository#
-     * getLastIds(de.atb.proseco.common.util.BusinessCase, java.lang.Class,
+     * getLastIds(BusinessCase, java.lang.Class,
      * int)
      */
     @Override
@@ -391,8 +391,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      * (non-Javadoc)
      *
      * @see
-     * de.atb.proseco.persistence.IMonitoringDataRepository#getLastIds(
-     * de.atb.proseco.common.util.ApplicationScenario, java.lang.Class,
+     * IMonitoringDataRepository#getLastIds(
+     * ApplicationScenario, java.lang.Class,
      * int)
      */
     @Override
@@ -408,8 +408,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      *
      * @see
      * IMonitoringDataRepository#
-     * getLastIds(de.atb.proseco.common.util.BusinessCase, java.lang.Class,
-     * de.atb.proseco.common.util.TimeFrame)
+     * getLastIds(BusinessCase, java.lang.Class,
+     * TimeFrame)
      */
     @Override
     public synchronized List<String> getLastIds(final BusinessCase businessCase, final Class<Type> clazz, final TimeFrame timeFrame) {
@@ -473,9 +473,9 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      * (non-Javadoc)
      *
      * @see
-     * de.atb.proseco.persistence.IMonitoringDataRepository#getLastIds(
-     * de.atb.proseco.common.util.ApplicationScenario, java.lang.Class,
-     * de.atb.proseco.common.util.TimeFrame)
+     * IMonitoringDataRepository#getLastIds(
+     * ApplicationScenario, java.lang.Class,
+     * TimeFrame)
      */
     @Override
     public synchronized List<String> getLastIds(final ApplicationScenario applicationScenario, final Class<Type> clazz, final TimeFrame timeFrame) {
@@ -491,7 +491,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      *
      * @see
      * IMonitoringDataRepository#
-     * executeSparqlUpdateQuery(de.atb.proseco.common.util.BusinessCase,
+     * executeSparqlUpdateQuery(BusinessCase,
      * java.lang.String)
      */
     @Override
@@ -504,7 +504,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      *
      * @see
      * IMonitoringDataRepository#
-     * executeSparqlUpdateQueries(de.atb.proseco.common.util.BusinessCase,
+     * executeSparqlUpdateQueries(BusinessCase,
      * java.lang.String[])
      */
     @Override
@@ -535,7 +535,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      *
      * @see
      * IMonitoringDataRepository#
-     * executeSparqlSelectQuery(de.atb.proseco.common.util.BusinessCase,
+     * executeSparqlSelectQuery(BusinessCase,
      * java.lang.String)
      */
     @Override
