@@ -1,4 +1,4 @@
-name: build-container-image
+name: publish-container-image
 
 on:
   push:
@@ -36,26 +36,28 @@ jobs:
       - name: Build necessary modules
         run: mvn install -pl context-monitoring -am
 
-      - name: Get image tag
+      - name: Get short commit SHA
         if: ${{ github.event_name == 'push' }}
-        id: get_image_tag
+        id: get_short_commit_SHA
         run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
 
       - name: Build Image
         if: ${{ github.event_name == 'push' }}
         env:
-          IMAGE_TAG: ${{ steps.get_image_tag.outputs.sha8}}
+          IMAGE_TAG: ${{ steps.get_short_commit_SHA.outputs.sha8}}
         run: mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
 
-      - name: Get latest release info
+      # below code triggers only for release events
+
+      - name: Get release name
         if: ${{ github.event_name == 'release' }}
-        id: latest_release_info
-        uses: jossef/action-latest-release-info@v1.1.0
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+        id: get_release_name
+        run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
 
       - name: Build Image for Release
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         env:
-          IMAGE_TAG: ${{ steps.latest_release_info.outputs.name }}
-        run: mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
+          IMAGE_TAG: ${{ steps.get_release_name.outputs.name }}
+        run: |
+          echo "release name is $IMAGE_TAG"
+          mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
