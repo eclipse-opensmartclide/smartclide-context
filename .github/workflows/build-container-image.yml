@@ -52,7 +52,7 @@ jobs:
       - name: Get release name
         if: ${{ github.event_name == 'release' }}
         id: get_release_name
-        run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/*/}"
+        run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
 
       - name: Build Image for Release
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
@@ -60,4 +60,5 @@ jobs:
           IMAGE_TAG: ${{ steps.get_release_name.outputs.TAG_NAME }}
         run: |
           echo "release name is $IMAGE_TAG"
+          echo "github release event-tag name ${{ github.event.release.tag_name }}"
           mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
