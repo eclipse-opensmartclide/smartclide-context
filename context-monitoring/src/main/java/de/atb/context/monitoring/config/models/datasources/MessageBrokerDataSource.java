@@ -62,19 +62,19 @@ public class MessageBrokerDataSource extends DataSource {
 	}
 
 	public final String getMessageBrokerServer() {
-		return (String) this.getOptionValue(MessageBrokerDataSourceOptions.MessageBrokerServer, true);
+		return this.getOptionValue(MessageBrokerDataSourceOptions.MessageBrokerServer, true);
 	}
 
 	public final String getUserName() {
-		return (String) this.getOptionValue(MessageBrokerDataSourceOptions.UserName, true);
+		return this.getOptionValue(MessageBrokerDataSourceOptions.UserName, true);
 	}
 
 	public final String getPassword() {
-		return (String) this.getOptionValue(MessageBrokerDataSourceOptions.Password, true);
+		return this.getOptionValue(MessageBrokerDataSourceOptions.Password, true);
 	}
 
 	public final String getMachineId() {
-		return (String) this.getOptionValue(MessageBrokerDataSourceOptions.MachineId, true);
+		return this.getOptionValue(MessageBrokerDataSourceOptions.MachineId, true);
 	}
 
 	public final Credentials getCredentials() {
@@ -84,7 +84,7 @@ public class MessageBrokerDataSource extends DataSource {
 	}
 
 	public final Long getStartDelay() {
-		return (Long) this.getOptionValue(MessageBrokerDataSourceOptions.StartDelay, true);
+		return this.getOptionValue(MessageBrokerDataSourceOptions.StartDelay, true);
 	}
 
 	public final IMessageBroker toMessageBroker() {

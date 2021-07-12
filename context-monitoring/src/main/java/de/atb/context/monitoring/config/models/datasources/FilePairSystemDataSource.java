@@ -66,11 +66,11 @@ public class FilePairSystemDataSource extends DataSource {
     }
 
     public final String getFirstExtension() {
-        return (String) this.getOptionValue(FilePairSystemDataSourceOptions.ExtensionOne);
+        return this.getOptionValue(FilePairSystemDataSourceOptions.ExtensionOne);
     }
 
     public final String getSecondExtension() {
-        return (String) this.getOptionValue(FilePairSystemDataSourceOptions.ExtensionTwo);
+        return this.getOptionValue(FilePairSystemDataSourceOptions.ExtensionTwo);
     }
 
 }
