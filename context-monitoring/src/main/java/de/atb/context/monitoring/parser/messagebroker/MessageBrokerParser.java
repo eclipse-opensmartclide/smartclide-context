@@ -36,9 +36,9 @@ import java.util.Date;
  * @version $LastChangedRevision: 143 $
  * 
  */
-public abstract class MessageBrokerParser extends IndexingParser<IMessageBroker> {
+public abstract class MessageBrokerParser extends IndexingParser<String> {
 
-	protected IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, IMessageBroker> serviceAnalyser;
+	protected IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, String> serviceAnalyser;
 
 	public MessageBrokerParser(final DataSource dataSource,
                                final InterpreterConfiguration interpreterConfiguration,
@@ -48,37 +48,30 @@ public abstract class MessageBrokerParser extends IndexingParser<IMessageBroker>
 				dataSource, indexer, this.document, amiConfiguration);
 	}
 
-	@Override
-	public final synchronized boolean parse(final IMessageBroker object) {
-		// some generic webservice handling stuff could be done here
-		// like indexing webservice status, modification etc.
-
-		this.document.add(IndexedFields.createField(IndexedMessageBrokerFields.Uri,
-				String.valueOf(object.getURI())));
+	public final synchronized boolean parse(final String message) {
 		this.document.add(IndexedFields.createField(IndexedFields.MonitoredAt,
 				DateTools.timeToString(new Date().getTime(),
 						DateTools.Resolution.SECOND)));
 
-		// TODO add some webserivce-specific fields to the document's index
-		return parseObject(object, this.document);
+		return parseObject(message, this.document);
 	}
 
 	@Override
-	public final synchronized IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, IMessageBroker> getAnalyser() {
+	public final synchronized IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, String> getAnalyser() {
 		return this.serviceAnalyser;
 	}
 
 	/**
 	 * Abstract method to be implemented by the webservice specific parser.
 	 * 
-	 * @param service
-	 *            the actual webservice to parsed.
+	 * @param message
+	 *            message to parsed.
 	 * @param document
 	 *            the document to add indexed fields to.
 	 * @return <code>true</code> if parsing was successful, <code>false</code>
 	 *         otherwise.
 	 */
-	protected abstract boolean parseObject(IMessageBroker service,
+	protected abstract boolean parseObject(String message,
 			Document document);
 
 }

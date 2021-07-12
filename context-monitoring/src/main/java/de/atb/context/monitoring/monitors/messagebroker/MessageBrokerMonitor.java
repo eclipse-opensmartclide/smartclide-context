@@ -14,6 +14,7 @@ package de.atb.context.monitoring.monitors.messagebroker;
  * #L%
  */
 
+import com.rabbitmq.client.*;
 import de.atb.context.monitoring.analyser.messagebroker.MessageBrokerAnalyser;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.DataSourceType;
@@ -22,7 +23,6 @@ import de.atb.context.monitoring.config.models.Monitor;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSource;
 import de.atb.context.monitoring.events.MonitoringProgressListener;
 import de.atb.context.monitoring.index.Indexer;
-import de.atb.context.monitoring.models.IMessageBroker;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.monitors.ThreadedMonitor;
 import de.atb.context.monitoring.parser.messagebroker.MessageBrokerParser;
@@ -32,7 +32,7 @@ import org.apache.lucene.document.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -44,13 +44,12 @@ import java.util.concurrent.TimeUnit;
  * @author scholze
  * @version $LastChangedRevision: 143 $
  */
-public class MessageBrokerMonitor extends ThreadedMonitor<IMessageBroker, IMonitoringDataModel<?, ?>> implements MonitoringProgressListener<IMessageBroker, IMonitoringDataModel<?, ?>>, Runnable {
+public class MessageBrokerMonitor extends ThreadedMonitor<String, IMonitoringDataModel<?, ?>> implements MonitoringProgressListener<String, IMonitoringDataModel<?, ?>>, Runnable {
     private final Logger logger = LoggerFactory.getLogger(MessageBrokerMonitor.class);
     private MessageBrokerParser parser;
     protected MessageBrokerDataSource dataSource;
     protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     protected String id;
-    protected List<String> receivedMessages;
     protected boolean isAnalysisRunning;
 
     public MessageBrokerMonitor(final DataSource dataSource, final Interpreter interpreter, final Monitor monitor, final Indexer indexer, final AmIMonitoringConfiguration amiConfiguration) {
@@ -64,7 +63,6 @@ public class MessageBrokerMonitor extends ThreadedMonitor<IMessageBroker, IMonit
 
         this.running = false;
         this.isAnalysisRunning = false;
-        receivedMessages = new ArrayList<>();
 
         this.interpreterConfiguration = this.interpreter.getConfigurations().get(0); // FIXME exception if interpreter is null
     }
@@ -133,46 +131,51 @@ public class MessageBrokerMonitor extends ThreadedMonitor<IMessageBroker, IMonit
                 parser = interpreterConfiguration.createParser(
                         this.dataSource, this.indexer, this.amiConfiguration);
             }
-            // configure and start a MonitorRunner instance that periodically calls the monitor method
-            //TODO the following commented block has to be adjusted to current messagebroker
-            //this.executor.scheduleAtFixedRate(new MessageBrokerMonitoringRunner(this), initialDelay, period, TimeUnit.MILLISECONDS);
 
-            // subscribe to a topic and receive content from MessageBroker
-            //TODO the following commented block has to be adjusted to current messagebroker
-/*            this.consumer.subscribe(this.topics);
-            while (this.running) {
-                if (!this.isAnalysisRunning) {
-                    ConsumerRecords<String, String> records = this.consumer.poll(100);
-                    for (ConsumerRecord<String, String> record : records) {
-                        this.receivedMessages.add(record.value());
-                        parser.getDocument().add(IndexedFields.createField(IndexedMessageBrokerFields.Content, record.value()));
-                    }
+            ConnectionFactory factory = new ConnectionFactory();
+            factory.setHost(dataSource.getMessageBrokerServer());
+            factory.setUsername(dataSource.getUserName());
+            factory.setPassword(dataSource.getPassword());
+
+            Connection connection = factory.newConnection();
+            Channel channel = connection.createChannel();
+
+            channel.queueDeclare("QUEUE_NAME", false, false, false, null);
+
+            DeliverCallback deliverCallback = new DeliverCallback() {
+                public void handle(String s, Delivery delivery) throws IOException {
+                    String envelope = delivery.getEnvelope().toString();
+                    String message = new String(delivery.getBody(), "UTF-8");
+
+                    handleMessageBroker(envelope, message);
                 }
-            }*/
+            };
+
+            channel.basicConsume("QUEUE_NAME", true, deliverCallback, new CancelCallback() {
+                public void handle(String consumerTag) throws IOException {
+                }
+            });
         } catch (Exception e) {
             this.logger.error("Error starting MessageBrokerMonitor! ", e);
         }
     }
 
     public void monitor() {
-        this.logger.info("Starting monitoring for MessageBroker at URI: " + this.dataSource.getUri());
-
-        this.isAnalysisRunning = true;
-        handleMessageBroker();
-        this.isAnalysisRunning = false;
+        this.logger.info("Starting monitoring for MessageBroker at URI: " + this.dataSource.getMessageBrokerServer());
     }
 
-    protected final void handleMessageBroker() {
+    protected final void handleMessageBroker(String envelope, String message) {
         this.logger.debug("Handling URI " + this.dataSource.getUri() + "...");
+        this.isAnalysisRunning = true;
         try {
             if ((this.dataSource.getUri() != null)) {
                 MessageBrokerAnalyser analyser = (MessageBrokerAnalyser) parser.getAnalyser();
 
-                if (parser.parse(this.dataSource.toMessageBroker())) {
+                if (parser.parse(message)) {
                     this.indexer.addDocumentToIndex(parser.getDocument());
-                    this.raiseParsedEvent(this.dataSource.toMessageBroker(), parser.getDocument());
-                    this.raiseAnalysedEvent(analyser.analyse(this.dataSource.toMessageBroker()),
-                            this.dataSource.toMessageBroker(), analyser.getDocument());
+                    this.raiseParsedEvent(message, parser.getDocument());
+                    List<IMonitoringDataModel<?, ?>> analysedMessages = analyser.analyse(message);
+                    this.raiseAnalysedEvent(analysedMessages, message, analyser.getDocument());
                 }
             }
             // clean up indexed document and remove all stuff already used
@@ -181,6 +184,7 @@ public class MessageBrokerMonitor extends ThreadedMonitor<IMessageBroker, IMonit
         } catch (Exception e) {
             logger.error("Unknown error ind MessageBrokerMonitor.handleMessageBroker()", e);
         }
+        this.isAnalysisRunning = false;
     }
 
     /**
@@ -207,7 +211,7 @@ public class MessageBrokerMonitor extends ThreadedMonitor<IMessageBroker, IMonit
     }
 
     @Override
-    public void documentAnalysed(List<IMonitoringDataModel<?, ?>> analysedList, IMessageBroker parsed, Document document) {
+    public void documentAnalysed(List<IMonitoringDataModel<?, ?>> analysedList, String parsed, Document document) {
         if ((analysedList != null) && (analysedList.size() > 0)) {
             for (IMonitoringDataModel<?, ?> analysed : analysedList) {
                 logger.info("Created monitoring data for " + analysed.getApplicationScenario());
@@ -223,17 +227,10 @@ public class MessageBrokerMonitor extends ThreadedMonitor<IMessageBroker, IMonit
     }
 
     @Override
-    public void documentParsed(IMessageBroker parsed, Document document) {
+    public void documentParsed(String parsed, Document document) {
     }
 
     @Override
     public void documentIndexed(String indexId, Document document) {
-    }
-
-    public List<String> getReceivedMessages() {
-        List<String> messages = new ArrayList<>();
-        messages.addAll(receivedMessages);
-        receivedMessages.clear();
-        return messages;
     }
 }

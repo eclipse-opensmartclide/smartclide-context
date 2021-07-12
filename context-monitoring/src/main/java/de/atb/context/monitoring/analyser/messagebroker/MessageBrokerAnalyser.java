@@ -33,7 +33,7 @@ import java.util.List;
  * @version $LastChangedRevision: 143 $
  * 
  */
-public abstract class MessageBrokerAnalyser<OutputType extends IMonitoringDataModel<?, ?>> extends IndexingAnalyser<OutputType, IMessageBroker> {
+public abstract class MessageBrokerAnalyser<OutputType extends IMonitoringDataModel<?, ?>> extends IndexingAnalyser<OutputType, String> {
 
 	public MessageBrokerAnalyser() {
 		super();
@@ -51,13 +51,13 @@ public abstract class MessageBrokerAnalyser<OutputType extends IMonitoringDataMo
 	 * (java.lang.Object, org.apache.lucene.document.Document)
 	 */
 	@Override
-	public final List<OutputType> analyseObject(final IMessageBroker service, final Document document) {
+	public final List<OutputType> analyseObject(final String service, final Document document) {
 		// some generic handling stuff could be done here
 		// like indexing file creation, modification etc.
 
 		return analyseObject(service);
 	}
 
-	public abstract List<OutputType> analyseObject(IMessageBroker service);
+	public abstract List<OutputType> analyseObject(String service);
 
 }
