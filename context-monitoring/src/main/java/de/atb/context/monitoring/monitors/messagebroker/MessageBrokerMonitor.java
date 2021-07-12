@@ -49,7 +49,6 @@ public class MessageBrokerMonitor extends ThreadedMonitor<IMessageBroker, IMonit
     private MessageBrokerParser parser;
     protected MessageBrokerDataSource dataSource;
     protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    protected List<String> topics;
     protected String id;
     protected List<String> receivedMessages;
     protected boolean isAnalysisRunning;
