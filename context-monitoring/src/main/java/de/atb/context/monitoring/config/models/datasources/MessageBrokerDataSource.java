@@ -19,8 +19,8 @@ import de.atb.context.common.authentication.Credentials;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.DataSourceType;
 import de.atb.context.monitoring.models.IMessageBroker;
-import thewebsemantic.RdfType;
 import thewebsemantic.Namespace;
+import thewebsemantic.RdfType;
 
 import java.net.URI;
 
@@ -89,6 +89,7 @@ public class MessageBrokerDataSource extends DataSource {
 
 	public final IMessageBroker toMessageBroker() {
 		final URI myUri = URI.create(uri);
+        final Credentials myCredentials = getCredentials();
 		return new IMessageBroker() {
 
 			@Override
@@ -96,10 +97,10 @@ public class MessageBrokerDataSource extends DataSource {
 				return myUri;
 			}
 
-			@Override
-			public Credentials getCredentials() {
-				return getCredentials();
-			}
+            @Override
+            public Credentials getCredentials() {
+                return myCredentials;
+            }
 		};
 	}
 }
