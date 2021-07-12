@@ -52,7 +52,7 @@ jobs:
       - name: Get release name
         if: ${{ github.event_name == 'release' }}
         id: get_release_name
-        run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
+        run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/*/}"
 
       - name: Build Image for Release
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
