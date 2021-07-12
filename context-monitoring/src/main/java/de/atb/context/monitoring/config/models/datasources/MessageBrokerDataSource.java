@@ -69,10 +69,6 @@ public class MessageBrokerDataSource extends DataSource {
 		return this.getOptionValue(MessageBrokerDataSourceOptions.Password, true);
 	}
 
-	public final String getMachineId() {
-		return this.getOptionValue(MessageBrokerDataSourceOptions.MachineId, true);
-	}
-
 	public final Credentials getCredentials() {
 		String userName = this.getUserName();
 		String password = this.getPassword();
