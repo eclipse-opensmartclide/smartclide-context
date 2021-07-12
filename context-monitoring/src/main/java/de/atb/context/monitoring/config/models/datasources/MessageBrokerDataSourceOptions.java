@@ -37,8 +37,8 @@ public enum MessageBrokerDataSourceOptions implements IDataSourceOptionValue {
 	;
 
 	private final static Map<String, Class<? extends Serializable>> keysToClasses = new HashMap<String, Class<? extends Serializable>>();
-	private String key;
-	private Class<? extends Serializable> valueType;
+	private final String key;
+	private final Class<? extends Serializable> valueType;
 
 	static {
 		for (MessageBrokerDataSourceOptions option : MessageBrokerDataSourceOptions.values()) {
