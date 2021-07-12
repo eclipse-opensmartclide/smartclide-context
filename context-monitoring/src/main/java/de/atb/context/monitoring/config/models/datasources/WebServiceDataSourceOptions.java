@@ -39,15 +39,8 @@ public enum WebServiceDataSourceOptions implements IDataSourceOptionValue {
 
     ;
 
-    private final static Map<String, Class<? extends Serializable>> keysToClasses = new HashMap<>();
-    private String key;
-    private Class<? extends Serializable> valueType;
-
-    static {
-        for (WebServiceDataSourceOptions option : WebServiceDataSourceOptions.values()) {
-            keysToClasses.put(option.key, option.valueType);
-        }
-    }
+    private final String key;
+    private final Class<? extends Serializable> valueType;
 
     WebServiceDataSourceOptions(final String optionKey, final Class<? extends Serializable> valueType) {
         this.key = optionKey;
