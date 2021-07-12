@@ -59,7 +59,7 @@ public enum DataSourceType {
     /**
      * Classifies a DataSource as a MessageBrokerDataSource.
      */
-    MessageBroker(MessageBrokerDataSource.class)
+    MessageBroker(MessageBrokerDataSource.class);
 
     private final Logger logger = LoggerFactory.getLogger(DataSourceType.class);
     private final Class<? extends DataSource> clazz;
