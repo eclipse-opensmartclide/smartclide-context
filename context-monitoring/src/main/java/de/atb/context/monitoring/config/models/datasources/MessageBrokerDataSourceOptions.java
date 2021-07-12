@@ -34,8 +34,6 @@ public enum MessageBrokerDataSourceOptions implements IDataSourceOptionValue {
 
 	Password("password", String.class),
 	
-	StartDelay("startDelay", Long.class),
-
 	;
 
 	private final static Map<String, Class<? extends Serializable>> keysToClasses = new HashMap<String, Class<? extends Serializable>>();

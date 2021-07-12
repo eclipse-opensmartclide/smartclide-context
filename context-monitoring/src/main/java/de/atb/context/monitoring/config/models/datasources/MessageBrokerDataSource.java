@@ -75,10 +75,6 @@ public class MessageBrokerDataSource extends DataSource {
 		return new Credentials(userName, password);
 	}
 
-	public final Long getStartDelay() {
-		return this.getOptionValue(MessageBrokerDataSourceOptions.StartDelay, true);
-	}
-
 	public final IMessageBroker toMessageBroker() {
 		final URI myUri = URI.create(uri);
         final Credentials myCredentials = getCredentials();
