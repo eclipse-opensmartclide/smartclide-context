@@ -44,7 +44,7 @@ public enum IndexedMessageBrokerFields implements IFieldable {
 
 	;
 
-	private String name;
+	private final String name;
 
 	IndexedMessageBrokerFields(final String name) {
 		this.name = name;
