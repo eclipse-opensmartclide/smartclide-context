@@ -25,8 +25,6 @@ import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.IMessageBroker;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.monitors.ThreadedMonitor;
-import de.atb.context.monitoring.parser.IndexedFields;
-import de.atb.context.monitoring.parser.messagebroker.IndexedMessageBrokerFields;
 import de.atb.context.monitoring.parser.messagebroker.MessageBrokerParser;
 import de.atb.context.services.faults.ContextFault;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
@@ -136,11 +134,9 @@ public class MessageBrokerMonitor extends ThreadedMonitor<IMessageBroker, IMonit
                 parser = interpreterConfiguration.createParser(
                         this.dataSource, this.indexer, this.amiConfiguration);
             }
-            // configure and start a KafkaMonitorRunner instance that periodically calls the monitor method
-            // FIXME this need to be optimised and the config taken from dataSource
-            long period = this.dataSource.getInterval() != null ? this.dataSource.getInterval().longValue() : 15000L;
-            long initialDelay = this.dataSource.getStartDelay() != null ? this.dataSource.getStartDelay().longValue() : period;
-            this.executor.scheduleAtFixedRate(new MessageBrokerMonitoringRunner(this), initialDelay, period, TimeUnit.MILLISECONDS);
+            // configure and start a MonitorRunner instance that periodically calls the monitor method
+            //TODO the following commented block has to be adjusted to current messagebroker
+            //this.executor.scheduleAtFixedRate(new MessageBrokerMonitoringRunner(this), initialDelay, period, TimeUnit.MILLISECONDS);
 
             // subscribe to a topic and receive content from MessageBroker
             //TODO the following commented block has to be adjusted to current messagebroker
