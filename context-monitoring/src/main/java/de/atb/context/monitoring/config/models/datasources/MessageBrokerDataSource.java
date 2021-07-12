@@ -57,10 +57,6 @@ public class MessageBrokerDataSource extends DataSource {
 		return DataSourceType.MessageBroker;
 	}
 
-	public final Long getInterval() {
-		return (Long) this.getOptionValue(MessageBrokerDataSourceOptions.PollingInterval, true);
-	}
-
 	public final String getMessageBrokerServer() {
 		return this.getOptionValue(MessageBrokerDataSourceOptions.MessageBrokerServer, true);
 	}

@@ -28,8 +28,6 @@ import java.util.Map;
  */
 public enum MessageBrokerDataSourceOptions implements IDataSourceOptionValue {
 
-	PollingInterval("interval", Long.class),
-
 	MessageBrokerServer("server", String.class),
 
 	UserName("username", String.class),
