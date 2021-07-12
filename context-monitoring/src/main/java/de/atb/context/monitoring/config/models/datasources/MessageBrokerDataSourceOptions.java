@@ -33,7 +33,8 @@ public enum MessageBrokerDataSourceOptions implements IDataSourceOptionValue {
 	UserName("username", String.class),
 
 	Password("password", String.class),
-	
+
+    Topic("topic", String.class),
 	;
 
 	private final static Map<String, Class<? extends Serializable>> keysToClasses = new HashMap<String, Class<? extends Serializable>>();

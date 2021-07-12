@@ -140,7 +140,7 @@ public class MessageBrokerMonitor extends ThreadedMonitor<String, IMonitoringDat
             Connection connection = factory.newConnection();
             Channel channel = connection.createChannel();
 
-            channel.queueDeclare("QUEUE_NAME", false, false, false, null);
+            channel.queueDeclare(dataSource.getTopic(), false, false, false, null);
 
             DeliverCallback deliverCallback = new DeliverCallback() {
                 public void handle(String s, Delivery delivery) throws IOException {
@@ -151,7 +151,7 @@ public class MessageBrokerMonitor extends ThreadedMonitor<String, IMonitoringDat
                 }
             };
 
-            channel.basicConsume("QUEUE_NAME", true, deliverCallback, new CancelCallback() {
+            channel.basicConsume(dataSource.getTopic(), true, deliverCallback, new CancelCallback() {
                 public void handle(String consumerTag) throws IOException {
                 }
             });
