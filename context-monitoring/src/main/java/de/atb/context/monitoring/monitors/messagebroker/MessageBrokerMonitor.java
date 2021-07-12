@@ -223,7 +223,6 @@ public class MessageBrokerMonitor extends ThreadedMonitor<String, IMonitoringDat
                 }
             }
         }
-        return;
     }
 
     @Override
