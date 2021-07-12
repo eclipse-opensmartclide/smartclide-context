@@ -135,8 +135,8 @@ public enum DataSourceType {
             return (T) convertTo(WebServiceDataSource.class, base);
         } else if (type == DataSourceType.Database) {
             return (T) convertTo(DatabaseDataSource.class, base);
-//        } else if (type == DataSourceType.Kafka) {
-//            return (T) convertTo(MessageBrokerDataSource.class, base);
+        } else if (type == DataSourceType.MessageBroker) {
+            return (T) convertTo(MessageBrokerDataSource.class, base);
         } else {
             return null;
         }
