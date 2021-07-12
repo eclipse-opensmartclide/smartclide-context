@@ -36,8 +36,6 @@ public enum MessageBrokerDataSourceOptions implements IDataSourceOptionValue {
 	
 	StartDelay("startDelay", Long.class),
 
-	MachineId("machineId", String.class),
-
 	;
 
 	private final static Map<String, Class<? extends Serializable>> keysToClasses = new HashMap<String, Class<? extends Serializable>>();
