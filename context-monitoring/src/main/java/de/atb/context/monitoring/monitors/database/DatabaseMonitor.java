@@ -15,25 +15,25 @@ package de.atb.context.monitoring.monitors.database;
  */
 
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import de.atb.context.monitoring.analyser.database.DatabaseAnalyser;
-import de.atb.context.monitoring.config.models.*;
+import de.atb.context.monitoring.config.models.DataSource;
+import de.atb.context.monitoring.config.models.DataSourceType;
+import de.atb.context.monitoring.config.models.Interpreter;
+import de.atb.context.monitoring.config.models.InterpreterConfiguration;
+import de.atb.context.monitoring.config.models.Monitor;
 import de.atb.context.monitoring.config.models.datasources.DatabaseDataSource;
-import de.atb.context.monitoring.events.MonitoringProgressListener;
 import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.IDatabase;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.monitors.ThreadedMonitor;
 import de.atb.context.monitoring.parser.database.DatabaseParser;
-import de.atb.context.services.faults.ContextFault;
-import org.apache.lucene.document.Document;
+import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * DatabaseMonitor
@@ -42,12 +42,10 @@ import java.util.concurrent.TimeUnit;
  * @author scholze
  * @version $LastChangedRevision: 143 $
  */
-public class DatabaseMonitor extends ThreadedMonitor<IDatabase, IMonitoringDataModel<?, ?>> implements MonitoringProgressListener<IDatabase, IMonitoringDataModel<?, ?>>, Runnable {
+public class DatabaseMonitor extends ThreadedMonitor<IDatabase, IMonitoringDataModel<?, ?>> {
 
     protected DatabaseDataSource dataSource;
     protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-
-    private final Logger logger = LoggerFactory.getLogger(DatabaseMonitor.class);
 
     public DatabaseMonitor(final DataSource dataSource, final Interpreter interpreter, final Monitor monitor, final Indexer indexer, final AmIMonitoringConfiguration amiConfiguration) {
         super(dataSource, interpreter, monitor, indexer, amiConfiguration);
@@ -167,28 +165,5 @@ public class DatabaseMonitor extends ThreadedMonitor<IDatabase, IMonitoringDataM
             }
         }
 
-    }
-
-    @Override
-    public void documentAnalysed(List<IMonitoringDataModel<?, ?>> analysedList, IDatabase parsed, Document document) {
-        if ((analysedList != null) && (analysedList.size() > 0)) {
-            for (IMonitoringDataModel<?, ?> analysed : analysedList) {
-                logger.info("Created monitoring data for " + analysed.getApplicationScenario());
-                try {
-                    this.amiRepository.persist(analysed);
-                    logger.info("Persisted monitoring data for " + analysed.getApplicationScenario());
-                } catch (ContextFault e1) {
-                    logger.error(e1.getMessage(), e1);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void documentParsed(IDatabase parsed, Document document) {
-    }
-
-    @Override
-    public void documentIndexed(String indexId, Document document) {
     }
 }

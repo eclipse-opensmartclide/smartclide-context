@@ -17,20 +17,16 @@ package de.atb.context.monitoring.monitors.webservice;
 
 import de.atb.context.monitoring.analyser.webservice.WebServiceAnalyser;
 import de.atb.context.monitoring.config.models.*;
-import de.atb.context.monitoring.events.MonitoringProgressListener;
+import de.atb.context.monitoring.models.IWebService;
 import de.atb.context.monitoring.parser.webservice.WebServiceParser;
 import de.atb.context.monitoring.config.models.datasources.WebServiceDataSource;
 import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
-import de.atb.context.monitoring.models.IWebService;
 import de.atb.context.monitoring.monitors.ThreadedMonitor;
-import de.atb.context.services.faults.ContextFault;
-import org.apache.lucene.document.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -42,12 +38,10 @@ import java.util.concurrent.TimeUnit;
  * @author scholze
  * @version $LastChangedRevision: 143 $
  */
-public class WebServiceMonitor extends ThreadedMonitor<IWebService, IMonitoringDataModel<?, ?>> implements MonitoringProgressListener<IWebService, IMonitoringDataModel<?, ?>>, Runnable {
+public class WebServiceMonitor extends ThreadedMonitor<IWebService, IMonitoringDataModel<?, ?>> {
 
     protected WebServiceDataSource dataSource;
     protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-
-    private final Logger logger = LoggerFactory.getLogger(WebServiceMonitor.class);
 
     public WebServiceMonitor(final DataSource dataSource, final Interpreter interpreter, final Monitor monitor, final Indexer indexer, final AmIMonitoringConfiguration amiConfiguration) {
         super(dataSource, interpreter, monitor, indexer, amiConfiguration);
@@ -177,28 +171,5 @@ public class WebServiceMonitor extends ThreadedMonitor<IWebService, IMonitoringD
             }
         }
 
-    }
-
-    @Override
-    public void documentAnalysed(List<IMonitoringDataModel<?, ?>> analysedList, IWebService parsed, Document document) {
-        if ((analysedList != null) && (analysedList.size() > 0)) {
-            for (IMonitoringDataModel<?, ?> analysed : analysedList) {
-                logger.info("Created monitoring data for " + analysed.getApplicationScenario());
-                try {
-                    this.amiRepository.persist(analysed);
-                    logger.info("Persisted monitoring data for " + analysed.getApplicationScenario());
-                } catch (ContextFault e1) {
-                    logger.error(e1.getMessage(), e1);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void documentParsed(IWebService parsed, Document document) {
-    }
-
-    @Override
-    public void documentIndexed(String indexId, Document document) {
     }
 }

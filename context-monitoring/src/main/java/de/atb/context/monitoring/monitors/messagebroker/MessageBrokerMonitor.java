@@ -44,8 +44,7 @@ import java.util.concurrent.TimeUnit;
  * @author scholze
  * @version $LastChangedRevision: 143 $
  */
-public class MessageBrokerMonitor extends ThreadedMonitor<String, IMonitoringDataModel<?, ?>> implements MonitoringProgressListener<String, IMonitoringDataModel<?, ?>>, Runnable {
-    private final Logger logger = LoggerFactory.getLogger(MessageBrokerMonitor.class);
+public class MessageBrokerMonitor extends ThreadedMonitor<String, IMonitoringDataModel<?, ?>> {
     private MessageBrokerParser parser;
     protected MessageBrokerDataSource dataSource;
     protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -208,28 +207,5 @@ public class MessageBrokerMonitor extends ThreadedMonitor<String, IMonitoringDat
             }
         }
 
-    }
-
-    @Override
-    public void documentAnalysed(List<IMonitoringDataModel<?, ?>> analysedList, String parsed, Document document) {
-        if ((analysedList != null) && (analysedList.size() > 0)) {
-            for (IMonitoringDataModel<?, ?> analysed : analysedList) {
-                logger.info("Created monitoring data for " + analysed.getApplicationScenario());
-                try {
-                    this.amiRepository.persist(analysed);
-                    logger.info("Persisted monitoring data for " + analysed.getApplicationScenario());
-                } catch (ContextFault e1) {
-                    logger.error(e1.getMessage(), e1);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void documentParsed(String parsed, Document document) {
-    }
-
-    @Override
-    public void documentIndexed(String indexId, Document document) {
     }
 }

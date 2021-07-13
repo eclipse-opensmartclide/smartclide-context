@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  * @author scholze
  * @version $LastChangedRevision: 143 $
  */
-public abstract class ThreadedMonitor<P, A> implements Runnable {
+public abstract class ThreadedMonitor<P, A> extends AbstractMonitor<P> implements Runnable {
     protected boolean running = false;
     protected Indexer indexer;
     protected DataSource dataSource;
@@ -41,7 +41,6 @@ public abstract class ThreadedMonitor<P, A> implements Runnable {
     protected InterpreterConfiguration interpreterConfiguration;
     protected Monitor monitor;
     protected AmIMonitoringConfiguration amiConfiguration;
-    protected AmIMonitoringDataRepositoryServiceWrapper amiRepository;
     protected List<MonitoringProgressListener<P, A>> progressListeners = new ArrayList<>();
 
     private Thread thread;
@@ -54,10 +53,6 @@ public abstract class ThreadedMonitor<P, A> implements Runnable {
         this.monitor = monitor;
         this.indexer = indexer;
         this.amiConfiguration = configuration;
-    }
-
-    public void setAmiRepository(AmIMonitoringDataRepositoryServiceWrapper amiRepository) {
-        this.amiRepository = amiRepository;
     }
 
     /**
