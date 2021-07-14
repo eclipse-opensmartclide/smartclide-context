@@ -61,4 +61,5 @@ jobs:
         run: |
           echo "release name is $IMAGE_TAG"
           echo "github release event-tag name ${{ github.event.release.tag_name }}"
+          echo "github release event-name ${{ github.event.release.name }}"
           mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
