@@ -52,14 +52,27 @@ jobs:
       - name: Get release name
         if: ${{ github.event_name == 'release' }}
         id: get_release_name
-        run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
+        run: |
+          echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
+          echo "::set-output name=RELEASES_NAME::${GITHUB_REF#refs/releases/}"
+          echo "::set-output name=RELEASE_NAME::${GITHUB_REF#refs/release/}"
+          echo "::set-output name=RELEASES1_NAME::${GITHUB_REF#refs/releases/name}"
+          echo "::set-output name=RELEASE1_NAME::${GITHUB_REF#refs/release/name}"
 
       - name: Build Image for Release
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         env:
-          IMAGE_TAG: ${{ steps.get_release_name.outputs.TAG_NAME }}
+          IMAGE_TAG: ${{ github.event.release.name }}
+          RELEASES_NAME: ${{ steps.get_release_name.outputs.RELEASES_NAME }}
+          RELEASE_NAME: ${{ steps.get_release_name.outputs.RELEASE_NAME }}
+          RELEASES1_NAME: ${{ steps.get_release_name.outputs.RELEASES1_NAME }}
+          RELEASE1_NAME: ${{ steps.get_release_name.outputs.RELEASE1_NAME }}
         run: |
-          echo "release name is $IMAGE_TAG"
+          echo "image tag name is $IMAGE_TAG"
+          echo "releases name is $RELEASES_NAME"
+          echo "release name is $RELEASE_NAME"
+          echo "releases1 name is $RELEASES1_NAME"
+          echo "release1 name is $RELEASE1_NAME"
           echo "github release event-tag name ${{ github.event.release.tag_name }}"
           echo "github release event-name ${{ github.event.release.name }}"
           mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
