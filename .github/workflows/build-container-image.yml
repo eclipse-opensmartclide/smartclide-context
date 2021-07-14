@@ -54,21 +54,20 @@ jobs:
         id: get_release_name
         run: |
           echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
-          echo "::set-output name=RELEASES_NAME::${GITHUB_REF#refs/releases/}"
-          echo "::set-output name=RELEASE_NAME::${GITHUB_REF#refs/release/}"
-          echo "::set-output name=RELEASES1_NAME::${GITHUB_REF#refs/releases/name}"
-          echo "::set-output name=RELEASE1_NAME::${GITHUB_REF#refs/release/name}"
+          echo "::set-output name=TAG2_NAME::${{ github.event.release.name }}"
 
       - name: Build Image for Release
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         env:
           IMAGE_TAG: ${{ github.event.release.name }}
+          TEST: ${{ steps.get_release_name.outputs.TAG2_NAME }}
           RELEASES_NAME: ${{ steps.get_release_name.outputs.RELEASES_NAME }}
           RELEASE_NAME: ${{ steps.get_release_name.outputs.RELEASE_NAME }}
           RELEASES1_NAME: ${{ steps.get_release_name.outputs.RELEASES1_NAME }}
           RELEASE1_NAME: ${{ steps.get_release_name.outputs.RELEASE1_NAME }}
         run: |
           echo "image tag name is $IMAGE_TAG"
+          echo "test name is $TEST"
           echo "releases name is $RELEASES_NAME"
           echo "release name is $RELEASE_NAME"
           echo "releases1 name is $RELEASES1_NAME"
