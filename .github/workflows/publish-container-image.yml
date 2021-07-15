@@ -57,5 +57,4 @@ jobs:
         if: ${{ github.event_name == 'release' }}
         env:
           IMAGE_TAG: ${{ steps.get_tag_name.outputs.TAG_NAME }}
-        run:
-          mvn test jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
+        run: mvn test jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
