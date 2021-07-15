@@ -14,19 +14,6 @@ package de.atb.context.monitoring.monitors.file;
  * #L%
  */
 
-import de.atb.context.monitoring.analyser.IndexingAnalyser;
-import de.atb.context.monitoring.config.models.*;
-import de.atb.context.monitoring.config.models.datasources.FileSystemDataSource;
-import de.atb.context.monitoring.index.Indexer;
-import de.atb.context.monitoring.models.IMonitoringDataModel;
-import de.atb.context.monitoring.monitors.ThreadedMonitor;
-import de.atb.context.monitoring.parser.IndexingParser;
-import name.pachler.nio.file.*;
-import name.pachler.nio.file.ext.ExtendedWatchEventKind;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.StandardWatchEventKinds;
@@ -37,6 +24,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import de.atb.context.monitoring.analyser.IndexingAnalyser;
+import de.atb.context.monitoring.config.models.DataSource;
+import de.atb.context.monitoring.config.models.DataSourceType;
+import de.atb.context.monitoring.config.models.Interpreter;
+import de.atb.context.monitoring.config.models.InterpreterConfiguration;
+import de.atb.context.monitoring.config.models.Monitor;
+import de.atb.context.monitoring.config.models.datasources.FileSystemDataSource;
+import de.atb.context.monitoring.index.Indexer;
+import de.atb.context.monitoring.models.IMonitoringDataModel;
+import de.atb.context.monitoring.monitors.ThreadedMonitor;
+import de.atb.context.monitoring.parser.IndexingParser;
+import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
+import name.pachler.nio.file.ClosedWatchServiceException;
+import name.pachler.nio.file.FileSystems;
+import name.pachler.nio.file.Path;
+import name.pachler.nio.file.Paths;
+import name.pachler.nio.file.StandardWatchEventKind;
+import name.pachler.nio.file.WatchEvent;
+import name.pachler.nio.file.WatchKey;
+import name.pachler.nio.file.WatchService;
+import name.pachler.nio.file.ext.ExtendedWatchEventKind;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * FileSystemMonitor
@@ -55,9 +66,11 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
     private static final Long EVENT_FIRING_OFFSET = 100L;
 
     public FileSystemMonitor(final DataSource dataSource,
-                             final Interpreter fileSet, final Monitor monitor,
-                             final Indexer indexer, final AmIMonitoringConfiguration amiConfiguration) {
-        super(dataSource, fileSet, monitor, indexer, amiConfiguration);
+                             final Interpreter interpreter,
+                             final Monitor monitor,
+                             final Indexer indexer,
+                             final AmIMonitoringConfiguration configuration) {
+        super(dataSource, interpreter, monitor, indexer, configuration);
         if (dataSource.getType().equals(DataSourceType.FileSystem)
             && (dataSource instanceof FileSystemDataSource)) {
             this.dataSource = dataSource;
@@ -67,7 +80,7 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
         }
 
         this.logger.info("Initializing " + this.getClass().getSimpleName()
-            + " for uri: " + dataSource.getUri());
+                         + " for uri: " + dataSource.getUri());
         this.pathToMonitor = new File(this.dataSource.getUri())
             .getAbsoluteFile();
     }
@@ -91,7 +104,7 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
         try {
             Thread.currentThread().setName(
                 this.getClass().getSimpleName() + " ("
-                    + this.dataSource.getId() + ")");
+                + this.dataSource.getId() + ")");
             monitor();
             startWatcher();
         } catch (Exception e) {
@@ -100,7 +113,7 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
     }
 
     @Override
-    public final void monitor() {
+    public final void monitor() throws Exception {
         this.logger.info("Starting monitoring for path " + this.pathToMonitor);
         this.filesToDates.clear();
         if (this.pathToMonitor.isDirectory()) {
@@ -145,17 +158,17 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
             try {
                 if (f.isFile() && this.interpreter.accepts(f)) {
                     fileExisting(f.getAbsolutePath(),
-                        new Date().getTime(),
-                        this.interpreter.getConfiguration(f));
+                                 new Date().getTime(),
+                                 this.interpreter.getConfiguration(f));
                 } else if (f.isFile() && !this.interpreter.accepts(f)) {
                     this.logger.debug("Skipping file " + f.getAbsolutePath()
-                        + ", interpreter does not accept it");
+                                      + ", interpreter does not accept it");
                 } else if (f.isDirectory()) {
                     iterateFiles(f);
                 }
             } catch (Throwable t) {
                 this.logger.error("Error parsing file " + f.getAbsolutePath(),
-                    t);
+                                  t);
             }
         }
     }
@@ -174,12 +187,12 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
                 WatchKey signalledKey;
                 try {
                     watchedPath.register(watchService,
-                        StandardWatchEventKind.ENTRY_CREATE,
-                        StandardWatchEventKind.ENTRY_MODIFY,
-                        StandardWatchEventKind.ENTRY_DELETE,
-                        StandardWatchEventKind.OVERFLOW,
-                        ExtendedWatchEventKind.ENTRY_RENAME_FROM,
-                        ExtendedWatchEventKind.ENTRY_RENAME_TO);
+                                         StandardWatchEventKind.ENTRY_CREATE,
+                                         StandardWatchEventKind.ENTRY_MODIFY,
+                                         StandardWatchEventKind.ENTRY_DELETE,
+                                         StandardWatchEventKind.OVERFLOW,
+                                         ExtendedWatchEventKind.ENTRY_RENAME_FROM,
+                                         ExtendedWatchEventKind.ENTRY_RENAME_TO);
                     while (true) {
                         try {
                             signalledKey = watchService.take();
@@ -211,12 +224,12 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
     protected final void handleWatchEvents(final List<WatchEvent<?>> events,
                                            final Long time) {
         String watchedPath = String.valueOf(Paths.get(this.pathToMonitor
-            .getAbsolutePath()));
+                                                          .getAbsolutePath()));
         String from = null;
         for (WatchEvent<?> e : events) {
             Path context = (Path) e.context();
             String file = watchedPath + java.io.File.separator
-                + context.toString();
+                          + context.toString();
             InterpreterConfiguration setting = this.interpreter
                 .getConfiguration(file);
             if (e.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
@@ -240,8 +253,8 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
                                       final InterpreterConfiguration setting) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(file
-                + " already existed at "
-                + this.getDefaultDateFormat().format(
+                              + " already existed at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         if (setting != null) {
@@ -254,10 +267,10 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
                                      final Long time, final InterpreterConfiguration setting) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(from
-                + " renamed to "
-                + to
-                + " at "
-                + this.getDefaultDateFormat().format(
+                              + " renamed to "
+                              + to
+                              + " at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         if (setting != null) {
@@ -271,8 +284,8 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
                                      final InterpreterConfiguration setting) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(file
-                + " created at "
-                + this.getDefaultDateFormat().format(
+                              + " created at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         if (setting != null) {
@@ -285,8 +298,8 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
                                      final InterpreterConfiguration setting) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(file
-                + " deleted at "
-                + this.getDefaultDateFormat().format(
+                              + " deleted at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         this.filesToDates.remove(file);
@@ -302,8 +315,8 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
 
         if (this.logger.isTraceEnabled() && modified) {
             this.logger.trace(file
-                + " modified at "
-                + this.getDefaultDateFormat().format(
+                              + " modified at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         if (modified) {
@@ -318,21 +331,18 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
         if (setting != null) {
             File file = new File(fileName);
             this.logger.debug("Handling file " + fileName + "...");
-            IndexingParser<File> parser = setting.createFileParser(
-                this.dataSource, this.indexer, this.amiConfiguration);
-            IndexingAnalyser<IMonitoringDataModel<?, ?>, File> analyser = (IndexingAnalyser<IMonitoringDataModel<?, ?>, File>) parser
-                .getAnalyser();
-            if (parser.parse(file)) {
-                this.indexer.addDocumentToIndex(parser.getDocument());
-                this.raiseParsedEvent(file, parser.getDocument());
-                List<IMonitoringDataModel<?, ?>> analysedModels = analyser
-                    .analyse(file);
-                this.raiseAnalysedEvent(analysedModels, file,
-                    analyser.getDocument());
-            }
+            IndexingParser<File> parser = getParser(setting);
+            IndexingAnalyser<IMonitoringDataModel<?, ?>, File> analyser = (IndexingAnalyser<IMonitoringDataModel<?, ?>, File>) parser.getAnalyser();
+
+            parseAndAnalyse(file, parser, analyser);
         } else {
             this.logger.debug("File " + fileName + " will be ignored!");
         }
+    }
+
+    @Override
+    protected IndexingParser<File> getParser(final InterpreterConfiguration setting) {
+        return setting.createFileParser(this.dataSource, this.indexer, this.amiConfiguration);
     }
 
     protected final DateFormat getDefaultDateFormat() {
