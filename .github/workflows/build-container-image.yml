@@ -5,8 +5,7 @@ on:
     branches:
       - main
   release:
-    types:
-      - created
+    types: [released, prereleased]
 
 jobs:
   build:
@@ -49,14 +48,14 @@ jobs:
 
       # below code triggers only for release events
 
-      - name: Get release name
+      - name: Get tag name
         if: ${{ github.event_name == 'release' }}
-        id: get_release_name
-        run: echo "::set-output name=RELEASE_NAME::${{ github.event.release.name }}"
+        id: get_tag_name
+        run: echo "::set-output name=TAG_NAME::${{ github.event.release.tag_name }}"
 
       - name: Build Image for Release
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        if: ${{ github.event_name == 'release' }}
         env:
-          IMAGE_TAG: ${{ steps.get_release_name.outputs.RELEASE_NAME }}
+          IMAGE_TAG: ${{ steps.get_tag_name.outputs.TAG_NAME }}
         run:
           mvn compile jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
