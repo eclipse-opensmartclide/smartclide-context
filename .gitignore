@@ -14,4 +14,4 @@ pom.xml.versionsBackup
 
 #lucene
 # TODO: remove this ignore once monitoring folder has been moved
-monitoring
+context-monitoring/monitoring/
