@@ -21,21 +21,24 @@ import java.util.Map;
 
 /**
  * WebServiceDataSourceOptions
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 143 $
- * 
+ *
  */
 public enum MessageBrokerDataSourceOptions implements IDataSourceOptionValue {
 
 	MessageBrokerServer("server", String.class),
 
+    MessageBrokerPort("port", Integer.class),
+
 	UserName("username", String.class),
 
 	Password("password", String.class),
 
-    Topic("topic", String.class),
-	;
+    Exchange("exchange", String.class),
+
+    Topic("topic", String.class);
 
 	private final String key;
 	private final Class<? extends Serializable> valueType;

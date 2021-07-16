@@ -18,11 +18,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
+import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.Envelope;
+import de.atb.context.common.util.StringUtils;
 import de.atb.context.monitoring.analyser.messagebroker.MessageBrokerAnalyser;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.DataSourceType;
@@ -48,11 +51,9 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
 
     private MessageBrokerParser parser;
 
-    private final DeliverCallback deliverCallback = (s, delivery) -> {
-        String envelope = delivery.getEnvelope().toString();
+    private final DeliverCallback deliverCallback = (consumerTag, delivery) -> {
         String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-
-        handleMessage(envelope, message);
+        handleMessage(delivery.getEnvelope(), message);
     };
 
     private final CancelCallback cancelCallback = consumerTag -> {
@@ -95,15 +96,18 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
             }
 
             final Channel channel = createChannel();
-
-            channel.queueDeclare(dataSource.getTopic(), true, false, false, null);
-            channel.basicConsume(dataSource.getTopic(), true, deliverCallback, cancelCallback);
+            channel.exchangeDeclare(dataSource.getExchange(), BuiltinExchangeType.TOPIC, true);
+            final String queue = channel.queueDeclare("", true, false, false, null).getQueue();
+            channel.queueBind(queue, dataSource.getExchange(), dataSource.getTopic());
+            channel.basicConsume(queue, true, deliverCallback, cancelCallback);
         }
     }
 
     // FIXME: envelope is never used
-    protected final void handleMessage(String envelope, String message) {
-        this.logger.debug("Handling URI " + this.dataSource.getUri() + "...");
+    protected final void handleMessage(Envelope envelope, String message) {
+        this.logger.info("Handling message from exchange \"{}\" with routing key \"{}\" ...",
+                         envelope.getExchange(),
+                         envelope.getRoutingKey());
         try {
             if ((this.dataSource.getUri() != null)) {
                 MessageBrokerAnalyser analyser = (MessageBrokerAnalyser) parser.getAnalyser();
@@ -120,9 +124,18 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
 
     private Channel createChannel() throws IOException, TimeoutException {
         final ConnectionFactory factory = new ConnectionFactory();
+
         factory.setHost(dataSource.getMessageBrokerServer());
-        factory.setUsername(dataSource.getUserName());
-        factory.setPassword(dataSource.getPassword());
+        factory.setPort(dataSource.getMessageBrokerPort());
+
+        final String userName = dataSource.getUserName();
+        if (!StringUtils.isEmpty(userName)) {
+            factory.setUsername(userName);
+        }
+        final String password = dataSource.getPassword();
+        if (!StringUtils.isEmpty(password)) {
+            factory.setPassword(password);
+        }
 
         final Connection connection = factory.newConnection();
 

@@ -15,6 +15,8 @@ package de.atb.context.monitoring.config.models.datasources;
  */
 
 
+import java.net.URI;
+
 import de.atb.context.common.authentication.Credentials;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.DataSourceType;
@@ -22,21 +24,19 @@ import de.atb.context.monitoring.models.IMessageBroker;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
-import java.net.URI;
-
 /**
  * MessageBrokerDataSource
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 156 $
- * 
+ *
  */
 @RdfType("MessageBrokerDataSource")
 @Namespace("http://atb-bremen.de/")
 public class MessageBrokerDataSource extends DataSource {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 3490943354053238739L;
 
@@ -61,6 +61,10 @@ public class MessageBrokerDataSource extends DataSource {
 		return this.getOptionValue(MessageBrokerDataSourceOptions.MessageBrokerServer, true);
 	}
 
+	public final Integer getMessageBrokerPort() {
+	    return this.getOptionValue(MessageBrokerDataSourceOptions.MessageBrokerPort, true);
+    }
+
 	public final String getUserName() {
 		return this.getOptionValue(MessageBrokerDataSourceOptions.UserName, true);
 	}
@@ -68,6 +72,10 @@ public class MessageBrokerDataSource extends DataSource {
 	public final String getPassword() {
 		return this.getOptionValue(MessageBrokerDataSourceOptions.Password, true);
 	}
+
+    public final String getExchange() {
+        return this.getOptionValue(MessageBrokerDataSourceOptions.Exchange, true);
+    }
 
     public final String getTopic() {
         return this.getOptionValue(MessageBrokerDataSourceOptions.Topic, true);
