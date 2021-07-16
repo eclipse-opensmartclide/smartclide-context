@@ -215,6 +215,8 @@ public abstract class DataSource implements Serializable {
             return (T) convertTo(WebServiceDataSource.class);
         } else if (type == DataSourceType.Database) {
             return (T) convertTo(DatabaseDataSource.class);
+        } else if (type == DataSourceType.MessageBroker) {
+            return (T) convertTo(MessageBrokerDataSource.class);
         } else {
             return null;
         }
