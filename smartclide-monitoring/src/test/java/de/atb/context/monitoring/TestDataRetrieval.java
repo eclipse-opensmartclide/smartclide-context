@@ -5,16 +5,19 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 
-import com.rabbitmq.client.BuiltinExchangeType;
+import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import de.atb.context.monitoring.config.models.Config;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSourceOptions;
+import de.atb.context.monitoring.models.GitMessage;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.services.AmIMonitoringService;
 import de.atb.context.services.IAmIMonitoringDataRepositoryService;
@@ -113,14 +116,21 @@ public class TestDataRetrieval {
 
         Thread.sleep(10000);
 
-        for (int i = 0; i < 5; i++) {
-            final String message = "foo" + i;
-            logger.info("Publishing message: {}", message);
-            channel.basicPublish(EXCHANGE_NAME, ROUTING_KEY, null, message.getBytes(StandardCharsets.UTF_8));
-            Thread.sleep(1000);
-        }
+        final GitMessage gitMessage = GitMessage.builder()
+            .timestamp(ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
+            .user("user@smartclide.eu")
+            .repository("git@github.com:eclipse-researchlabs/smartclide-context.git")
+            .branch("branch")
+            .noOfCommitsInBranch(42)
+            .noOfModifiedFiles(3)
+            .noOfPushesInBranch(17)
+            .build();
+        final String message = new Gson().toJson(gitMessage);
+        logger.info("Publishing message: {}", message);
+        channel.basicPublish(EXCHANGE_NAME, ROUTING_KEY, null, message.getBytes(StandardCharsets.UTF_8));
 
         Thread.sleep(10000);
+
         // get the monitored data from the repository (latest registry)
         //List<ProntoDataModel> data = monitoringDataRepository.getMonitoringData(ApplicationScenario.DIVERSITY_1, ProntoDataModel.class, 1);
 
@@ -147,7 +157,7 @@ public class TestDataRetrieval {
     }
 
     private void updateMessageBrokerDataSource(final String monitoringConfig, final String host, final Integer port)
-            throws Exception {
+        throws Exception {
         final Persister persister = new Persister();
         final Config config = persister.read(Config.class, new File(monitoringConfig));
         final Map<String, String> optionsMap = config.getDataSource(DATASOURCE_GIT).getOptionsMap();

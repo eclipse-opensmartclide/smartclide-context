@@ -9,7 +9,7 @@ package de.atb.context.monitoring.monitors.messagebroker;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -25,7 +25,6 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import com.rabbitmq.client.Envelope;
-import de.atb.context.common.util.StringUtils;
 import de.atb.context.monitoring.analyser.messagebroker.MessageBrokerAnalyser;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.DataSourceType;
@@ -38,6 +37,7 @@ import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.monitors.ScheduledExecutorThreadedMonitor;
 import de.atb.context.monitoring.parser.messagebroker.MessageBrokerParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * WebServiceMonitor
@@ -118,7 +118,7 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
             parser.getDocument().removeFields("content");
             parser.getDocument().removeFields("monitoredAt");
         } catch (Exception e) {
-            logger.error("Unknown error ind MessageBrokerMonitor.handleMessageBroker()", e);
+            logger.error("Unknown error in MessageBrokerMonitor.handleMessageBroker()", e);
         }
     }
 
@@ -129,11 +129,11 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
         factory.setPort(dataSource.getMessageBrokerPort());
 
         final String userName = dataSource.getUserName();
-        if (!StringUtils.isEmpty(userName)) {
+        if (StringUtils.isNotBlank(userName)) {
             factory.setUsername(userName);
         }
         final String password = dataSource.getPassword();
-        if (!StringUtils.isEmpty(password)) {
+        if (StringUtils.isNotBlank(password)) {
             factory.setPassword(password);
         }
 

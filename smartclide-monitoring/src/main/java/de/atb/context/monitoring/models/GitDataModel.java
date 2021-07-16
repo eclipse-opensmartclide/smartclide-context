@@ -9,10 +9,15 @@ package de.atb.context.monitoring.models;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import de.atb.context.common.Version;
@@ -27,11 +32,6 @@ import org.simpleframework.xml.Root;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
 @RdfType("GitDataModel")
 @Namespace(BusinessCase.NS_DUMMY_URL)
 @Root
@@ -45,7 +45,7 @@ public class GitDataModel implements IMonitoringDataModel<GitDataModel, MessageB
     private MessageBrokerDataSource dataSource;
     private String implementingClassName = GitDataModel.class.getName();
     private String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
-    private List<GitMessage> gitMessages =new ArrayList<>();
+    private List<GitMessage> gitMessages = new ArrayList<>();
 
     public GitDataModel() {
         this.identifier = UUID.randomUUID().toString();

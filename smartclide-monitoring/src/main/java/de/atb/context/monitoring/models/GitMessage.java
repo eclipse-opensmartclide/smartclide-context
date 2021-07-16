@@ -9,13 +9,16 @@ package de.atb.context.monitoring.models;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
 
 import de.atb.context.common.util.BusinessCase;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
@@ -24,7 +27,11 @@ import thewebsemantic.RdfType;
 @Namespace(BusinessCase.NS_DUMMY_URL)
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class GitMessage {
+    String timestamp;
     String user;
     String repository;
     String branch;
