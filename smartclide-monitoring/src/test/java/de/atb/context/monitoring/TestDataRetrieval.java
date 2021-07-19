@@ -140,9 +140,9 @@ public class TestDataRetrieval {
                 .noOfPushesInBranch(17)
                 .build();
         final String message = GSON.toJson(gitMessage);
-        publishMessage(message, ROUTING_KEY_MONITORING);
+        publishMessage(ROUTING_KEY_MONITORING, message);
 
-        Thread.sleep(5000);
+        Thread.sleep(10000);
 
         // get the monitored data from the repository (latest registry)
         final List<GitDataModel> data =
