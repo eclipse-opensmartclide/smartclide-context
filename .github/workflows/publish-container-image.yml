@@ -1,0 +1,60 @@
+name: publish-container-image
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types: [released, prereleased]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    env:
+      CONTAINER_REGISTRY_USERNAME: ${GITHUB_ACTOR}
+      CONTAINER_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Cache Maven Packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('./**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Build necessary modules
+        run: mvn install -pl context-monitoring -am
+
+      - name: Get short commit SHA
+        if: ${{ github.event_name == 'push' }}
+        id: get_short_commit_SHA
+        run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+
+      - name: Build Image
+        if: ${{ github.event_name == 'push' }}
+        env:
+          IMAGE_TAG: ${{ steps.get_short_commit_SHA.outputs.sha8}}
+        run: mvn test jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
+
+      # below code triggers only for release events
+
+      - name: Get tag name
+        if: ${{ github.event_name == 'release' }}
+        id: get_tag_name
+        run: echo "::set-output name=TAG_NAME::${{ github.event.release.tag_name }}"
+
+      - name: Build Image for Release
+        if: ${{ github.event_name == 'release' }}
+        env:
+          IMAGE_TAG: ${{ steps.get_tag_name.outputs.TAG_NAME }}
+        run: mvn test jib:build -pl smartclide-monitoring -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}" -Djib.to.tags="${IMAGE_TAG}"
