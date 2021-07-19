@@ -9,7 +9,7 @@ package de.atb.context.monitoring.analyser;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -33,6 +33,8 @@ public class GitAnalyser extends MessageBrokerAnalyser {
 
     private static final Logger logger = LoggerFactory.getLogger(GitAnalyser.class);
 
+    private static final Gson GSON = new Gson();
+
     public GitAnalyser(final DataSource dataSource,
                        final InterpreterConfiguration interpreterConfiguration,
                        final Indexer indexer,
@@ -44,7 +46,7 @@ public class GitAnalyser extends MessageBrokerAnalyser {
     @Override
     public List<GitDataModel> analyseObject(final String input) {
         try {
-            final GitMessage gitMessage = new Gson().fromJson(input, GitMessage.class);
+            final GitMessage gitMessage = GSON.fromJson(input, GitMessage.class);
             final GitDataModel model = new GitDataModel();
             model.addGitMessage(gitMessage);
             model.setMonitoredAt(new Date());

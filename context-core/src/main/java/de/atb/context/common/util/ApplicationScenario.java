@@ -9,7 +9,7 @@ package de.atb.context.common.util;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -17,6 +17,7 @@ package de.atb.context.common.util;
 import de.atb.context.common.configuration.ApplicationScenarioConfiguration;
 import de.atb.context.common.configuration.IConfigurationBean;
 import de.atb.context.learning.models.IModelInitializer;
+import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,7 @@ import java.util.Map;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
+@ToString(exclude = {"logger", "initializer"})
 public class ApplicationScenario implements IModelInitializer {
     @XmlTransient
     private final Logger logger = LoggerFactory

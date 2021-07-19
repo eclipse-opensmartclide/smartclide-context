@@ -1,4 +1,4 @@
-package de.atb.context.monitoring.models;
+package eu.smartclide.contexthandling.dle.model;
 
 /*-
  * #%L
@@ -24,20 +24,18 @@ import lombok.ToString;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
-@RdfType("GitMessage")
-@Namespace(BusinessCase.NS_DUMMY_URL)
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class GitMessage {
-    String timestamp;
+public class CommitMessage {
+    @Builder.Default
+    final String header = "new commit";
+    @Builder.Default
+    final String state = "info";
     String user;
-    String repository;
     String branch;
-    Integer noOfCommitsInBranch;
-    Integer noOfPushesInBranch;
-    Integer noOfModifiedFiles;
+    Integer files;
 }
