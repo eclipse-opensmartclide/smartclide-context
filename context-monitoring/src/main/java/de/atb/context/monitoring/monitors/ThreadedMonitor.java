@@ -14,17 +14,23 @@ package de.atb.context.monitoring.monitors;
  * #L%
  */
 
-import de.atb.context.monitoring.config.models.*;
-import de.atb.context.monitoring.events.MonitoringProgressListener;
-import de.atb.context.monitoring.index.Indexer;
-import de.atb.context.monitoring.parser.IndexingParser;
-import de.atb.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper;
-import org.apache.lucene.document.Document;
-import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import de.atb.context.monitoring.analyser.IndexingAnalyser;
+import de.atb.context.monitoring.config.models.DataSource;
+import de.atb.context.monitoring.config.models.Index;
+import de.atb.context.monitoring.config.models.Interpreter;
+import de.atb.context.monitoring.config.models.InterpreterConfiguration;
+import de.atb.context.monitoring.config.models.Monitor;
+import de.atb.context.monitoring.events.MonitoringProgressListener;
+import de.atb.context.monitoring.index.Indexer;
+import de.atb.context.monitoring.models.IMonitoringDataModel;
+import de.atb.context.monitoring.parser.IndexingParser;
+import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
+import org.apache.logging.log4j.core.util.Assert;
+import org.apache.lucene.document.Document;
 
 /**
  * ThreadedMonitor
@@ -33,31 +39,33 @@ import java.util.concurrent.TimeUnit;
  * @author scholze
  * @version $LastChangedRevision: 143 $
  */
-public abstract class ThreadedMonitor<P, A> implements Runnable {
+public abstract class ThreadedMonitor<P, A extends IMonitoringDataModel<?, ?>> extends AbstractMonitor<P> implements Runnable {
     protected boolean running = false;
     protected Indexer indexer;
     protected DataSource dataSource;
     protected Interpreter interpreter;
-    protected InterpreterConfiguration interpreterConfiguration;
     protected Monitor monitor;
     protected AmIMonitoringConfiguration amiConfiguration;
-    protected AmIMonitoringDataRepositoryServiceWrapper amiRepository;
     protected List<MonitoringProgressListener<P, A>> progressListeners = new ArrayList<>();
 
     private Thread thread;
 
     protected ThreadedMonitor(final DataSource dataSource,
-                              final Interpreter fileSet, final Monitor monitor,
-                              final Indexer indexer, final AmIMonitoringConfiguration configuration) {
+                              final Interpreter interpreter,
+                              final Monitor monitor,
+                              final Indexer indexer,
+                              final AmIMonitoringConfiguration configuration) {
+
+        Assert.requireNonEmpty(dataSource, "dataSource may not be null!");
+        Assert.requireNonEmpty(interpreter, "interpreter may not be null!");
+        Assert.requireNonEmpty(monitor, "monitor may not be null!");
+        Assert.requireNonEmpty(indexer, "indexer may not be null!");
+
         this.dataSource = dataSource;
-        this.interpreter = fileSet;
+        this.interpreter = interpreter;
         this.monitor = monitor;
         this.indexer = indexer;
         this.amiConfiguration = configuration;
-    }
-
-    public void setAmiRepository(AmIMonitoringDataRepositoryServiceWrapper amiRepository) {
-        this.amiRepository = amiRepository;
     }
 
     /**
@@ -82,7 +90,9 @@ public abstract class ThreadedMonitor<P, A> implements Runnable {
 
     protected abstract void shutdown(long timeOut, TimeUnit units);
 
-    public abstract void monitor();
+    public abstract void monitor() throws Exception;
+
+    protected abstract IndexingParser<P> getParser(final InterpreterConfiguration setting);
 
     public final void stop() {
         // if (this.isRunning()) {
@@ -127,6 +137,18 @@ public abstract class ThreadedMonitor<P, A> implements Runnable {
         final MonitoringProgressListener<P, A> listener) {
         synchronized (this.progressListeners) {
             this.progressListeners.remove(listener);
+        }
+    }
+
+    protected void parseAndAnalyse(final P objectToParse,
+                                   final IndexingParser<P> parser,
+                                   final IndexingAnalyser<A, P> analyser) {
+        if (parser.parse(objectToParse)) {
+            final Document document = parser.getDocument();
+            this.indexer.addDocumentToIndex(document);
+            this.raiseParsedEvent(objectToParse, document);
+            final List<A> analysedModels = analyser.analyse(objectToParse);
+            this.raiseAnalysedEvent(analysedModels, objectToParse, analyser.getDocument());
         }
     }
 

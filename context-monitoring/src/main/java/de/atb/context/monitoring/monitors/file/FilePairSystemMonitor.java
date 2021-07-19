@@ -14,22 +14,6 @@ package de.atb.context.monitoring.monitors.file;
  * #L%
  */
 
-import de.atb.context.monitoring.config.models.*;
-import de.atb.context.monitoring.config.models.datasources.FilePairSystemDataSource;
-import de.atb.context.monitoring.parser.IndexingParser;
-import de.atb.context.monitoring.analyser.IndexingAnalyser;
-import de.atb.context.monitoring.index.Indexer;
-import de.atb.context.monitoring.models.IMonitoringDataModel;
-import de.atb.context.monitoring.monitors.ThreadedMonitor;
-import de.atb.context.monitoring.parser.file.FilePairParser;
-import name.pachler.nio.file.*;
-import name.pachler.nio.file.ext.ExtendedWatchEventKind;
-import org.javatuples.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import de.atb.context.common.io.FileUtils;
-import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -40,6 +24,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import de.atb.context.common.io.FileUtils;
+import de.atb.context.monitoring.analyser.IndexingAnalyser;
+import de.atb.context.monitoring.config.models.DataSource;
+import de.atb.context.monitoring.config.models.DataSourceType;
+import de.atb.context.monitoring.config.models.Interpreter;
+import de.atb.context.monitoring.config.models.InterpreterConfiguration;
+import de.atb.context.monitoring.config.models.Monitor;
+import de.atb.context.monitoring.config.models.datasources.FilePairSystemDataSource;
+import de.atb.context.monitoring.index.Indexer;
+import de.atb.context.monitoring.models.IMonitoringDataModel;
+import de.atb.context.monitoring.monitors.ThreadedMonitor;
+import de.atb.context.monitoring.parser.IndexingParser;
+import de.atb.context.monitoring.parser.file.FilePairParser;
+import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
+import name.pachler.nio.file.ClosedWatchServiceException;
+import name.pachler.nio.file.FileSystems;
+import name.pachler.nio.file.Path;
+import name.pachler.nio.file.Paths;
+import name.pachler.nio.file.StandardWatchEventKind;
+import name.pachler.nio.file.WatchEvent;
+import name.pachler.nio.file.WatchKey;
+import name.pachler.nio.file.WatchService;
+import name.pachler.nio.file.ext.ExtendedWatchEventKind;
+import org.javatuples.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * FilePairSystemMonitor
@@ -64,9 +75,11 @@ public class FilePairSystemMonitor extends
         .getLogger(FilePairSystemMonitor.class);
 
     public FilePairSystemMonitor(final DataSource dataSource,
-                                 final Interpreter fileSet, final Monitor monitor,
-                                 final Indexer indexer, final AmIMonitoringConfiguration amiConfiguration) {
-        super(dataSource, fileSet, monitor, indexer, amiConfiguration);
+                                 final Interpreter interpreter,
+                                 final Monitor monitor,
+                                 final Indexer indexer,
+                                 final AmIMonitoringConfiguration configuration) {
+        super(dataSource, interpreter, monitor, indexer, configuration);
         if (dataSource.getType().equals(DataSourceType.FilePairSystem)) {
             this.dataSource = dataSource;
         } else {
@@ -75,7 +88,7 @@ public class FilePairSystemMonitor extends
         }
 
         this.logger.info("Initializing " + this.getClass().getSimpleName()
-            + " for uri: " + dataSource.getUri());
+                         + " for uri: " + dataSource.getUri());
         this.pathToMonitor = new File(this.dataSource.getUri());
     }
 
@@ -109,9 +122,9 @@ public class FilePairSystemMonitor extends
             this.running = true;
             Thread.currentThread().setName(
                 this.getClass().getSimpleName() + " ("
-                    + this.dataSource.getId() + ")");
+                + this.dataSource.getId() + ")");
             this.logger.info("Really starting "
-                + this.getClass().getSimpleName() + " ");
+                             + this.getClass().getSimpleName() + " ");
             monitor();
             startWatcher();
         } catch (Exception e) {
@@ -120,7 +133,7 @@ public class FilePairSystemMonitor extends
     }
 
     @Override
-    public final void monitor() {
+    public final void monitor() throws Exception {
         this.logger.info("Starting monitoring for path " + this.pathToMonitor);
         this.filesToDates.clear();
     }
@@ -168,20 +181,20 @@ public class FilePairSystemMonitor extends
                     && this.interpreter.accepts(f)) {
                     Long time = new Date().getTime();
                     fileExisting(f.getValue0().getAbsolutePath(), time,
-                        this.interpreter.getConfiguration(f.getValue0()));
+                                 this.interpreter.getConfiguration(f.getValue0()));
                     fileExisting(f.getValue1().getAbsolutePath(), time,
-                        this.interpreter.getConfiguration(f.getValue1()));
+                                 this.interpreter.getConfiguration(f.getValue1()));
                 } else if (f.getValue0().isFile() && f.getValue1().isFile()
-                    && !this.interpreter.accepts(f)) {
+                           && !this.interpreter.accepts(f)) {
                     this.logger.trace("Skipping files "
-                        + f.getValue0().getAbsolutePath() + " and "
-                        + f.getValue1().getAbsolutePath()
-                        + ", interpreter does not accept it");
+                                      + f.getValue0().getAbsolutePath() + " and "
+                                      + f.getValue1().getAbsolutePath()
+                                      + ", interpreter does not accept it");
                 }
             } catch (Throwable t) {
                 this.logger.error("Error parsing file "
-                    + f.getValue0().getAbsolutePath() + " and "
-                    + f.getValue1().getAbsolutePath(), t);
+                                  + f.getValue0().getAbsolutePath() + " and "
+                                  + f.getValue1().getAbsolutePath(), t);
             }
         }
 
@@ -202,12 +215,12 @@ public class FilePairSystemMonitor extends
                 WatchKey signalledKey;
                 try {
                     watchedPath.register(this.watchService,
-                        StandardWatchEventKind.ENTRY_CREATE,
-                        StandardWatchEventKind.ENTRY_MODIFY,
-                        StandardWatchEventKind.ENTRY_DELETE,
-                        StandardWatchEventKind.OVERFLOW,
-                        ExtendedWatchEventKind.ENTRY_RENAME_FROM,
-                        ExtendedWatchEventKind.ENTRY_RENAME_TO);
+                                         StandardWatchEventKind.ENTRY_CREATE,
+                                         StandardWatchEventKind.ENTRY_MODIFY,
+                                         StandardWatchEventKind.ENTRY_DELETE,
+                                         StandardWatchEventKind.OVERFLOW,
+                                         ExtendedWatchEventKind.ENTRY_RENAME_FROM,
+                                         ExtendedWatchEventKind.ENTRY_RENAME_TO);
                     while (true) {
                         try {
                             signalledKey = this.watchService.take();
@@ -239,12 +252,12 @@ public class FilePairSystemMonitor extends
     protected final void handleWatchEvents(final List<WatchEvent<?>> events,
                                            final Long time) {
         String watchedPath = String.valueOf(Paths.get(this.pathToMonitor
-            .getAbsolutePath()));
+                                                          .getAbsolutePath()));
         String from = null;
         for (WatchEvent<?> e : events) {
             Path context = (Path) e.context();
             String file = watchedPath + java.io.File.separator
-                + context.toString();
+                          + context.toString();
             InterpreterConfiguration setting = this.interpreter
                 .getConfiguration(file);
             if (e.kind() == StandardWatchEventKind.ENTRY_CREATE) {
@@ -268,8 +281,8 @@ public class FilePairSystemMonitor extends
                                       final InterpreterConfiguration setting) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(file
-                + " already existed at "
-                + this.getDefaultDateFormat().format(
+                              + " already existed at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         if (setting != null) {
@@ -282,10 +295,10 @@ public class FilePairSystemMonitor extends
                                      final Long time, final InterpreterConfiguration setting) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(from
-                + " renamed to "
-                + to
-                + " at "
-                + this.getDefaultDateFormat().format(
+                              + " renamed to "
+                              + to
+                              + " at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         if (setting != null) {
@@ -299,8 +312,8 @@ public class FilePairSystemMonitor extends
                                      final InterpreterConfiguration setting) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(file
-                + " created at "
-                + this.getDefaultDateFormat().format(
+                              + " created at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         if (setting != null) {
@@ -313,8 +326,8 @@ public class FilePairSystemMonitor extends
                                      final InterpreterConfiguration setting) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(file
-                + " deleted at "
-                + this.getDefaultDateFormat().format(
+                              + " deleted at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         this.filesToDates.remove(file);
@@ -330,8 +343,8 @@ public class FilePairSystemMonitor extends
 
         if (this.logger.isTraceEnabled() && modified) {
             this.logger.trace(file
-                + " modified at "
-                + this.getDefaultDateFormat().format(
+                              + " modified at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         if (modified) {
@@ -349,21 +362,22 @@ public class FilePairSystemMonitor extends
             updateFilePair(file);
             if ((this.filePair != null) && (this.filePair.getValue0() != null)
                 && (this.filePair.getValue1() != null)) {
-                IndexingParser<Pair<File, File>> parser = setting.createParser(
-                    this.dataSource, this.indexer, this.amiConfiguration);
+                IndexingParser<Pair<File, File>> parser = getParser(setting);
                 IndexingAnalyser<IMonitoringDataModel<?, ?>, Pair<File, File>> analyser = (IndexingAnalyser<IMonitoringDataModel<?, ?>, Pair<File, File>>) parser
                     .getAnalyser();
-                if (parser.parse(this.filePair)) {
-                    this.indexer.addDocumentToIndex(parser.getDocument());
-                    this.raiseParsedEvent(this.filePair, parser.getDocument());
-                    this.raiseAnalysedEvent(analyser.analyse(this.filePair),
-                        this.filePair, analyser.getDocument());
-                }
+
+                parseAndAnalyse(this.filePair, parser, analyser);
+
                 this.filePair = Pair.with(null, null);
             }
         } else {
             this.logger.debug("File " + fileName + " will be ignored!");
         }
+    }
+
+    @Override
+    protected IndexingParser<Pair<File, File>> getParser(final InterpreterConfiguration setting) {
+        return setting.createParser(this.dataSource, this.indexer, this.amiConfiguration);
     }
 
     protected final Pair<File, File> updateFilePair(final File file) {

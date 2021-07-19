@@ -31,15 +31,8 @@ public enum FileSystemDataSourceOptions implements IDataSourceOptionValue {
 
     ;
 
-    private final static Map<String, Class<? extends Serializable>> keysToClasses = new HashMap<>();
-    private String key;
-    private Class<? extends Serializable> valueType;
-
-    static {
-        for (FileSystemDataSourceOptions option : FileSystemDataSourceOptions.values()) {
-            keysToClasses.put(option.key, option.valueType);
-        }
-    }
+    private final String key;
+    private final Class<? extends Serializable> valueType;
 
     FileSystemDataSourceOptions(final String optionKey, final Class<? extends Serializable> valueType) {
         this.key = optionKey;

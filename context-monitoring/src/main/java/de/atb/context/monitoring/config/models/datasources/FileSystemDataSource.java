@@ -53,6 +53,6 @@ public class FileSystemDataSource extends DataSource {
     }
 
     public final Boolean includeHiddenFiles() {
-        return (Boolean) this.getOptionValue(FileSystemDataSourceOptions.IncludeHiddenFiles);
+        return this.getOptionValue(FileSystemDataSourceOptions.IncludeHiddenFiles);
     }
 }

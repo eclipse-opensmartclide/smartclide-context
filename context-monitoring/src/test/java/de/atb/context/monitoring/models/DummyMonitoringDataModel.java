@@ -2,11 +2,11 @@
  * @(#)DummyMonitoringDataModel.java
  *
  * $Id: DummyMonitoringDataModel.java 686 2016-12-02 15:53:40Z scholze $
- * 
+ *
  * $Rev:: 692                  $ 	last change revision
  * $Date:: 2012-07-09 09:58:45#$	last change date
  * $Author:: scholze             $	last change author
- * 
+ *
  * Copyright 2011-15 Sebastian Scholze (ATB). All rights reserved.
  *
  */
@@ -21,9 +21,9 @@ package de.atb.context.monitoring.models;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,6 +42,7 @@ import de.atb.context.monitoring.rdf.RdfHelper;
 import de.atb.context.persistence.ModelOutputLanguage;
 import lombok.Getter;
 import lombok.Setter;
+import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
@@ -51,10 +52,10 @@ import java.util.UUID;
 
 /**
  * DummyMonitoringDataModel
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 692 $
- * 
+ *
  */
 @RdfType("DummyMonitoringDataModel")
 @Namespace("http://www.atb-bremen.de/")
@@ -74,6 +75,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
     private String dummyName = "myDummyName";
     private String dummyValue = "myDummyVaLuE!";
+    @Id
     private String identifier;
 
     public DummyMonitoringDataModel() {
@@ -82,7 +84,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IMonitoringData#fromRdfModel(java.lang
 	 * .String)
@@ -94,7 +96,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IMonitoringData#fromRdfModel(com.hp.hpl
 	 * .jena.rdf.model.Model)
@@ -106,7 +108,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IMonitoringData#toRdfString()
 	 */
 	@Override
@@ -116,7 +118,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IMonitoringData#toRdfModel()
 	 */
 	@Override
@@ -126,7 +128,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IMonitoringDataModel#getBusinessCase
 	 * ()
@@ -138,7 +140,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IMonitoringDataModel#
 	 * triggersContextChange()
 	 */
@@ -149,7 +151,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IMonitoringDataModel#
 	 * getApplicationScenario()
 	 */
@@ -160,7 +162,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IMonitoringDataModel#
 	 * getContextIdentifierClassName()
 	 */
@@ -171,7 +173,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IMonitoringDataModel#initialize()
 	 */

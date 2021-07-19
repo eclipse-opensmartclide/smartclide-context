@@ -57,7 +57,7 @@ public class DatabaseDataSource extends DataSource {
     }
 
     public final Long getInterval() {
-        return (Long) this.getOptionValue(DatabaseDataSourceOptions.PollingInterval, true);
+        return this.getOptionValue(DatabaseDataSourceOptions.PollingInterval, true);
     }
 
     public final String getUserName() {
@@ -69,19 +69,19 @@ public class DatabaseDataSource extends DataSource {
     }
 
     public final String getMachineId() {
-        return (String) this.getOptionValue(DatabaseDataSourceOptions.MachineId, true);
+        return this.getOptionValue(DatabaseDataSourceOptions.MachineId, true);
     }
 
     public final String getDatabaseDriver() {
-        return (String) this.getOptionValue(DatabaseDataSourceOptions.DatabaseDriver, true);
+        return this.getOptionValue(DatabaseDataSourceOptions.DatabaseDriver, true);
     }
 
     public final String getDatabaseUri() {
-        return (String) this.getOptionValue(DatabaseDataSourceOptions.DatabaseUri, true);
+        return this.getOptionValue(DatabaseDataSourceOptions.DatabaseUri, true);
     }
 
     public final String getDatabaseSelect() {
-        return (String) this.getOptionValue(DatabaseDataSourceOptions.DatabaseSelect, true);
+        return this.getOptionValue(DatabaseDataSourceOptions.DatabaseSelect, true);
     }
 
     public final Credentials getCredentials() {
@@ -91,7 +91,7 @@ public class DatabaseDataSource extends DataSource {
     }
 
     public final Long getStartDelay() {
-        return (Long) this.getOptionValue(DatabaseDataSourceOptions.StartDelay, true);
+        return this.getOptionValue(DatabaseDataSourceOptions.StartDelay, true);
     }
 
     public final IDatabase toDatabase() {

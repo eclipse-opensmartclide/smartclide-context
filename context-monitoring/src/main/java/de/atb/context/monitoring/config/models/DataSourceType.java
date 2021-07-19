@@ -57,13 +57,12 @@ public enum DataSourceType {
     Database(DatabaseDataSource.class),
 
     /**
-     * Classifies a DataSource as a DatabaseDataSource.
+     * Classifies a DataSource as a MessageBrokerDataSource.
      */
-//    Kafka(KafkaDataSource.class),
-    ;
+    MessageBroker(MessageBrokerDataSource.class);
 
     private final Logger logger = LoggerFactory.getLogger(DataSourceType.class);
-    private Class<? extends DataSource> clazz;
+    private final Class<? extends DataSource> clazz;
 
     DataSourceType(final Class<? extends DataSource> clazz) {
         this.clazz = clazz;
@@ -130,8 +129,8 @@ public enum DataSourceType {
             return (T) convertTo(WebServiceDataSource.class, base);
         } else if (type == DataSourceType.Database) {
             return (T) convertTo(DatabaseDataSource.class, base);
-//        } else if (type == DataSourceType.Kafka) {
-//            return (T) convertTo(KafkaDataSource.class, base);
+        } else if (type == DataSourceType.MessageBroker) {
+            return (T) convertTo(MessageBrokerDataSource.class, base);
         } else {
             return null;
         }
