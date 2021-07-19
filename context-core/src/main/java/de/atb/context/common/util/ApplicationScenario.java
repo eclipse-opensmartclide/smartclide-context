@@ -9,7 +9,7 @@ package de.atb.context.common.util;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -168,12 +168,13 @@ public class ApplicationScenario implements IModelInitializer {
     @SuppressWarnings("unchecked")
     protected boolean createConfigurationClass() {
         try {
-            if (configurationClass == null) {
-                final Class<? extends ApplicationScenarioConfiguration<?>> clazz = (Class<? extends ApplicationScenarioConfiguration<?>>) Class
-                        .forName(configurationClassName);
+            // FIXME: temporary workaround
+            if (configurationClass == null && configurationClassName != null) {
+                final Class<? extends ApplicationScenarioConfiguration<?>> clazz =
+                    (Class<? extends ApplicationScenarioConfiguration<?>>) Class.forName(configurationClassName);
                 configurationClass = clazz;
+                return true;
             }
-            return true;
         } catch (final ClassNotFoundException e) {
             logger.error(e.getMessage(), e);
         }
