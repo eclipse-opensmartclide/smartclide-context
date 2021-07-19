@@ -140,15 +140,13 @@ public class TestDataRetrieval {
                 .noOfPushesInBranch(17)
                 .build();
         final String message = GSON.toJson(gitMessage);
-        logger.info("Publishing message: {}", message);
-        channel.basicPublish(EXCHANGE_NAME, ROUTING_KEY_MONITORING, null, message.getBytes(StandardCharsets.UTF_8));
+        publishMessage(message, ROUTING_KEY_MONITORING);
 
-        Thread.sleep(50000);
+        Thread.sleep(5000);
 
         // get the monitored data from the repository (latest registry)
-        final ApplicationScenario applicationScenario = ApplicationScenario.getInstance();
-        logger.debug("application scenario: {}", applicationScenario);
-        List<GitDataModel> data = monitoringDataRepository.getMonitoringData(applicationScenario, GitDataModel.class, 1);
+        final List<GitDataModel> data =
+                monitoringDataRepository.getMonitoringData(ApplicationScenario.getInstance(), GitDataModel.class, 1);
 
         assertNotNull(data);
         assertFalse(data.isEmpty());
@@ -157,6 +155,8 @@ public class TestDataRetrieval {
         for (GitMessage gm : gitMessages) {
             convertAndSendToDle(gm);
         }
+
+        Thread.sleep(5000);
     }
 
     private String readFile(String filename) {
@@ -195,7 +195,7 @@ public class TestDataRetrieval {
         channel.queueBind(queue, EXCHANGE_NAME, ROUTING_KEY_DLE);
         channel.basicConsume(
                 queue,
-                (t, m) -> logger.debug("DLE received message: {}", new String(m.getBody(), StandardCharsets.UTF_8)),
+                (t, m) -> logger.info("DLE received message: {}", new String(m.getBody(), StandardCharsets.UTF_8)),
                 (t) -> logger.info("cancelled!")
         );
     }
@@ -212,7 +212,12 @@ public class TestDataRetrieval {
                 )
                 .build();
         final String dleMessageJson = GSON.toJson(dleMessage);
-        channel.basicPublish(EXCHANGE_NAME, ROUTING_KEY_DLE, null, dleMessageJson.getBytes(StandardCharsets.UTF_8));
+        publishMessage(ROUTING_KEY_DLE, dleMessageJson);
+    }
+
+    private void publishMessage(final String routingKey, final String message) throws IOException {
+        logger.info("Publishing message: {}", message);
+        channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes(StandardCharsets.UTF_8));
     }
 
 }

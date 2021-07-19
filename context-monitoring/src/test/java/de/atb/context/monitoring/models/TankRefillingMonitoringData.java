@@ -9,7 +9,7 @@ package de.atb.context.monitoring.models;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -27,6 +27,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.simpleframework.xml.Root;
 
+import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 import thewebsemantic.Transient;
@@ -35,10 +36,10 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 /**
  * A TankRefillingMonitoringData describes
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 881 $
- * 
+ *
  */
 @RdfType("TankRefilling")
 @Namespace(BusinessCase.NS_DUMMY_URL)
@@ -56,6 +57,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
     private Date monitoredAt;
     private FileSystemDataSource dataSource;
     private String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
+    @Id
     private String identifier;
 
 	@Transient
@@ -76,7 +78,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/**
 	 * Adds another monitored Tank to the list of monitored tanks.
-	 * 
+	 *
 	 * @param tank
 	 *            The monitored Tank to be added to the list of monitored tanks.
 	 */
@@ -86,7 +88,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.proseco.monitoring.IMonitoringData#fromRDFModel(com.hp.hpl
 	 * .jena.rdf.model.Model)
@@ -98,7 +100,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.proseco.monitoring.IMonitoringData#fromXMPString(java.lang
 	 * .String)
@@ -110,7 +112,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.proseco.monitoring.models.IMonitoringDataModel#getBusinessCase
 	 * ()
@@ -122,7 +124,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.atb.proseco.monitoring.IMonitoringData#toRDFModel()
 	 */
 	@Override
@@ -132,7 +134,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.atb.proseco.monitoring.IMonitoringData#toXMPString()
 	 */
 	@Override
@@ -142,7 +144,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -155,7 +157,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.atb.proseco.monitoring.models.IMonitoringDataModel#
 	 * triggersContextChange()
 	 */
@@ -166,7 +168,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.atb.proseco.monitoring.models.IMonitoringDataModel#
 	 * getApplicationScenario()
 	 */
@@ -177,7 +179,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.atb.proseco.monitoring.models.IMonitoringDataModel#
 	 * getContextIdentifierClassName()
 	 */
@@ -188,7 +190,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.proseco.monitoring.models.IMonitoringDataModel#initialize()
 	 */

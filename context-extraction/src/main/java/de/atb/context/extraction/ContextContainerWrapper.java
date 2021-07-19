@@ -2,11 +2,11 @@
  * @(#)ContextContainerWrapper.java
  *
  * $Id: ContextContainerWrapper.java 647 2016-10-20 15:13:20Z scholze $
- * 
+ *
  * $Rev:: 647                  $ 	last change revision
  * $Date:: 2016-10-20 17:13:20#$	last change date
  * $Author:: scholze             $	last change author
- * 
+ *
  * Copyright 2011-15 Sebastian Scholze (ATB). All rights reserved.
  *
  */
@@ -43,16 +43,17 @@ import java.util.Date;
 
 /**
  * ContextContainerWrapper
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 647 $
- * 
+ *
  */
 @Setter
 @Getter
 public class ContextContainerWrapper {
 
-	protected ApplicationScenario applicationScenario = ApplicationScenario.getInstance(BusinessCase.getInstance("dummy",BusinessCase.NS_DUMMY_URL));
+	protected ApplicationScenario applicationScenario =
+        ApplicationScenario.getInstance(BusinessCase.getInstance(BusinessCase.NS_DUMMY_ID, BusinessCase.NS_DUMMY_URL));
 	protected Boolean useReasoner = Boolean.FALSE;
 	protected String identifier;
 	protected String monitoringDataId;

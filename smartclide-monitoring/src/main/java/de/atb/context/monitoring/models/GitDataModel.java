@@ -29,6 +29,7 @@ import de.atb.context.persistence.ModelOutputLanguage;
 import lombok.Getter;
 import lombok.Setter;
 import org.simpleframework.xml.Root;
+import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
@@ -41,6 +42,7 @@ public class GitDataModel implements IMonitoringDataModel<GitDataModel, MessageB
     private Date monitoredAt;
     private String documentIndexId = "index/broker";
     private String documentUri;
+    @Id
     private String identifier;
     private MessageBrokerDataSource dataSource;
     private String implementingClassName = GitDataModel.class.getName();
