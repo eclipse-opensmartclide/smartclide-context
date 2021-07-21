@@ -16,24 +16,18 @@ package de.atb.context.monitoring.monitors.database;
 
 
 import de.atb.context.monitoring.analyser.database.DatabaseAnalyser;
-import de.atb.context.monitoring.config.models.*;
+import de.atb.context.monitoring.config.models.DataSource;
+import de.atb.context.monitoring.config.models.DataSourceType;
+import de.atb.context.monitoring.config.models.Interpreter;
+import de.atb.context.monitoring.config.models.InterpreterConfiguration;
+import de.atb.context.monitoring.config.models.Monitor;
 import de.atb.context.monitoring.config.models.datasources.DatabaseDataSource;
-import de.atb.context.monitoring.events.MonitoringProgressListener;
 import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.IDatabase;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
-import de.atb.context.monitoring.monitors.ThreadedMonitor;
+import de.atb.context.monitoring.monitors.PeriodicScheduledExecutorThreadedMonitor;
 import de.atb.context.monitoring.parser.database.DatabaseParser;
-import de.atb.context.services.faults.ContextFault;
-import org.apache.lucene.document.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * DatabaseMonitor
@@ -42,15 +36,16 @@ import java.util.concurrent.TimeUnit;
  * @author scholze
  * @version $LastChangedRevision: 143 $
  */
-public class DatabaseMonitor extends ThreadedMonitor<IDatabase, IMonitoringDataModel<?, ?>> implements MonitoringProgressListener<IDatabase, IMonitoringDataModel<?, ?>>, Runnable {
+public class DatabaseMonitor extends PeriodicScheduledExecutorThreadedMonitor<IDatabase, IMonitoringDataModel<?, ?>> {
 
-    protected DatabaseDataSource dataSource;
-    protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private final DatabaseDataSource dataSource;
 
-    private final Logger logger = LoggerFactory.getLogger(DatabaseMonitor.class);
-
-    public DatabaseMonitor(final DataSource dataSource, final Interpreter interpreter, final Monitor monitor, final Indexer indexer, final AmIMonitoringConfiguration amiConfiguration) {
-        super(dataSource, interpreter, monitor, indexer, amiConfiguration);
+    public DatabaseMonitor(final DataSource dataSource,
+                           final Interpreter interpreter,
+                           final Monitor monitor,
+                           final Indexer indexer,
+                           final AmIMonitoringConfiguration configuration) {
+        super(dataSource, interpreter, monitor, indexer, configuration);
         if (dataSource.getType().equals(DataSourceType.Database) && (dataSource instanceof DatabaseDataSource)) {
             this.dataSource = (DatabaseDataSource) dataSource;
         } else {
@@ -59,136 +54,39 @@ public class DatabaseMonitor extends ThreadedMonitor<IDatabase, IMonitoringDataM
         this.logger.info("Initializing DatabaseMonitor for uri: " + dataSource.getUri());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see ThreadedMonitor#isRunning()
-     */
     @Override
-    public final boolean isRunning() {
-        return this.running;
+    protected DatabaseParser getParser(final InterpreterConfiguration setting) {
+        return setting.createParser(this.dataSource, this.indexer, this.amiConfiguration);
     }
 
     @Override
-    public final void pause() {
-        this.running = false;
-        this.executor.shutdown();
+    protected long getSchedulePeriod() {
+        return this.dataSource.getInterval() != null ? this.dataSource.getInterval() : 15000L;
     }
 
     @Override
-    public final void restart() {
-        shutdown();
-        run();
+    protected long getScheduleInitialDelay() {
+        return this.dataSource.getStartDelay() != null ? this.dataSource.getStartDelay() : getSchedulePeriod();
     }
 
     @Override
-    public final void shutdown() {
-        shutdown(2, TimeUnit.SECONDS);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * ThreadedMonitor#shutdown(long)
-     */
-    @Override
-    protected final void shutdown(final long timeOut, final TimeUnit unit) {
-        this.executor.shutdown();
-        try {
-            if (!this.executor.awaitTermination(timeOut, unit)) {
-                this.executor.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            logger.error(e.getMessage(), e);
-            Thread.currentThread().interrupt();
-        } finally {
-            this.running = false;
-        }
+    protected InterpreterConfiguration getInterpreterConfiguration() {
+        return this.interpreter.getConfiguration("monitoring-config.xml");
     }
 
     @Override
-    public final void run() {
-        try {
-            Thread.currentThread().setName(this.getClass().getSimpleName() + " (" + this.dataSource.getId() + ")");
-            addProgressListener(DatabaseMonitor.this);
-            this.running = true;
-            long period = this.dataSource.getInterval() != null ? this.dataSource.getInterval() : 15000L;
-            long initialDelay = this.dataSource.getStartDelay() != null ? this.dataSource.getStartDelay() : period;
-            this.executor.scheduleAtFixedRate(new DatabaseMonitoringRunner(this), initialDelay, period, TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
-            this.logger.error("Error starting DatabaseMonitor! ", e);
-        }
-    }
-
-    public void monitor() {
-        this.logger.info("Starting monitoring for DATABASE at URI: " + this.dataSource.getUri());
-        this.running = true;
-        InterpreterConfiguration setting = this.interpreter
-            .getConfiguration("monitoring-config.xml");
-        handleDatabase(setting);
-    }
-
-    protected final void handleDatabase(final InterpreterConfiguration setting) {
+    protected void doMonitor(final InterpreterConfiguration setting) throws Exception {
         if (setting != null) {
             this.logger.debug("Handling URI " + this.dataSource.getUri() + "...");
             if ((this.dataSource.getUri() != null)) {
-                DatabaseParser parser = setting.createParser(
-                    this.dataSource, this.indexer, this.amiConfiguration);
+                DatabaseParser parser = getParser(setting);
                 DatabaseAnalyser analyser = (DatabaseAnalyser) parser.getAnalyser();
-                if (parser.parse(this.dataSource.toDatabase())) {
-                    this.indexer.addDocumentToIndex(parser.getDocument());
-                    this.raiseParsedEvent(this.dataSource.toDatabase(), parser.getDocument());
-                    this.raiseAnalysedEvent(analyser.analyse(this.dataSource.toDatabase()),
-                        this.dataSource.toDatabase(), analyser.getDocument());
-                }
+                final IDatabase database = this.dataSource.toDatabase();
+
+                parseAndAnalyse(database, parser, analyser);
             }
         } else {
             this.logger.debug("URI " + this.dataSource.getUri() + " will be ignored!");
         }
-    }
-
-    protected static final class DatabaseMonitoringRunner implements Runnable {
-
-        private static final Logger logger = LoggerFactory.getLogger(DatabaseMonitoringRunner.class);
-
-        private final DatabaseMonitor parent;
-
-        public DatabaseMonitoringRunner(final DatabaseMonitor parent) {
-            this.parent = parent;
-        }
-
-        @Override
-        public void run() {
-            try {
-                this.parent.monitor();
-            } catch (Exception e) {
-                logger.error("Error during monitoring of DATABASE! ", e);
-            }
-        }
-
-    }
-
-    @Override
-    public void documentAnalysed(List<IMonitoringDataModel<?, ?>> analysedList, IDatabase parsed, Document document) {
-        if ((analysedList != null) && (analysedList.size() > 0)) {
-            for (IMonitoringDataModel<?, ?> analysed : analysedList) {
-                logger.info("Created monitoring data for " + analysed.getApplicationScenario());
-                try {
-                    this.amiRepository.persist(analysed);
-                    logger.info("Persisted monitoring data for " + analysed.getApplicationScenario());
-                } catch (ContextFault e1) {
-                    logger.error(e1.getMessage(), e1);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void documentParsed(IDatabase parsed, Document document) {
-    }
-
-    @Override
-    public void documentIndexed(String indexId, Document document) {
     }
 }

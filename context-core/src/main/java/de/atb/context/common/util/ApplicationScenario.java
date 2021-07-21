@@ -17,6 +17,7 @@ package de.atb.context.common.util;
 import de.atb.context.common.configuration.ApplicationScenarioConfiguration;
 import de.atb.context.common.configuration.IConfigurationBean;
 import de.atb.context.learning.models.IModelInitializer;
+import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,7 @@ import java.util.Map;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
+@ToString(exclude = {"logger", "initializer"})
 public class ApplicationScenario implements IModelInitializer {
     @XmlTransient
     private final Logger logger = LoggerFactory
@@ -166,12 +168,13 @@ public class ApplicationScenario implements IModelInitializer {
     @SuppressWarnings("unchecked")
     protected boolean createConfigurationClass() {
         try {
-            if (configurationClass == null) {
-                final Class<? extends ApplicationScenarioConfiguration<?>> clazz = (Class<? extends ApplicationScenarioConfiguration<?>>) Class
-                        .forName(configurationClassName);
+            // FIXME: temporary workaround
+            if (configurationClass == null && configurationClassName != null) {
+                final Class<? extends ApplicationScenarioConfiguration<?>> clazz =
+                    (Class<? extends ApplicationScenarioConfiguration<?>>) Class.forName(configurationClassName);
                 configurationClass = clazz;
+                return true;
             }
-            return true;
         } catch (final ClassNotFoundException e) {
             logger.error(e.getMessage(), e);
         }

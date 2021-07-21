@@ -15,50 +15,43 @@ package de.atb.context.monitoring.analyser.messagebroker;
  */
 
 
+import java.util.List;
+
 import de.atb.context.monitoring.analyser.IndexingAnalyser;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.InterpreterConfiguration;
 import de.atb.context.monitoring.index.Indexer;
-import de.atb.context.monitoring.models.IMessageBroker;
-import de.atb.context.monitoring.models.IMessageBroker;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
-import org.apache.lucene.document.Document;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-
-import java.util.List;
+import org.apache.lucene.document.Document;
 
 /**
  * WebServiceAnalyser
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 143 $
- * 
  */
-public abstract class MessageBrokerAnalyser<OutputType extends IMonitoringDataModel<?, ?>> extends IndexingAnalyser<OutputType, IMessageBroker> {
+public abstract class MessageBrokerAnalyser<OutputType extends IMonitoringDataModel<?, ?>> extends IndexingAnalyser<OutputType, String> {
 
-	public MessageBrokerAnalyser() {
-		super();
-	}
+    public MessageBrokerAnalyser(final DataSource dataSource, final InterpreterConfiguration interpreterConfiguration, final Indexer indexer, final Document document, final AmIMonitoringConfiguration amiConfiguration) {
+        super(dataSource, interpreterConfiguration, indexer, document, amiConfiguration);
+    }
 
-	public MessageBrokerAnalyser(final DataSource dataSource, final InterpreterConfiguration interpreterConfiguration, final Indexer indexer, final Document document, final AmIMonitoringConfiguration amiConfiguration) {
-		super(dataSource, interpreterConfiguration, indexer, document, amiConfiguration);
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * IndexingAnalyser#analyseObject
+     * (java.lang.Object, org.apache.lucene.document.Document)
+     */
+    @Override
+    public final List<OutputType> analyseObject(final String input, final Document document) {
+        // some generic handling stuff could be done here
+        // like indexing file creation, modification etc.
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * IndexingAnalyser#analyseObject
-	 * (java.lang.Object, org.apache.lucene.document.Document)
-	 */
-	@Override
-	public final List<OutputType> analyseObject(final IMessageBroker service, final Document document) {
-		// some generic handling stuff could be done here
-		// like indexing file creation, modification etc.
+        return analyseObject(input);
+    }
 
-		return analyseObject(service);
-	}
-
-	public abstract List<OutputType> analyseObject(IMessageBroker service);
+    public abstract List<OutputType> analyseObject(final String input);
 
 }

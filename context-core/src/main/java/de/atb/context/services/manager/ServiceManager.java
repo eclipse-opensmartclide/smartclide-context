@@ -2,11 +2,11 @@
  * @(#)ServiceManager.java
  *
  * $Id: ServiceManager.java 679 2016-11-24 18:29:04Z gsimoes $
- * 
+ *
  * $Rev:: 679                  $ 	last change revision
  * $Date:: 2016-11-24 19:29:04#$	last change date
  * $Author:: gsimoes           $	last change author
- * 
+ *
  * Copyright 2011-15 Oliver Kotte. All rights reserved.
  *
  */
@@ -27,6 +27,23 @@ package de.atb.context.services.manager;
  */
 
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jws.WebService;
+import javax.xml.ws.BindingProvider;
+
+import de.atb.context.modules.Deployer;
+import de.atb.context.services.SWServiceContainer;
+import de.atb.context.services.config.models.SWService;
+import de.atb.context.services.infrastructure.ServiceRegistryService;
+import de.atb.context.services.interfaces.IPrimitiveService;
 import lombok.Getter;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
@@ -45,22 +62,6 @@ import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.ws.addressing.WSAddressingFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import de.atb.context.modules.Deployer;
-import de.atb.context.services.SWServiceContainer;
-import de.atb.context.services.config.models.SWService;
-import de.atb.context.services.infrastructure.ServiceRegistryService;
-import de.atb.context.services.interfaces.IPrimitiveService;
-
-import javax.jws.WebService;
-import javax.xml.ws.BindingProvider;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * ServiceManager
@@ -83,10 +84,8 @@ public class ServiceManager {
     private static Deployer deployer;
     @Getter
     private static de.atb.context.modules.Server server;
-    //public static Notifier notifier;
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(ServiceManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServiceManager.class);
 
     public static synchronized void shutdownServiceAndEngine(final Server server) {
         if (server != null) {
@@ -121,8 +120,9 @@ public class ServiceManager {
                     : host;
 
             String name = service.getName();
-            name = (name.equals("null") || (name.trim().length() == 0)) ? getServiceNameFromClass(service
-                    .getServerClass()) : name;
+            name = (name.equals("null") || (name.trim().length() == 0))
+                   ? getServiceNameFromClass(service.getServerClass())
+                   : name;
 
             return registerWebservice(host, port, name,
                     createInstance(service.getServerClass()),
@@ -184,8 +184,7 @@ public class ServiceManager {
     public static synchronized <T extends IPrimitiveService> Server registerWebservice(
             final String host, final int port, final String serviceName, final T serviceBean,
             final Class<? extends T> serviceClass) {
-        String address = String.format(SERVICE_PATTERN, host,
-                Integer.valueOf(port), serviceName);
+        String address = String.format(SERVICE_PATTERN, host, port, serviceName);
         logger.info("Trying to create Service '" + serviceName + "' at " + host
                 + ":" + port);
         JaxWsServerFactoryBean svrFactory = new JaxWsServerFactoryBean();
@@ -212,8 +211,7 @@ public class ServiceManager {
             final Class<? extends T> serviceClass, final SWServiceContainer service) {
 
         // WebService annotation = serviceClass.getAnnotation(WebService.class);
-        String address = String.format(SERVICE_PATTERN, host,
-                Integer.valueOf(port), serviceName);
+        String address = String.format(SERVICE_PATTERN, host, port, serviceName);
         // String teste = annotation.wsdlLocation();
         logger.info("Trying to create Service '" + serviceName + "' at " + host
                 + ":" + port);
@@ -242,16 +240,13 @@ public class ServiceManager {
     @SuppressWarnings("unchecked")
     public static synchronized <T extends IPrimitiveService> T getWebservice(
             final SWServiceContainer service) {
-        int port = service.getLocation().getPort() == -1 ? DEFAULT_SERVICE_PORT
-                : service.getLocation().getPort();
+        int port = service.getLocation().getPort() == -1 ? DEFAULT_SERVICE_PORT : service.getLocation().getPort();
 
         String host = String.valueOf(service.getLocation().getHost());
-        host = (host.equals("null") || (host.trim().length() == 0)) ? DEFAULT_SERVICE_HOST
-                : host;
+        host = (host.equals("null") || (host.trim().length() == 0)) ? DEFAULT_SERVICE_HOST : host;
 
         String name = service.getName();
-        name = (name.equals("null") || (name.trim().length() == 0)) ? getServiceNameFromClass(service
-                .getProxyClass()) : name;
+        name = (name.equals("null") || (name.trim().length() == 0)) ? getServiceNameFromClass(service.getProxyClass()) : name;
 
         return (T) getWebservice(host, port, name, service.getProxyClass());
     }
@@ -288,17 +283,15 @@ public class ServiceManager {
     public static synchronized <T extends IPrimitiveService> T getWebservice(
             final String host, final int port, final String serviceName,
             final Class<? extends T> serviceClass) {
-        String address = String.format(SERVICE_PATTERN, host,
-                Integer.valueOf(port), serviceName);
-        logger.info("Trying to receive Service '" + serviceName + "' at "
-                + host + ":" + port);
+        String address = String.format(SERVICE_PATTERN, host, port, serviceName);
+        logger.info("Trying to receive Service '{}' at {}:{}", serviceName, host, port);
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.getInInterceptors().add(new LoggingInInterceptor());
         factory.getOutInterceptors().add(new LoggingOutInterceptor());
         factory.setServiceClass(serviceClass);
         factory.setAddress(address);
         T service = (T) factory.create();
-        logger.info("Received Service at '%s' at %s:%s", serviceName, address, port);
+        logger.info("Received Service at '{}' at {}:{}", serviceName, address, port);
         setClientPolicies(service);
         return service;
     }
@@ -306,14 +299,14 @@ public class ServiceManager {
     @SuppressWarnings("unchecked")
     public static synchronized <T extends IPrimitiveService> T getWebservice(
             final String address, final String serviceName, final Class<? extends T> serviceClass) {
-        logger.info("Trying to receive Service '%s' at %s", serviceName, address);
+        logger.info("Trying to receive Service '{}' at {}", serviceName, address);
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.getInInterceptors().add(new LoggingInInterceptor());
         factory.getOutInterceptors().add(new LoggingOutInterceptor());
         factory.setServiceClass(serviceClass);
         factory.setAddress(address);
         T service = (T) factory.create();
-        logger.info("Received Service '%s' at %s", serviceName, address);
+        logger.info("Received Service '{}' at {}", serviceName, address);
         setClientPolicies(service);
         return service;
     }
@@ -332,7 +325,7 @@ public class ServiceManager {
     @SuppressWarnings("unchecked")
     public static synchronized <T extends IPrimitiveService> T getWebserviceDecoupledMode(
             final String address, final String serviceName, final Class<? extends T> serviceClass) {
-        logger.info("Trying to receive Service '%s' at %s", serviceName, address);
+        logger.info("Trying to receive Service '{}' at {}", serviceName, address);
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         ClientFactoryBean cfb = factory.getClientFactoryBean();
         WSAddressingFeature wsAddressingFeature = new WSAddressingFeature();
@@ -346,8 +339,7 @@ public class ServiceManager {
                 "^[^\\w]+|[^\\w]+$", "");
         int responseAddressInt = Integer.parseInt(responseAddress) + 100;
 
-        String addressResponse = String.format(SERVICE_PATTERN, hostAddress,
-                Integer.valueOf(responseAddressInt), serviceName);
+        String addressResponse = String.format(SERVICE_PATTERN, hostAddress, responseAddressInt, serviceName);
 
         factory.getInInterceptors().add(new LoggingInInterceptor());
         factory.getOutInterceptors().add(new LoggingOutInterceptor());
@@ -356,7 +348,7 @@ public class ServiceManager {
         T service = (T) factory.create();
         ((BindingProvider) service).getRequestContext().put(
                 WS_ADDRESSING_REPLYTO, addressResponse);
-        logger.info("Received Service '%s' at %s", serviceName, address);
+        logger.info("Received Service '{}' at {}", serviceName, address);
         setClientPolicies(service);
         return service;
     }

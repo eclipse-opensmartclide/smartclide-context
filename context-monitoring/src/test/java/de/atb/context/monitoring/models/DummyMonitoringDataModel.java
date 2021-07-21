@@ -9,6 +9,7 @@ import de.atb.context.monitoring.rdf.RdfHelper;
 import de.atb.context.persistence.ModelOutputLanguage;
 import lombok.Getter;
 import lombok.Setter;
+import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
@@ -18,10 +19,10 @@ import java.util.UUID;
 
 /**
  * DummyMonitoringDataModel
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 692 $
- * 
+ *
  */
 @RdfType("DummyMonitoringDataModel")
 @Namespace("http://www.atb-bremen.de/")
@@ -41,6 +42,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
     private String dummyName = "myDummyName";
     private String dummyValue = "myDummyVaLuE!";
+    @Id
     private String identifier;
 
     public DummyMonitoringDataModel() {
@@ -49,7 +51,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IMonitoringData#fromRdfModel(java.lang
 	 * .String)
@@ -61,7 +63,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IMonitoringData#fromRdfModel(com.hp.hpl
 	 * .jena.rdf.model.Model)
@@ -73,7 +75,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IMonitoringData#toRdfString()
 	 */
 	@Override
@@ -83,7 +85,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IMonitoringData#toRdfModel()
 	 */
 	@Override
@@ -93,7 +95,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IMonitoringDataModel#getBusinessCase
 	 * ()
@@ -105,7 +107,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IMonitoringDataModel#
 	 * triggersContextChange()
 	 */
@@ -116,7 +118,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IMonitoringDataModel#
 	 * getApplicationScenario()
 	 */
@@ -127,7 +129,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IMonitoringDataModel#
 	 * getContextIdentifierClassName()
 	 */
@@ -138,7 +140,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IMonitoringDataModel#initialize()
 	 */

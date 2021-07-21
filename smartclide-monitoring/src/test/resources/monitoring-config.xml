@@ -4,28 +4,27 @@
         xsi:schemaLocation="http://www.atb-bremen.de monitoring-config.xsd">
 
     <indexes>
-        <index id="index-dummy" location="target/indexes/dummy"></index>
+        <index id="index-git" location="target/indexes/git"/>
     </indexes>
 
     <datasources>
-        <datasource id="datasource-dummy" type="file"
-                    monitor="de.atb.context.monitoring.monitors.file.CustomFileBasedAnalyser"
-                    uri="target/test-classes/filebasedmonitor"
-                    options="extensionOne=json"
-                    class="de.atb.context.monitoring.config.models.datasources.FileSystemDataSource"/>
+        <datasource id="datasource-git" type="messagebroker"
+                    monitor="de.atb.context.monitoring.monitors.GitMonitor"
+                    uri=""
+                    options="server=localhost&amp;port=5672&amp;exchange=smartclide-monitoring&amp;topic=monitoring.git.commits.*"
+                    class="de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSource"/>
     </datasources>
 
     <interpreters>
-        <interpreter id="interpreter-dummy">
+        <interpreter id="interpreter-git">
             <configuration type="*"
-                           parser="de.atb.context.monitoring.parser.file.CustomFileParser"
-                           analyser="de.atb.context.monitoring.analyser.file.CustomFileBasedAnalyser"/>
+                           parser="de.atb.context.monitoring.parser.GitParser"
+                           analyser="de.atb.context.monitoring.analyser.GitAnalyser"/>
         </interpreter>
     </interpreters>
 
     <monitors>
-        <monitor id="monitor-dummy" datasource="datasource-dummy" interpreter="interpreter-dummy"
-                 index="index-dummy"/>
+        <monitor id="monitor-git" datasource="datasource-git" interpreter="interpreter-git" index="index-git"/>
     </monitors>
 
 </config>

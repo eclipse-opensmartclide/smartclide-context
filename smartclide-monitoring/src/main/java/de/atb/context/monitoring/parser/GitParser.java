@@ -1,4 +1,4 @@
-package de.atb.context.monitoring.parser.file;
+package de.atb.context.monitoring.parser;
 
 /*-
  * #%L
@@ -14,23 +14,23 @@ package de.atb.context.monitoring.parser.file;
  * #L%
  */
 
-import java.io.File;
-
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.InterpreterConfiguration;
 import de.atb.context.monitoring.index.Indexer;
+import de.atb.context.monitoring.parser.messagebroker.MessageBrokerParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
+import org.apache.lucene.document.Document;
 
-public class CustomFileParser extends FileParser {
-    public CustomFileParser(DataSource dataSource,
-                            InterpreterConfiguration interpreterConfiguration,
-                            Indexer indexer,
-                            AmIMonitoringConfiguration amiConfiguration) {
+public class GitParser extends MessageBrokerParser {
+    public GitParser(final DataSource dataSource,
+                     final InterpreterConfiguration interpreterConfiguration,
+                     final Indexer indexer,
+                     final AmIMonitoringConfiguration amiConfiguration) {
         super(dataSource, interpreterConfiguration, indexer, amiConfiguration);
     }
 
     @Override
-    protected boolean parseObject(File file) {
+    protected boolean parseObject(final String message, final Document document) {
         return true;
     }
 }

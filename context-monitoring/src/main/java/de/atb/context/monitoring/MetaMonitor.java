@@ -15,19 +15,20 @@ package de.atb.context.monitoring;
  */
 
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+
 import de.atb.context.common.exceptions.ConfigurationException;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.Interpreter;
 import de.atb.context.monitoring.config.models.Monitor;
 import de.atb.context.monitoring.index.Indexer;
+import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.monitors.ThreadedMonitor;
 import de.atb.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper;
-import org.slf4j.LoggerFactory;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
+import org.slf4j.LoggerFactory;
 
 /**
  * MetaMonitor
@@ -39,8 +40,13 @@ import java.lang.reflect.Modifier;
 public class MetaMonitor {
 
     @SuppressWarnings("unchecked")
-    public static <P, A> ThreadedMonitor<P, A> createThreadedMonitor(final Monitor monitor, final DataSource dataSource, final Interpreter interpreter,
-                                                                     final Indexer indexer, final AmIMonitoringConfiguration configuration, AmIMonitoringDataRepositoryServiceWrapper amiRepository) throws ConfigurationException {
+    public static <P, A extends IMonitoringDataModel<?, ?>> ThreadedMonitor<P, A> createThreadedMonitor(
+        final Monitor monitor,
+        final DataSource dataSource,
+        final Interpreter interpreter,
+        final Indexer indexer,
+        final AmIMonitoringConfiguration configuration,
+        final AmIMonitoringDataRepositoryServiceWrapper amiRepository) throws ConfigurationException {
         Class<?> factory;
         try {
             factory = Class.forName(dataSource.getMonitor());
@@ -52,10 +58,18 @@ public class MetaMonitor {
 
         if (!Modifier.isAbstract(modifier) && !Modifier.isInterface(modifier) && !Modifier.isStatic(modifier)) {
             try {
-                Constructor<?> constructor = factory.getConstructor(DataSource.class, Interpreter.class, Monitor.class,
-                    Indexer.class, AmIMonitoringConfiguration.class);
-                ThreadedMonitor<P, A> instance = (ThreadedMonitor<P, A>) constructor.newInstance(new Object[]{dataSource, interpreter,
-                    monitor, indexer, configuration});
+                Constructor<?> constructor = factory.getConstructor(DataSource.class,
+                                                                    Interpreter.class,
+                                                                    Monitor.class,
+                                                                    Indexer.class,
+                                                                    AmIMonitoringConfiguration.class);
+                ThreadedMonitor<P, A> instance = (ThreadedMonitor<P, A>) constructor.newInstance(new Object[]{
+                    dataSource,
+                    interpreter,
+                    monitor,
+                    indexer,
+                    configuration
+                });
                 instance.setAmiRepository(amiRepository);
                 return instance;
             } catch (InstantiationException | InvocationTargetException | IllegalArgumentException | IllegalAccessException | NoSuchMethodException | SecurityException e) {

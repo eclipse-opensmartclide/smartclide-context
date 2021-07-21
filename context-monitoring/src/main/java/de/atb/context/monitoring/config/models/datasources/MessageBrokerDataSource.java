@@ -15,28 +15,28 @@ package de.atb.context.monitoring.config.models.datasources;
  */
 
 
+import java.net.URI;
+
 import de.atb.context.common.authentication.Credentials;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.DataSourceType;
 import de.atb.context.monitoring.models.IMessageBroker;
-import thewebsemantic.RdfType;
 import thewebsemantic.Namespace;
-
-import java.net.URI;
+import thewebsemantic.RdfType;
 
 /**
  * MessageBrokerDataSource
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 156 $
- * 
+ *
  */
 @RdfType("MessageBrokerDataSource")
 @Namespace("http://atb-bremen.de/")
 public class MessageBrokerDataSource extends DataSource {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 3490943354053238739L;
 
@@ -57,38 +57,39 @@ public class MessageBrokerDataSource extends DataSource {
 		return DataSourceType.MessageBroker;
 	}
 
-	public final Long getInterval() {
-		return (Long) this.getOptionValue(MessageBrokerDataSourceOptions.PollingInterval, true);
+	public final String getMessageBrokerServer() {
+		return this.getOptionValue(MessageBrokerDataSourceOptions.MessageBrokerServer, true);
 	}
 
-	public final String getMessageBrokerServer() {
-		return (String) this.getOptionValue(MessageBrokerDataSourceOptions.MessageBrokerServer, true);
-	}
+	public final Integer getMessageBrokerPort() {
+	    return this.getOptionValue(MessageBrokerDataSourceOptions.MessageBrokerPort, true);
+    }
 
 	public final String getUserName() {
-		return (String) this.getOptionValue(MessageBrokerDataSourceOptions.UserName, true);
+		return this.getOptionValue(MessageBrokerDataSourceOptions.UserName, true);
 	}
 
 	public final String getPassword() {
-		return (String) this.getOptionValue(MessageBrokerDataSourceOptions.Password, true);
+		return this.getOptionValue(MessageBrokerDataSourceOptions.Password, true);
 	}
 
-	public final String getMachineId() {
-		return (String) this.getOptionValue(MessageBrokerDataSourceOptions.MachineId, true);
-	}
+    public final String getExchange() {
+        return this.getOptionValue(MessageBrokerDataSourceOptions.Exchange, true);
+    }
 
-	public final Credentials getCredentials() {
+    public final String getTopic() {
+        return this.getOptionValue(MessageBrokerDataSourceOptions.Topic, true);
+    }
+
+    public final Credentials getCredentials() {
 		String userName = this.getUserName();
 		String password = this.getPassword();
 		return new Credentials(userName, password);
 	}
 
-	public final Long getStartDelay() {
-		return (Long) this.getOptionValue(MessageBrokerDataSourceOptions.StartDelay, true);
-	}
-
 	public final IMessageBroker toMessageBroker() {
 		final URI myUri = URI.create(uri);
+        final Credentials myCredentials = getCredentials();
 		return new IMessageBroker() {
 
 			@Override
@@ -96,10 +97,10 @@ public class MessageBrokerDataSource extends DataSource {
 				return myUri;
 			}
 
-			@Override
-			public Credentials getCredentials() {
-				return getCredentials();
-			}
+            @Override
+            public Credentials getCredentials() {
+                return myCredentials;
+            }
 		};
 	}
 }

@@ -9,7 +9,7 @@ package de.atb.context.monitoring.models;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -27,6 +27,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.simpleframework.xml.Root;
 
+import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 import thewebsemantic.Transient;
@@ -76,7 +77,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/**
 	 * Adds another monitored Tank to the list of monitored tanks.
-	 * 
+	 *
 	 * @param tank
 	 *            The monitored Tank to be added to the list of monitored tanks.
 	 */
@@ -86,7 +87,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IMonitoringData#fromRDFModel(com.hp.hpl
 	 * .jena.rdf.model.Model)
@@ -98,7 +99,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IMonitoringData#fromXMPString(java.lang
 	 * .String)
@@ -110,7 +111,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IMonitoringDataModel#getBusinessCase
 	 * ()
@@ -142,7 +143,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -188,7 +189,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IMonitoringDataModel#initialize()
 	 */

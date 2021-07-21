@@ -16,24 +16,18 @@ package de.atb.context.monitoring.monitors.webservice;
 
 
 import de.atb.context.monitoring.analyser.webservice.WebServiceAnalyser;
-import de.atb.context.monitoring.config.models.*;
-import de.atb.context.monitoring.events.MonitoringProgressListener;
-import de.atb.context.monitoring.parser.webservice.WebServiceParser;
+import de.atb.context.monitoring.config.models.DataSource;
+import de.atb.context.monitoring.config.models.DataSourceType;
+import de.atb.context.monitoring.config.models.Interpreter;
+import de.atb.context.monitoring.config.models.InterpreterConfiguration;
+import de.atb.context.monitoring.config.models.Monitor;
 import de.atb.context.monitoring.config.models.datasources.WebServiceDataSource;
 import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.models.IWebService;
-import de.atb.context.monitoring.monitors.ThreadedMonitor;
-import de.atb.context.services.faults.ContextFault;
-import org.apache.lucene.document.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import de.atb.context.monitoring.monitors.PeriodicScheduledExecutorThreadedMonitor;
+import de.atb.context.monitoring.parser.webservice.WebServiceParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * WebServiceMonitor
@@ -42,15 +36,16 @@ import java.util.concurrent.TimeUnit;
  * @author scholze
  * @version $LastChangedRevision: 143 $
  */
-public class WebServiceMonitor extends ThreadedMonitor<IWebService, IMonitoringDataModel<?, ?>> implements MonitoringProgressListener<IWebService, IMonitoringDataModel<?, ?>>, Runnable {
+public class WebServiceMonitor extends PeriodicScheduledExecutorThreadedMonitor<IWebService, IMonitoringDataModel<?, ?>> {
 
-    protected WebServiceDataSource dataSource;
-    protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private final WebServiceDataSource dataSource;
 
-    private final Logger logger = LoggerFactory.getLogger(WebServiceMonitor.class);
-
-    public WebServiceMonitor(final DataSource dataSource, final Interpreter interpreter, final Monitor monitor, final Indexer indexer, final AmIMonitoringConfiguration amiConfiguration) {
-        super(dataSource, interpreter, monitor, indexer, amiConfiguration);
+    public WebServiceMonitor(final DataSource dataSource,
+                             final Interpreter interpreter,
+                             final Monitor monitor,
+                             final Indexer indexer,
+                             final AmIMonitoringConfiguration configuration) {
+        super(dataSource, interpreter, monitor, indexer, configuration);
         if (dataSource.getType().equals(DataSourceType.WebService) && (dataSource instanceof WebServiceDataSource)) {
             this.dataSource = (WebServiceDataSource) dataSource;
         } else {
@@ -59,146 +54,39 @@ public class WebServiceMonitor extends ThreadedMonitor<IWebService, IMonitoringD
         this.logger.info("Initializing WebServiceMonitor for uri: " + dataSource.getUri());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see ThreadedMonitor#isRunning()
-     */
     @Override
-    public final boolean isRunning() {
-        return this.running;
+    protected WebServiceParser getParser(final InterpreterConfiguration setting) {
+        return setting.createParser(this.dataSource, this.indexer, this.amiConfiguration);
     }
 
     @Override
-    public final void pause() {
-        this.running = false;
-        this.executor.shutdown();
+    protected long getSchedulePeriod() {
+        return this.dataSource.getInterval() != null ? this.dataSource.getInterval() : 15000L;
     }
 
     @Override
-    public final void restart() {
-        shutdown();
-        run();
+    protected InterpreterConfiguration getInterpreterConfiguration() {
+        return this.interpreter.getConfiguration("monitoring-config.xml");
     }
 
     @Override
-    public final void shutdown() {
-        this.executor.shutdown();
-        try {
-            if (!this.executor.awaitTermination(2, TimeUnit.SECONDS)) {
-                this.executor.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            logger.error(e.getMessage(), e);
-            Thread.currentThread().interrupt();
-        } finally {
-            this.running = false;
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * ThreadedMonitor#shutdown(long)
-     */
-    @Override
-    protected final void shutdown(final long timeOut, final TimeUnit unit) {
-        this.executor.shutdown();
-        try {
-            if (!this.executor.awaitTermination(timeOut, unit)) {
-                this.executor.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            logger.error(e.getMessage(), e);
-            Thread.currentThread().interrupt();
-        } finally {
-            this.running = false;
-        }
+    protected long getScheduleInitialDelay() {
+        return this.dataSource.getStartDelay() != null ? this.dataSource.getStartDelay() : getSchedulePeriod();
     }
 
     @Override
-    public final void run() {
-        try {
-            Thread.currentThread().setName(this.getClass().getSimpleName() + " (" + this.dataSource.getId() + ")");
-            addProgressListener(WebServiceMonitor.this);
-            this.running = true;
-            long period = this.dataSource.getInterval() != null ? this.dataSource.getInterval() : 15000L;
-            long initialDelay = this.dataSource.getStartDelay() != null ? this.dataSource.getStartDelay() : period;
-            this.executor.scheduleAtFixedRate(new WebServiceMonitoringRunner(this), initialDelay, period, TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
-            this.logger.error("Error starting WebServiceMonitor! ", e);
-        }
-    }
-
-    public void monitor() {
-        this.logger.info("Starting monitoring for WebService at URI: " + this.dataSource.getUri());
-        this.running = true;
-        InterpreterConfiguration setting = this.interpreter
-            .getConfiguration("monitoring-config.xml");
-        handleWebService(setting);
-    }
-
-    protected final void handleWebService(final InterpreterConfiguration setting) {
+    protected void doMonitor(final InterpreterConfiguration setting) throws Exception {
         if (setting != null) {
             this.logger.debug("Handling URI " + this.dataSource.getUri() + "...");
             if ((this.dataSource.getUri() != null)) {
-                WebServiceParser parser = setting.createParser(
-                    this.dataSource, this.indexer, this.amiConfiguration);
+                WebServiceParser parser = getParser(setting);
                 WebServiceAnalyser analyser = (WebServiceAnalyser) parser.getAnalyser();
-                if (parser.parse(this.dataSource.toWebService())) {
-                    this.indexer.addDocumentToIndex(parser.getDocument());
-                    this.raiseParsedEvent(this.dataSource.toWebService(), parser.getDocument());
-                    this.raiseAnalysedEvent(analyser.analyse(this.dataSource.toWebService()),
-                        this.dataSource.toWebService(), analyser.getDocument());
-                }
+                final IWebService webService = this.dataSource.toWebService();
+
+                parseAndAnalyse(webService, parser, analyser);
             }
         } else {
             this.logger.debug("URI " + this.dataSource.getUri() + " will be ignored!");
         }
-    }
-
-    protected static final class WebServiceMonitoringRunner implements Runnable {
-
-        private static final Logger logger = LoggerFactory.getLogger(WebServiceMonitoringRunner.class);
-
-        private final WebServiceMonitor parent;
-
-        public WebServiceMonitoringRunner(final WebServiceMonitor parent) {
-            this.parent = parent;
-        }
-
-        @Override
-        public void run() {
-            try {
-                this.parent.monitor();
-            } catch (Exception e) {
-                logger.error("Error during monitoring of WebService! ", e);
-            }
-        }
-
-    }
-
-    @Override
-    public void documentAnalysed(List<IMonitoringDataModel<?, ?>> analysedList, IWebService parsed, Document document) {
-        if ((analysedList != null) && (analysedList.size() > 0)) {
-            for (IMonitoringDataModel<?, ?> analysed : analysedList) {
-                logger.info("Created monitoring data for " + analysed.getApplicationScenario());
-                try {
-                    this.amiRepository.persist(analysed);
-                    logger.info("Persisted monitoring data for " + analysed.getApplicationScenario());
-                } catch (ContextFault e1) {
-                    logger.error(e1.getMessage(), e1);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void documentParsed(IWebService parsed, Document document) {
-    }
-
-    @Override
-    public void documentIndexed(String indexId, Document document) {
     }
 }

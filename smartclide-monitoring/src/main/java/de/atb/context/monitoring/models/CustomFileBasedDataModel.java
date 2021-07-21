@@ -14,6 +14,9 @@ package de.atb.context.monitoring.models;
  * #L%
  */
 
+import java.util.Date;
+import java.util.UUID;
+
 import com.hp.hpl.jena.rdf.model.Model;
 import de.atb.context.common.Version;
 import de.atb.context.common.util.ApplicationScenario;
@@ -24,12 +27,9 @@ import de.atb.context.persistence.ModelOutputLanguage;
 import lombok.Getter;
 import lombok.Setter;
 import org.simpleframework.xml.Root;
+import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
-
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.UUID;
 
 @RdfType("CustomFileBasedDataModel")
 @Namespace(BusinessCase.NS_DUMMY_URL)
@@ -41,6 +41,7 @@ public class CustomFileBasedDataModel implements IMonitoringDataModel<CustomFile
     private Date monitoredAt;
     private String documentIndexId = "index/file";
     private String documentUri;
+    @Id
     private String identifier;
     private FileSystemDataSource dataSource;
     private String implementingClassName = CustomFileBasedDataModel.class.getName();

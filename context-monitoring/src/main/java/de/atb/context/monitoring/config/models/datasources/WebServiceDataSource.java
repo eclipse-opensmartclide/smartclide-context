@@ -57,19 +57,19 @@ public class WebServiceDataSource extends DataSource {
     }
 
     public final Long getInterval() {
-        return (Long) this.getOptionValue(WebServiceDataSourceOptions.PollingInterval, true);
+        return this.getOptionValue(WebServiceDataSourceOptions.PollingInterval, true);
     }
 
     public final String getUserName() {
-        return (String) this.getOptionValue(WebServiceDataSourceOptions.UserName, true);
+        return this.getOptionValue(WebServiceDataSourceOptions.UserName, true);
     }
 
     public final String getPassword() {
-        return (String) this.getOptionValue(WebServiceDataSourceOptions.Password, true);
+        return this.getOptionValue(WebServiceDataSourceOptions.Password, true);
     }
 
     public final String getMachineId() {
-        return (String) this.getOptionValue(WebServiceDataSourceOptions.MachineId, true);
+        return this.getOptionValue(WebServiceDataSourceOptions.MachineId, true);
     }
 
     public final Credentials getCredentials() {
@@ -79,7 +79,7 @@ public class WebServiceDataSource extends DataSource {
     }
 
     public final Long getStartDelay() {
-        return (Long) this.getOptionValue(WebServiceDataSourceOptions.StartDelay, true);
+        return this.getOptionValue(WebServiceDataSourceOptions.StartDelay, true);
     }
 
     public final IWebService toWebService() {

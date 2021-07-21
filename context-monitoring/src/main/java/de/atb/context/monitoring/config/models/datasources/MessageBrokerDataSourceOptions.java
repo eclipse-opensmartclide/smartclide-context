@@ -21,36 +21,27 @@ import java.util.Map;
 
 /**
  * WebServiceDataSourceOptions
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 143 $
- * 
+ *
  */
 public enum MessageBrokerDataSourceOptions implements IDataSourceOptionValue {
 
-	PollingInterval("interval", Long.class),
-
 	MessageBrokerServer("server", String.class),
+
+    MessageBrokerPort("port", Integer.class),
 
 	UserName("username", String.class),
 
 	Password("password", String.class),
-	
-	StartDelay("startDelay", Long.class),
 
-	MachineId("machineId", String.class),
+    Exchange("exchange", String.class),
 
-	;
+    Topic("topic", String.class);
 
-	private final static Map<String, Class<? extends Serializable>> keysToClasses = new HashMap<String, Class<? extends Serializable>>();
-	private String key;
-	private Class<? extends Serializable> valueType;
-
-	static {
-		for (MessageBrokerDataSourceOptions option : MessageBrokerDataSourceOptions.values()) {
-			keysToClasses.put(option.key, option.valueType);
-		}
-	}
+	private final String key;
+	private final Class<? extends Serializable> valueType;
 
 	MessageBrokerDataSourceOptions(final String optionKey, final Class<? extends Serializable> valueType) {
 		this.key = optionKey;

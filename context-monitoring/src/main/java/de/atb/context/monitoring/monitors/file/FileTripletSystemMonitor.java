@@ -14,22 +14,6 @@ package de.atb.context.monitoring.monitors.file;
  * #L%
  */
 
-import de.atb.context.monitoring.analyser.IndexingAnalyser;
-import de.atb.context.monitoring.config.models.*;
-import de.atb.context.monitoring.config.models.datasources.FileTripletSystemDataSource;
-import de.atb.context.monitoring.index.Indexer;
-import de.atb.context.monitoring.models.IMonitoringDataModel;
-import de.atb.context.monitoring.parser.IndexingParser;
-import de.atb.context.monitoring.parser.file.FileTripletParser;
-import de.atb.context.monitoring.monitors.ThreadedMonitor;
-import name.pachler.nio.file.*;
-import name.pachler.nio.file.ext.ExtendedWatchEventKind;
-import org.javatuples.Triplet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import de.atb.context.common.io.FileUtils;
-import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -41,6 +25,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import de.atb.context.common.io.FileUtils;
+import de.atb.context.monitoring.analyser.IndexingAnalyser;
+import de.atb.context.monitoring.config.models.DataSource;
+import de.atb.context.monitoring.config.models.DataSourceType;
+import de.atb.context.monitoring.config.models.Interpreter;
+import de.atb.context.monitoring.config.models.InterpreterConfiguration;
+import de.atb.context.monitoring.config.models.Monitor;
+import de.atb.context.monitoring.config.models.datasources.FileTripletSystemDataSource;
+import de.atb.context.monitoring.index.Indexer;
+import de.atb.context.monitoring.models.IMonitoringDataModel;
+import de.atb.context.monitoring.monitors.ThreadedMonitor;
+import de.atb.context.monitoring.parser.IndexingParser;
+import de.atb.context.monitoring.parser.file.FileTripletParser;
+import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
+import name.pachler.nio.file.ClosedWatchServiceException;
+import name.pachler.nio.file.FileSystems;
+import name.pachler.nio.file.Path;
+import name.pachler.nio.file.Paths;
+import name.pachler.nio.file.StandardWatchEventKind;
+import name.pachler.nio.file.WatchEvent;
+import name.pachler.nio.file.WatchKey;
+import name.pachler.nio.file.WatchService;
+import name.pachler.nio.file.ext.ExtendedWatchEventKind;
+import org.javatuples.Triplet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * FileTripletSystemMonitor
@@ -65,9 +76,11 @@ public class FileTripletSystemMonitor extends
         .getLogger(FileTripletSystemMonitor.class);
 
     public FileTripletSystemMonitor(final DataSource dataSource,
-                                    final Interpreter fileSet, final Monitor monitor,
-                                    final Indexer indexer, final AmIMonitoringConfiguration amiConfiguration) {
-        super(dataSource, fileSet, monitor, indexer, amiConfiguration);
+                                    final Interpreter interpreter,
+                                    final Monitor monitor,
+                                    final Indexer indexer,
+                                    final AmIMonitoringConfiguration configuration) {
+        super(dataSource, interpreter, monitor, indexer, configuration);
         if (dataSource.getType().equals(DataSourceType.FilePairSystem)) {
             this.dataSource = dataSource;
         } else {
@@ -76,7 +89,7 @@ public class FileTripletSystemMonitor extends
         }
 
         this.logger.info("Initializing " + this.getClass().getSimpleName()
-            + " for uri: " + dataSource.getUri());
+                         + " for uri: " + dataSource.getUri());
         this.pathToMonitor = new File(this.dataSource.getUri());
     }
 
@@ -110,9 +123,9 @@ public class FileTripletSystemMonitor extends
             this.running = true;
             Thread.currentThread().setName(
                 this.getClass().getSimpleName() + " ("
-                    + this.dataSource.getId() + ")");
+                + this.dataSource.getId() + ")");
             this.logger.info("Really starting "
-                + this.getClass().getSimpleName() + " ");
+                             + this.getClass().getSimpleName() + " ");
             monitor();
             startWatcher();
         } catch (Exception e) {
@@ -121,7 +134,7 @@ public class FileTripletSystemMonitor extends
     }
 
     @Override
-    public final void monitor() {
+    public final void monitor() throws Exception {
         this.logger.info("Starting monitoring for path " + this.pathToMonitor);
         this.filesToDates.clear();
     }
@@ -154,8 +167,8 @@ public class FileTripletSystemMonitor extends
             .listFiles(filter);
         List<Triplet<File, File, File>> fileTriplets = FileTripletParser
             .getTripletsFromFiles(files, dataSource.getFirstExtension(),
-                dataSource.getSecondExtension(),
-                dataSource.getThirdExtension());
+                                  dataSource.getSecondExtension(),
+                                  dataSource.getThirdExtension());
 
         for (Triplet<File, File, File> f : fileTriplets) {
             if (!this.running) {
@@ -163,7 +176,7 @@ public class FileTripletSystemMonitor extends
             }
             if ((f == null)
                 || ((f.getValue0() == null) && (f.getValue1() == null) && (f
-                .getValue2() == null))) {
+                                                                               .getValue2() == null))) {
                 continue;
             }
             try {
@@ -189,12 +202,12 @@ public class FileTripletSystemMonitor extends
                     }
                 } else {
                     this.logger.trace("Skipping files " + f.getValue0()
-                        + " and " + f.getValue1() + " and " + f.getValue2()
-                        + ", interpreter does not accept it");
+                                      + " and " + f.getValue1() + " and " + f.getValue2()
+                                      + ", interpreter does not accept it");
                 }
             } catch (Throwable t) {
                 this.logger.error("Error parsing file " + f.getValue0()
-                    + " and " + f.getValue1() + " and " + f.getValue2(), t);
+                                  + " and " + f.getValue1() + " and " + f.getValue2(), t);
             }
         }
 
@@ -214,12 +227,12 @@ public class FileTripletSystemMonitor extends
                 WatchKey signalledKey;
                 try {
                     watchedPath.register(watchService,
-                        StandardWatchEventKind.ENTRY_CREATE,
-                        StandardWatchEventKind.ENTRY_MODIFY,
-                        StandardWatchEventKind.ENTRY_DELETE,
-                        StandardWatchEventKind.OVERFLOW,
-                        ExtendedWatchEventKind.ENTRY_RENAME_FROM,
-                        ExtendedWatchEventKind.ENTRY_RENAME_TO);
+                                         StandardWatchEventKind.ENTRY_CREATE,
+                                         StandardWatchEventKind.ENTRY_MODIFY,
+                                         StandardWatchEventKind.ENTRY_DELETE,
+                                         StandardWatchEventKind.OVERFLOW,
+                                         ExtendedWatchEventKind.ENTRY_RENAME_FROM,
+                                         ExtendedWatchEventKind.ENTRY_RENAME_TO);
                     while (true) {
                         try {
                             signalledKey = watchService.take();
@@ -251,12 +264,12 @@ public class FileTripletSystemMonitor extends
     protected final void handleWatchEvents(final List<WatchEvent<?>> events,
                                            final Long time) {
         String watchedPath = String.valueOf(Paths.get(this.pathToMonitor
-            .getAbsolutePath()));
+                                                          .getAbsolutePath()));
         String from = null;
         for (WatchEvent<?> e : events) {
             Path context = (Path) e.context();
             String file = watchedPath + java.io.File.separator
-                + context.toString();
+                          + context.toString();
             InterpreterConfiguration setting = this.interpreter
                 .getConfiguration(file);
             if (e.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
@@ -280,8 +293,8 @@ public class FileTripletSystemMonitor extends
                                       final InterpreterConfiguration setting) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(file
-                + " already existed at "
-                + this.getDefaultDateFormat().format(
+                              + " already existed at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         if (setting != null) {
@@ -294,10 +307,10 @@ public class FileTripletSystemMonitor extends
                                      final Long time, final InterpreterConfiguration setting) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(from
-                + " renamed to "
-                + to
-                + " at "
-                + this.getDefaultDateFormat().format(
+                              + " renamed to "
+                              + to
+                              + " at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         if (setting != null) {
@@ -311,8 +324,8 @@ public class FileTripletSystemMonitor extends
                                      final InterpreterConfiguration setting) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(file
-                + " created at "
-                + this.getDefaultDateFormat().format(
+                              + " created at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         if (setting != null) {
@@ -325,8 +338,8 @@ public class FileTripletSystemMonitor extends
                                      final InterpreterConfiguration setting) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(file
-                + " deleted at "
-                + this.getDefaultDateFormat().format(
+                              + " deleted at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         this.filesToDates.remove(file);
@@ -342,8 +355,8 @@ public class FileTripletSystemMonitor extends
 
         if (this.logger.isTraceEnabled() && modified) {
             this.logger.trace(file
-                + " modified at "
-                + this.getDefaultDateFormat().format(
+                              + " modified at "
+                              + this.getDefaultDateFormat().format(
                 new Date(time)));
         }
         if (modified) {
@@ -361,22 +374,22 @@ public class FileTripletSystemMonitor extends
             updateFilePair(file);
             if ((this.filePair != null) && (this.filePair.getValue0() != null)
                 && (this.filePair.getValue1() != null)) {
-                IndexingParser<Triplet<File, File, File>> parser = setting
-                    .createParser(this.dataSource, this.indexer,
-                        this.amiConfiguration);
+                IndexingParser<Triplet<File, File, File>> parser = getParser(setting);
                 IndexingAnalyser<IMonitoringDataModel<?, ?>, Triplet<File, File, File>> analyser = (IndexingAnalyser<IMonitoringDataModel<?, ?>, Triplet<File, File, File>>) parser
                     .getAnalyser();
-                if (parser.parse(this.filePair)) {
-                    this.indexer.addDocumentToIndex(parser.getDocument());
-                    this.raiseParsedEvent(this.filePair, parser.getDocument());
-                    this.raiseAnalysedEvent(analyser.analyse(this.filePair),
-                        this.filePair, analyser.getDocument());
-                }
+
+                parseAndAnalyse(this.filePair, parser, analyser);
+
                 this.filePair = Triplet.with(null, null, null);
             }
         } else {
             this.logger.debug("File " + fileName + " will be ignored!");
         }
+    }
+
+    @Override
+    protected IndexingParser<Triplet<File, File, File>> getParser(final InterpreterConfiguration setting) {
+        return setting.createParser(this.dataSource, this.indexer, this.amiConfiguration);
     }
 
     protected final Triplet<File, File, File> updateFilePair(final File file) {

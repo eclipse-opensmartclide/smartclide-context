@@ -15,19 +15,30 @@ package de.atb.context.monitoring.config.models;
  */
 
 
-import de.atb.context.monitoring.config.models.datasources.*;
+import java.io.Serializable;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import de.atb.context.monitoring.config.models.datasources.DatabaseDataSource;
+import de.atb.context.monitoring.config.models.datasources.FilePairSystemDataSource;
+import de.atb.context.monitoring.config.models.datasources.FileSystemDataSource;
+import de.atb.context.monitoring.config.models.datasources.FileTripletSystemDataSource;
+import de.atb.context.monitoring.config.models.datasources.IDataSourceOptionValue;
+import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSource;
+import de.atb.context.monitoring.config.models.datasources.WebServiceDataSource;
+import org.apache.commons.lang3.tuple.Pair;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Transient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
-
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Locale;
-import java.util.StringTokenizer;
 
 /**
  * DataSource
@@ -80,6 +91,14 @@ public abstract class DataSource implements Serializable {
      */
     @Attribute(required = false)
     protected String options;
+
+    /**
+     * The options string as a map, mapping option name to option value.
+     * <p>
+     * Do not access directly, always use the corresponding getOptionsMap() method!
+     */
+    @Transient
+    private Map<String, String> optionsMap;
 
     /**
      * Gets the Id of the DataSource.
@@ -169,6 +188,18 @@ public abstract class DataSource implements Serializable {
     }
 
     /**
+     * Returns the options as a map of option name to option value (String).
+     *
+     * @return Map of option name to option value
+     */
+    public final Map<String, String> getOptionsMap() {
+        if (optionsMap == null) {
+            this.optionsMap = optionsToMap();
+        }
+        return optionsMap;
+    }
+
+    /**
      * Sets miscellaneous options for the DataSource as a String.
      * <p>
      * The option String has to be in the format
@@ -178,6 +209,12 @@ public abstract class DataSource implements Serializable {
      */
     public final void setOptions(final String options) {
         this.options = options;
+        this.optionsMap = optionsToMap();
+    }
+
+    public final void setOptions(final Map<String, String> optionsMap) {
+        this.optionsMap = optionsMap;
+        this.options = optionsMapToString(optionsMap);
     }
 
     /**
@@ -215,6 +252,8 @@ public abstract class DataSource implements Serializable {
             return (T) convertTo(WebServiceDataSource.class);
         } else if (type == DataSourceType.Database) {
             return (T) convertTo(DatabaseDataSource.class);
+        } else if (type == DataSourceType.MessageBroker) {
+            return (T) convertTo(MessageBrokerDataSource.class);
         } else {
             return null;
         }
@@ -273,40 +312,8 @@ public abstract class DataSource implements Serializable {
      * or a correspondig value exists.
      */
     private String getOptionValue(final String key, final boolean decode) {
-        if ((this.options == null) || (this.options.trim().length() == 0)) {
-            return null;
-        }
-        StringTokenizer tokenizer = new StringTokenizer(this.options, "&");
-        String value = null;
-        while (tokenizer.hasMoreTokens()) {
-            value = getValueFromPair(tokenizer.nextToken(), key, decode);
-            if (value != null) {
-                return value;
-            }
-        }
-        return value;
-    }
-
-    private String getValueFromPair(final String pair, final String key, final boolean decode) {
-        int index = pair.indexOf('=');
-        if (index <= 0) {
-            return null;
-        }
-
-        String left = pair.substring(0, index);
-        if (left.trim().length() == 0 || !left.equals(key)) {
-            return null;
-        }
-
-        String value = pair.substring(index + 1);
-        if (decode) {
-            try {
-                return URLDecoder.decode(value, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                logger.warn(e.getMessage(), e);
-            }
-        }
-        return value;
+        final String value = getOptionsMap().get(key);
+        return value == null ? null : decode ? URLDecoder.decode(value, StandardCharsets.UTF_8) : value;
     }
 
     /**
@@ -339,5 +346,21 @@ public abstract class DataSource implements Serializable {
         }
         logger.warn("Could not cast '" + value + "' to class " + clazz);
         return null;
+    }
+
+    private Map<String, String> optionsToMap() {
+        return Arrays.stream(options.split("&"))
+            .map(option -> {
+                final String[] parts = option.split("=");
+                return parts.length == 2 ? Pair.of(parts[0], parts[1]) : null;
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+    }
+
+    private String optionsMapToString(final Map<String, String> optionsMap) {
+        return optionsMap.entrySet().stream()
+            .map(entry -> String.format("%s=%s", entry.getKey(), entry.getValue()))
+            .collect(Collectors.joining("&"));
     }
 }
