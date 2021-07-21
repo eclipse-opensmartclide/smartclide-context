@@ -2,6 +2,7 @@ package de.atb.context.monitoring.models;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import de.atb.context.common.Version;
+import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.monitoring.config.models.datasources.FileSystemDataSource;
 import de.atb.context.monitoring.rdf.RdfHelper;
