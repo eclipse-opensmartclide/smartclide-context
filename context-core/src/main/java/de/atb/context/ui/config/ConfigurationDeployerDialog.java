@@ -4,12 +4,12 @@ package de.atb.context.ui.config;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -454,12 +454,12 @@ public class ConfigurationDeployerDialog extends JDialog implements
 /*************** UNUSED IMPLEMENTED FUNCTIONS **************************/
 /*
  * private static class ServiceRenderer extends DefaultListCellRenderer {
- * 
+ *
  * private static final long serialVersionUID = -7214238324806146528L; private
  * ImageIcon icon;
- * 
+ *
  * public ServiceRenderer() { icon = Icon.Connection_16.getIcon(); }
- * 
+ *
  * @Override public Component getListCellRendererComponent(JList list, Object
  * value, int index, boolean isSelected, boolean hasFocus) { JLabel label =
  * (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,

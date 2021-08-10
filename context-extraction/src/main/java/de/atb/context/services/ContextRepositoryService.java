@@ -1,27 +1,15 @@
-/*
- * @(#)ContextRepositoryService.java
- *
- * $Id: ContextRepositoryService.java 647 2016-10-20 15:13:20Z scholze $
- * 
- * $Rev:: 647                  $ 	last change revision
- * $Date:: 2016-10-20 17:13:20#$	last change date
- * $Author:: scholze             $	last change author
- * 
- * Copyright 2011-15 Sebastian Scholze (ATB). All rights reserved.
- *
- */
 package de.atb.context.services;
 
 /*
  * #%L
  * ATB Context Extraction Core Service
  * %%
- * Copyright (C) 2018 - 2019 ATB
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -135,7 +123,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#persistContext(de.
 	 * atb.context.context.ContextContainer)
@@ -150,7 +138,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#getContext(de.atb.
 	 * context.common.util.BusinessCase, java.lang.String)
@@ -167,7 +155,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IContextRepositoryService#getContext(de.
 	 * atb.context.common.util.BusinessCase, java.lang.String)
@@ -183,7 +171,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IContextRepositoryService#getRawContext(
 	 * de.atb.context.common.util.ApplicationScenario, java.lang.String)
@@ -200,7 +188,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IContextRepositoryService#getRawContext(
 	 * de.atb.context.common.util.BusinessCase, java.lang.String)
@@ -216,7 +204,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#executeSparqlAskQuery
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
@@ -228,7 +216,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#executeSparqlSelectQuery
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
@@ -241,7 +229,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#executeSparqlDescribeQuery
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
@@ -258,7 +246,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.atb.context.persistence.IContextRepository#
 	 * executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase,
 	 * java.lang.String)
@@ -275,7 +263,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#executeSparqlAskQuery
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
@@ -288,7 +276,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#executeSparqlSelectQuery
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
@@ -302,7 +290,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#executeSparqlDescribeQuery
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
@@ -320,7 +308,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.atb.context.persistence.IContextRepository#
 	 * executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase,
 	 * java.lang.String, boolean)
@@ -338,7 +326,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#getLastContextsIds
 	 * (de.atb.context.common.util.BusinessCase, int)
@@ -350,7 +338,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#getLastContextsIds
 	 * (de.atb.context.common.util.BusinessCase,
@@ -363,7 +351,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IContextRepositoryService#getLastContextsIds
 	 * (de.atb.context.common.util.ApplicationScenario, int)
@@ -375,7 +363,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IContextRepositoryService#getLastContextsIds
 	 * (de.atb.context.common.util.ApplicationScenario,
@@ -389,7 +377,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#init(de.atb.context
 	 * .common.util.BusinessCase, java.lang.String)
@@ -401,7 +389,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IContextRepositoryService#getDefaultModel
 	 * (de.atb.context.common.util.BusinessCase)

@@ -4,12 +4,12 @@ package de.atb.context.tools.ontology;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for Configuration complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Configuration"&gt;
  *   &lt;complexContent&gt;
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Configuration", propOrder = {
@@ -78,32 +78,32 @@ public class Configuration {
         this.belongTo = belongTo;
         this.type = type;
     }
-    
+
     public Configuration() {
     }
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
-    
-    
-    
+
+
+
     public String getDescription() {
         return description;
     }
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDescription(String value) {
         this.description = value;
@@ -111,11 +111,11 @@ public class Configuration {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -123,11 +123,11 @@ public class Configuration {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;
@@ -135,11 +135,11 @@ public class Configuration {
 
     /**
      * Gets the value of the belongTo property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBelongTo() {
         return belongTo;
@@ -147,11 +147,11 @@ public class Configuration {
 
     /**
      * Sets the value of the belongTo property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBelongTo(String value) {
         this.belongTo = value;
@@ -159,11 +159,11 @@ public class Configuration {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -171,11 +171,11 @@ public class Configuration {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -183,11 +183,11 @@ public class Configuration {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -195,11 +195,11 @@ public class Configuration {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;

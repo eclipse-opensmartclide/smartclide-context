@@ -4,12 +4,12 @@ package de.atb.context.tools.ontology;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for Definition complex type.
- * 
+ *
  * <p>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Definition"&gt;
  *   &lt;complexContent&gt;
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Definition", propOrder = { "description", "id" })
@@ -54,9 +54,9 @@ public class Definition {
 
 	/**
 	 * Gets the value of the description property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
 	public final String getDescription() {
 		return description;
@@ -64,10 +64,10 @@ public class Definition {
 
 	/**
 	 * Sets the value of the description property.
-	 * 
+	 *
 	 * @param value
 	 *            allowed object is {@link String }
-	 * 
+	 *
 	 */
 	public final void setDescription(final String value) {
 		this.description = value;
@@ -75,9 +75,9 @@ public class Definition {
 
 	/**
 	 * Gets the value of the id property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
 	public final String getId() {
 		return id;
@@ -85,10 +85,10 @@ public class Definition {
 
 	/**
 	 * Sets the value of the id property.
-	 * 
+	 *
 	 * @param value
 	 *            allowed object is {@link String }
-	 * 
+	 *
 	 */
 	public final void setId(final String value) {
 		this.id = value;

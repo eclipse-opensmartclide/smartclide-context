@@ -4,7 +4,7 @@ package de.atb.context.persistence.context;
  * #%L
  * ATB Context Extraction Core Service
  * %%
- * Copyright (C) 2018 - 2019 ATB
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -46,10 +46,10 @@ import java.util.List;
 
 /**
  * ContextRepository
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 647 $
- * 
+ *
  */
 @Setter
 @Getter
@@ -105,7 +105,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#getRawContext(de.atb
 	 * .context.common.util.ApplicationScenario, java.lang.String)
@@ -120,7 +120,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#getRawContext(de.atb
 	 * .context.common.util.BusinessCase, java.lang.String)
@@ -161,7 +161,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#getContext(de.atb.
 	 * context.common.util.BusinessCase, java.lang.String)
@@ -186,7 +186,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#getContext(de.atb.
 	 * context.common.util.BusinessCase, java.lang.String)
@@ -251,7 +251,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#executeSparqlSelectQuery
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
@@ -263,7 +263,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#executeSparqlDescribeQuery
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
@@ -275,7 +275,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.atb.context.persistence.IContextRepository#
 	 * executeSparqlConstructrQuery
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
@@ -287,7 +287,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#executeSparqlAskQuery
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
@@ -299,7 +299,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#executeSparqlAskQuery
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
@@ -336,7 +336,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#executeSparqlSelectQuery
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
@@ -373,7 +373,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#executeSparqlDescribeQuery
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
@@ -410,7 +410,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.atb.context.persistence.IContextRepository#
 	 * executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase,
 	 * java.lang.String, boolean)
@@ -447,7 +447,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#initializeRepository
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
@@ -460,7 +460,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#getDefaultModel(de
 	 * .atb.context.common.util.BusinessCase)
@@ -521,7 +521,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#getLastContextsIds
 	 * (de.atb.context.common.util.ApplicationScenario, int)
@@ -545,7 +545,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#getLastContextsIds
 	 * (de.atb.context.common.util.ApplicationScenario,
@@ -569,7 +569,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#getLastContextsIds
 	 * (de.atb.context.common.util.BusinessCase, int)
@@ -591,7 +591,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.IContextRepository#getLastContextsIds
 	 * (de.atb.context.common.util.BusinessCase,
@@ -636,7 +636,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.atb.context.persistence.common.IPersistenceUnit#persist(java.
 	 * lang.Object)

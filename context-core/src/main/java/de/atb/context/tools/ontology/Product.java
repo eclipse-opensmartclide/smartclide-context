@@ -4,7 +4,7 @@ package de.atb.context.tools.ontology;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -25,11 +25,11 @@ import java.util.List;
 /**
  * <p>
  * Java class for Product complex type.
- * 
+ *
  * <p>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Product"&gt;
  *   &lt;complexContent&gt;
@@ -46,8 +46,8 @@ import java.util.List;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Product", propOrder = { "hasPES", "hasProduct", "variant",
@@ -69,9 +69,9 @@ public class Product {
 
 	/**
 	 * Gets the value of the hasPES property.
-	 * 
+	 *
 	 * @return possible object is {@link Solution }
-	 * 
+	 *
 	 */
 	public final Solution getHasPES() {
 		return hasPES;
@@ -79,10 +79,10 @@ public class Product {
 
 	/**
 	 * Sets the value of the hasPES property.
-	 * 
+	 *
 	 * @param value
 	 *            allowed object is {@link Solution }
-	 * 
+	 *
 	 */
 	public final void setHasPES(final Solution value) {
 		this.hasPES = value;
@@ -90,26 +90,26 @@ public class Product {
 
 	/**
 	 * Gets the value of the hasProduct property.
-	 * 
+	 *
 	 * <p>
 	 * This accessor method returns a reference to the live list, not a
 	 * snapshot. Therefore any modification you make to the returned list will
 	 * be present inside the JAXB object. This is why there is not a
 	 * {@code set} method for the hasProduct property.
-	 * 
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getHasProduct().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list: Product
 	 * @return list of Product objects
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public final List<Product> getHasProduct() {
 		if (hasProduct == null) {
@@ -120,9 +120,9 @@ public class Product {
 
 	/**
 	 * Gets the value of the variant property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
 	public final String getVariant() {
 		return variant;
@@ -130,10 +130,10 @@ public class Product {
 
 	/**
 	 * Sets the value of the variant property.
-	 * 
+	 *
 	 * @param value
 	 *            allowed object is {@link String }
-	 * 
+	 *
 	 */
 	public final void setVariant(final String value) {
 		this.variant = value;
@@ -141,9 +141,9 @@ public class Product {
 
 	/**
 	 * Gets the value of the description property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
 	public final String getDescription() {
 		return description;
@@ -151,10 +151,10 @@ public class Product {
 
 	/**
 	 * Sets the value of the description property.
-	 * 
+	 *
 	 * @param value
 	 *            allowed object is {@link String }
-	 * 
+	 *
 	 */
 	public final void setDescription(final String value) {
 		this.description = value;
@@ -162,9 +162,9 @@ public class Product {
 
 	/**
 	 * Gets the value of the id property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
 	public final String getId() {
 		return id;
@@ -172,10 +172,10 @@ public class Product {
 
 	/**
 	 * Sets the value of the id property.
-	 * 
+	 *
 	 * @param value
 	 *            allowed object is {@link String }
-	 * 
+	 *
 	 */
 	public final void setId(final String value) {
 		this.id = value;
@@ -183,27 +183,27 @@ public class Product {
 
 	/**
 	 * Gets the value of the hasAmIElements property.
-	 * 
+	 *
 	 * <p>
 	 * This accessor method returns a reference to the live list, not a
 	 * snapshot. Therefore any modification you make to the returned list will
 	 * be present inside the JAXB object. This is why there is not a
 	 * {@code set} method for the hasAmIElements property.
-	 * 
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getHasAmIElements().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list
 	 * {@link AmISensor }
 	 * @return list of AmISensor objects
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public final List<AmISensor> getHasAmIElements() {
 		if (hasAmIElements == null) {

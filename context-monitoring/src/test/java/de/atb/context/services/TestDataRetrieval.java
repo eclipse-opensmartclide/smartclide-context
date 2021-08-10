@@ -27,12 +27,9 @@ import java.util.Properties;
  * @author scholze
  * @version $LastChangedRevision: 577 $
  */
-
-
 public class TestDataRetrieval {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(TestDataRetrieval.class);
+	private static final Logger logger = LoggerFactory.getLogger(TestDataRetrieval.class);
 
 	private static Server server;
 	private static IAmIMonitoringService service;

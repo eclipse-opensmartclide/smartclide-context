@@ -18,12 +18,10 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import de.atb.context.common.util.ApplicationScenario;
-import de.atb.context.common.util.BusinessCase;
 import de.atb.context.monitoring.config.models.Config;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSourceOptions;
 import de.atb.context.monitoring.models.GitDataModel;
 import de.atb.context.monitoring.models.GitMessage;
-import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.services.AmIMonitoringService;
 import de.atb.context.services.IAmIMonitoringDataRepositoryService;
 import de.atb.context.services.IAmIMonitoringService;
@@ -52,8 +50,6 @@ import static org.junit.Assert.assertNotNull;
  * @author scholze
  * @version $LastChangedRevision: 577 $
  */
-
-
 public class TestDataRetrieval {
 
     private static final Logger logger = LoggerFactory.getLogger(TestDataRetrieval.class);

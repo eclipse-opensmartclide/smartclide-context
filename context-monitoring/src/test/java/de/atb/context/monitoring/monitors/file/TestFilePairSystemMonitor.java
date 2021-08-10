@@ -1,8 +1,7 @@
 package de.atb.context.monitoring.monitors.file;
 
-import org.junit.*;
+import java.nio.file.Path;
 
-import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import de.atb.context.common.exceptions.ConfigurationException;
 import de.atb.context.monitoring.MetaMonitor;
 import de.atb.context.monitoring.config.MonitoringConfiguration;
@@ -14,16 +13,19 @@ import de.atb.context.monitoring.config.models.Monitor;
 import de.atb.context.monitoring.config.models.datasources.FilePairSystemDataSource;
 import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.monitors.ThreadedMonitor;
-
-import java.io.File;
-import java.nio.file.Path;
+import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * TestFilePairSystemMonitor
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 138 $
- * 
+ *
  */
 public class TestFilePairSystemMonitor {
 
@@ -58,7 +60,7 @@ public class TestFilePairSystemMonitor {
 		indexer.dropIndex();
 
 		AmIMonitoringConfiguration amiConfiguration = null;
-		
+
 		threadedMonitor = MetaMonitor.createThreadedMonitor(monitor, datasource, interpreter, indexer, amiConfiguration, null); //// FIXME: 17.10.2016
 	}
 

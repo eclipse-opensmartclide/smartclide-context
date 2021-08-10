@@ -1,15 +1,15 @@
 package de.atb.context.modules.broker.process.services;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -45,7 +45,7 @@ public class PESFlowSpecs {
     public void setOutputModel(OutputDataModel outputModel) {
         this.outputModel = outputModel;
     }
-    
+
     public boolean isSettled() {
         return settled;
     }
@@ -53,7 +53,7 @@ public class PESFlowSpecs {
     public void setSettled(boolean settled) {
         this.settled = settled;
     }
-    
+
     public PESFlowSpecs() {
         this.period = 1;
         this.flowtype = null;
@@ -65,7 +65,7 @@ public class PESFlowSpecs {
         this.hours = 0;
         this.sourceInfo = new ServiceInfo();
     }
-    
+
     public int getDelayTimeOfPesStart() {
         return delayTimeOfPesStart;
     }
@@ -105,7 +105,6 @@ public class PESFlowSpecs {
     public void setPeriod(int period) {
         this.period = period;
     }
-    
 
     public int getHours() {
         return hours;
@@ -158,6 +157,5 @@ public class PESFlowSpecs {
     public void setSourceInfo(ServiceInfo sourceInfo) {
         this.sourceInfo = sourceInfo;
     }
-    
-    
+
 }

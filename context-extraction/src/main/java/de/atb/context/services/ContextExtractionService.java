@@ -4,12 +4,12 @@ package de.atb.context.services;
  * #%L
  * ATB Context Extraction Core Service
  * %%
- * Copyright (C) 2018 - 2019 ATB
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -43,14 +43,14 @@ import java.util.List;
  * In order to retrieve a registered WebService, please consider using the
  * {@link de.atb.context.services.manager.ServiceManager} by providing the implemented interface
  * {@link IContextExtractionService} like :
- * 
+ *
  * <pre>
  * ServiceManager.getWebservice(IContextExtractionService.class);
  * </pre>
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 647 $
- * 
+ *
  */
 public class ContextExtractionService extends DeployableService implements IContextExtractionService {
     //protected ServiceInfo repositoryConfigData = new ServiceInfo();
@@ -65,7 +65,7 @@ public class ContextExtractionService extends DeployableService implements ICont
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IContextExtractionService#extractContext
 	 * (de.atb.context.monitoring.models.IMonitoringDataModel)
@@ -111,7 +111,7 @@ public class ContextExtractionService extends DeployableService implements ICont
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IPrimitiveService#start()
 	 */
 	@Override
@@ -121,7 +121,7 @@ public class ContextExtractionService extends DeployableService implements ICont
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IPrimitiveService#end()
 	 */
 	@Override
@@ -131,7 +131,7 @@ public class ContextExtractionService extends DeployableService implements ICont
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IPrimitiveService#restart()
 	 */
 	@Override
@@ -141,7 +141,7 @@ public class ContextExtractionService extends DeployableService implements ICont
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IPrimitiveService#ping()
 	 */
 	@Override
@@ -152,7 +152,7 @@ public class ContextExtractionService extends DeployableService implements ICont
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IContextExtractionService#informAboutAdaptation
 	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
@@ -169,7 +169,7 @@ public class ContextExtractionService extends DeployableService implements ICont
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IContextExtractionService#getLastContextsIds
 	 * (de.atb.context.common.util.BusinessCase, int)
@@ -190,7 +190,7 @@ public class ContextExtractionService extends DeployableService implements ICont
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * IContextExtractionService#getLastContextsIds
 	 * (de.atb.context.common.util.BusinessCase,

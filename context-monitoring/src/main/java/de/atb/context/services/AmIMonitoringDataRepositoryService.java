@@ -4,29 +4,15 @@ package de.atb.context.services;
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
-
-/*
- * @(#)MonitoringDataRepositoryService.java
- *
- * $Id: AmIMonitoringDataRepositoryService.java 665 2016-11-03 23:44:11Z scholze $
- *
- * $Rev:: 239                  $ 	last change revision
- * $Date:: 2015-09-24 14:10:36#$	last change date
- * $Author:: scholze             $	last change author
- *
- * Copyright 2011-15 Sebastian Scholze (ATB). All rights reserved.
- *
- */
-
 
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;

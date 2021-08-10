@@ -1,10 +1,10 @@
 package de.atb.context.services.dataLayer;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -73,7 +73,6 @@ public abstract class RepositoryService<T> /*<T extends FlowController>*/ implem
     public OutputDataModel getModel() {
         return model;
     }
-    
 
     public abstract T get(String elementId, Timestamp stamp, String pesId, String serviceId) throws ContextFault;
 
