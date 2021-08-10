@@ -37,12 +37,10 @@ public abstract class MessageBrokerAnalyser<OutputType extends IMonitoringDataMo
         super(dataSource, interpreterConfiguration, indexer, document, amiConfiguration);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IndexingAnalyser#analyseObject
-     * (java.lang.Object, org.apache.lucene.document.Document)
+     * @see IndexingAnalyser#analyseObject(java.lang.Object, org.apache.lucene.document.Document)
      */
     @Override
     public final List<OutputType> analyseObject(final String input, final Document document) {

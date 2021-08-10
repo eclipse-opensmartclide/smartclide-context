@@ -9,7 +9,7 @@ package de.atb.context.services.config.models;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -98,10 +98,10 @@ public class SWService implements ISWService {
 		this.host = host;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.services.config.models.IService#getLocation()
+	 * @see de.atb.context.services.config.models.ISWService#getLocation()
 	 */
 	@Override
 	public final URL getLocation() {
@@ -112,10 +112,10 @@ public class SWService implements ISWService {
 		this.location = location;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.services.config.models.IService#getServerClass()
+	 * @see de.atb.context.services.config.models.ISWService#getServerClass()
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -133,10 +133,10 @@ public class SWService implements ISWService {
 		this.serverClass = serverClass.getName();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.services.config.models.IService#getProxyClass()
+	 * @see de.atb.context.services.config.models.ISWService#getProxyClass()
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -154,10 +154,10 @@ public class SWService implements ISWService {
 		this.proxyClass = proxyClass.getName();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.services.config.models.IService#getName()
+	 * @see de.atb.context.services.config.models.ISWService#getName()
 	 */
 	@Override
 	public final String getName() {

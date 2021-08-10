@@ -9,7 +9,7 @@ package de.atb.context.extraction.util.ical;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -173,7 +173,7 @@ public enum ICalDataTypeProperties implements IOntologyResource, IOntPropertyPro
 	// return getNameSpace();
 	// }
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
 	 * @see de.atb.context.context.util.IOntologyResource#getNameSpace()
@@ -188,12 +188,10 @@ public enum ICalDataTypeProperties implements IOntologyResource, IOntPropertyPro
 		return localName;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.ce.util.OntPropertyProvider#getProperty(com.hp.hpl
-	 * .jena.ontology.OntModel)
+	 * @see de.atb.context.extraction.util.IOntPropertyProvider#getProperty(com.hp.hpl.jena.ontology.OntModel)
 	 */
 	@Override
 	public DatatypeProperty getProperty(final OntModel model) {

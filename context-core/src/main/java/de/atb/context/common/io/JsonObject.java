@@ -9,7 +9,7 @@ package de.atb.context.common.io;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -47,7 +47,7 @@ import java.util.Map;
  *         implied. See the License for the specific language governing
  *         permissions and limitations under the License.*
  */
-@SuppressWarnings({ "rawtypes", "serial", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class JsonObject<K, V> extends LinkedHashMap<K, V> {
 	Object target;
 	boolean isMap = false;
@@ -185,7 +185,7 @@ public class JsonObject<K, V> extends LinkedHashMap<K, V> {
 		return (Object[]) get("@items");
 	}
 
-	public final int getLength() throws IOException {
+	public final int getLength() {
 		if (isArray()) {
 			if (target == null) {
 				Object[] items = (Object[]) get("@items");

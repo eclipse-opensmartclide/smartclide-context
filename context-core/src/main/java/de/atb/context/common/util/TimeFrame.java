@@ -112,8 +112,7 @@ public class TimeFrame {
 		if (cal == null) {
 			return null;
 		}
-		return String.format(TimeFrame.XSD_FORMAT_STRING,
-				new XSDDateTime(cal).toString());
+		return String.format(TimeFrame.XSD_FORMAT_STRING, new XSDDateTime(cal));
 	}
 
 	public final String getXSDLexicalFormForEndTime() {
@@ -121,14 +120,12 @@ public class TimeFrame {
 		if (cal == null) {
 			return null;
 		}
-		return String.format(TimeFrame.XSD_FORMAT_STRING,
-				new XSDDateTime(cal).toString());
+		return String.format(TimeFrame.XSD_FORMAT_STRING, new XSDDateTime(cal));
 	}
 
 	public final boolean contains(final Date time) {
 		if (time != null) {
-			return (time.getTime() >= startTime.getTime())
-					&& (time.getTime() <= endTime.getTime());
+			return (time.getTime() >= startTime.getTime()) && (time.getTime() <= endTime.getTime());
 		}
 		return false;
 	}

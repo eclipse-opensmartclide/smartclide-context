@@ -89,47 +89,40 @@ public enum BaseMonitoringClasses implements IMonitoringDataResource {
         return model.createResource(this.getUri(model));
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataResource#getLocalName
-     * ()
+     * @see IMonitoringDataResource#getLocalName()
      */
     @Override
     public String getLocalName() {
         return this.localName;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataResource#getURI
-     * (com.hp.hpl.jena.rdf.model.Model)
+     * @see IMonitoringDataResource#getUri(com.hp.hpl.jena.rdf.model.Model)
      */
     @Override
     public String getUri(final Model model) {
         return model.getNsPrefixURI(this.namespace.getLocalName()) + this.localName;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see IMonitoringDataResource#
-     * getNameSpacePrefix()
+     * @see IMonitoringDataResource#getNameSpacePrefix()
      */
     @Override
     public String getNameSpacePrefix() {
         return this.namespace.getLocalName();
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataResource#getNameSpace
-     * (com.hp.hpl.jena.rdf.model.Model)
+     * @see IMonitoringDataResource#getNameSpace(com.hp.hpl.jena.rdf.model.Model)
      */
     @Override
     public String getNameSpace(final Model model) {

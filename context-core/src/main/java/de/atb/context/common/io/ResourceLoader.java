@@ -14,14 +14,16 @@ package de.atb.context.common.io;
  * #L%
  */
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import de.atb.context.common.io.FileUtils;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ResourceLoader
@@ -45,10 +47,10 @@ public class ResourceLoader {
 		}
 		FileUtils.ensureDirectoryExists(file.getAbsolutePath());
 
-		try (FileOutputStream fos = new FileOutputStream(file);) {
+		try (FileOutputStream fos = new FileOutputStream(file)) {
 
 			final byte[] by = new byte[4096];
-			int bytesRead = 0;
+			int bytesRead;
 			while ((bytesRead = is.read(by)) != -1) {
 				fos.write(by, 0, bytesRead);
 			}

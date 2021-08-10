@@ -9,7 +9,7 @@ package de.atb.context.ui.util;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -111,7 +111,7 @@ public class JTextAreaAppender extends AppenderSkeleton {
 		System.setOut(osOut);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
 	 * @see org.apache.log4j.Appender#close()
@@ -120,7 +120,7 @@ public class JTextAreaAppender extends AppenderSkeleton {
 	public void close() {
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
 	 * @see org.apache.log4j.Appender#requiresLayout()
@@ -130,12 +130,10 @@ public class JTextAreaAppender extends AppenderSkeleton {
 		return false;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * org.apache.log4j.AppenderSkeleton#append(org.apache.log4j.spi.LoggingEvent
-	 * )
+	 * @see org.apache.log4j.AppenderSkeleton#append(org.apache.log4j.spi.LoggingEvent)
 	 */
 	@Override
 	protected final void append(final LoggingEvent event) {

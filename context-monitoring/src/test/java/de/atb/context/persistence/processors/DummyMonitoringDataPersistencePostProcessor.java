@@ -6,22 +6,20 @@ import org.slf4j.LoggerFactory;
 
 /**
  * DummyPersistencePostProcessor
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 699 $
- * 
+ *
  */
 public class DummyMonitoringDataPersistencePostProcessor extends BasePersistenceProcessor<DummyMonitoringDataModel> implements
         IPersistencePostProcessor<DummyMonitoringDataModel> {
 
 	private final Logger logger = LoggerFactory.getLogger(DummyMonitoringDataPersistencePostProcessor.class);
-	
-	/*
+
+	/**
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.atb.context.persistence.processors.IPersistenceProcessor#process
-	 * (java.lang.Object)
+	 *
+	 * @see de.atb.context.persistence.processors.IPersistenceProcessor#process(java.lang.Object)
 	 */
 	@Override
 	public final DummyMonitoringDataModel process(DummyMonitoringDataModel object) {

@@ -9,7 +9,7 @@ package de.atb.context.persistence.common;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -62,7 +62,7 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
     }
 
     protected final void createShutdownHook() {
-        final Thread shutdownHook = new Thread(() -> shuttingDown(), "Shutdown Hook for repository at '" + basicLocation + "'");
+        final Thread shutdownHook = new Thread(this::shuttingDown, "Shutdown Hook for repository at '" + basicLocation + "'");
         Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
 
@@ -130,8 +130,7 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
 
     protected static synchronized String getLocationForBusinessCase(
             final String baseUri, final BusinessCase bc) {
-        return String.format("%s%s%s%s%s", ".", File.separator, baseUri,
-                File.separator, String.valueOf(bc));
+        return String.format("%s%s%s%s%s", ".", File.separator, baseUri, File.separator, bc);
     }
 
     protected abstract void shuttingDown();
@@ -147,7 +146,7 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
             throw new IllegalArgumentException("Directory '" + modelDir
                     + "' does not exist and cannot be created.");
         }
-        T toReturn = null;
+        T toReturn;
         if ((clazz == OntModel.class)
                 || implementsInterface(clazz, OntModel.class)) {
             OntModel ontModel = ModelFactory
@@ -192,17 +191,17 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
             final String processorType) {
         final boolean debug = Repository.logger.isDebugEnabled();
         if (processors != null) {
-            Repository.logger.debug("Triggering Persistence %s-Processors for '%s'", processorType, appScenario);
+            Repository.logger.debug("Triggering Persistence {}-Processors for '{}'", processorType, appScenario);
             if (debug) {
                 Repository.logger.debug(String.format(
                         "Triggering %1$d Persistence " + processorType
                                 + "-Processor(s) for '" + appScenario + "'",
-                        Integer.valueOf(processors.size())));
+                        processors.size()));
             }
             if (!processors.isEmpty()) {
                 for (final IPersistenceProcessor<T> processor : processors) {
                     if (debug) {
-                        Repository.logger.debug("Triggering Persistence %s-Processor '%s' for '%s'", processorType, processor.getId(), appScenario);
+                        Repository.logger.debug("Triggering Persistence {}-Processor '{}' for '{}'", processorType, processor.getId(), appScenario);
                     }
                     processor.process(object);
                 }
@@ -210,12 +209,10 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.persistence.common.IPersistenceUnit#
-     * addIPersistencePreProssecor
-     * (de.atb.context.persistence.processors.IPersistencePreProcessor)
+     * @see de.atb.context.persistence.common.IPersistenceUnit#addPersistencePreProcessor(de.atb.context.common.util.ApplicationScenario, de.atb.context.persistence.processors.IPersistencePreProcessor)
      */
     @Override
     public final synchronized boolean addPersistencePreProcessor(
@@ -224,12 +221,10 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
         return addPersistenceProcessor(scenario, preProcessors, preProcessor);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.persistence.common.IPersistenceUnit#
-     * addIPersistencePostProssecor
-     * (de.atb.context.persistence.processors.IPersistencePostProcessor)
+     * @see de.atb.context.persistence.common.IPersistenceUnit#addPersistencePostProcessor(de.atb.context.common.util.ApplicationScenario, de.atb.context.persistence.processors.IPersistencePostProcessor)
      */
     @Override
     public final synchronized boolean addPersistencePostProcessor(
@@ -262,12 +257,10 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
         return !exists;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.persistence.common.IPersistenceUnit#
-     * removeIPersistencePreProssecor
-     * (de.atb.context.persistence.processors.IPersistencePreProcessor)
+     * @see de.atb.context.persistence.common.IPersistenceUnit#removePersistencePreProcessor(de.atb.context.common.util.ApplicationScenario, de.atb.context.persistence.processors.IPersistencePreProcessor)
      */
     @Override
     public final synchronized boolean removePersistencePreProcessor(
@@ -285,12 +278,10 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
 
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.persistence.common.IPersistenceUnit#
-     * removeIPersistencePostProssecor
-     * (de.atb.context.persistence.processors.IPersistencePostProcessor)
+     * @see de.atb.context.persistence.common.IPersistenceUnit#removePersistencePostProcessor(de.atb.context.common.util.ApplicationScenario, de.atb.context.persistence.processors.IPersistencePostProcessor)
      */
     @Override
     public final synchronized boolean removePersistencePostProcessor(

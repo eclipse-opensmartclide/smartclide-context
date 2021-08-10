@@ -9,11 +9,14 @@ package de.atb.context.services;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.TimeFrame;
@@ -33,9 +36,6 @@ import de.atb.context.tools.ontology.Configuration;
 import de.atb.context.tools.ontology.ContextExtractionConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * ContextExtractionService
@@ -63,12 +63,10 @@ public class ContextExtractionService extends DeployableService implements ICont
 		initializeServices();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IContextExtractionService#extractContext
-	 * (de.atb.context.monitoring.models.IMonitoringDataModel)
+	 * @see IContextExtractionService#extractContext(String, String, ApplicationScenario)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -109,40 +107,40 @@ public class ContextExtractionService extends DeployableService implements ICont
 		throw new ContextFault("MonitoringData to be used for Context extraction is null!");
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IPrimitiveService#start()
+	 * @see de.atb.context.services.interfaces.IPrimitiveService#start()
 	 */
 	@Override
 	public final void start() throws ContextFault {
 		ContextExtractionService.logger.info(String.format("Starting %s ...", getClass().getSimpleName()));
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IPrimitiveService#end()
+	 * @see de.atb.context.services.interfaces.IPrimitiveService#stop()
 	 */
 	@Override
 	public final void stop() throws ContextFault {
 		ContextExtractionService.logger.info(String.format("Stopping %s ...", getClass().getSimpleName()));
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IPrimitiveService#restart()
+	 * @see de.atb.context.services.interfaces.IPrimitiveService#restart()
 	 */
 	@Override
 	public final void restart() throws ContextFault {
 		ContextExtractionService.logger.info(String.format("Restarting %s ...", getClass().getSimpleName()));
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IPrimitiveService#ping()
+	 * @see de.atb.context.services.interfaces.IPrimitiveService#ping()
 	 */
 	@Override
 	public final String ping() throws ContextFault {
@@ -150,12 +148,10 @@ public class ContextExtractionService extends DeployableService implements ICont
 		return ServiceManager.PING_RESPONSE;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IContextExtractionService#informAboutAdaptation
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
+	 * @see IContextExtractionService#informAboutAdaptation(de.atb.context.common.util.ApplicationScenario, java.lang.String)
 	 */
 	@Override
 	public final synchronized void informAboutAdaptation(ApplicationScenario applicationScenario, String identifier) {
@@ -167,12 +163,10 @@ public class ContextExtractionService extends DeployableService implements ICont
 		// }
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IContextExtractionService#getLastContextsIds
-	 * (de.atb.context.common.util.BusinessCase, int)
+	 * @see IContextExtractionService#getLastContextsIds(de.atb.context.common.util.ApplicationScenario, int)
 	 */
 	@Override
 	public final synchronized List<String> getLastContextsIds(ApplicationScenario applicationScenario, int count) {
@@ -188,13 +182,10 @@ public class ContextExtractionService extends DeployableService implements ICont
 		return ids;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IContextExtractionService#getLastContextsIds
-	 * (de.atb.context.common.util.BusinessCase,
-	 * de.atb.context.common.util.TimeFrame)
+	 * @see IContextExtractionService#getLastContextsIds(de.atb.context.common.util.ApplicationScenario, de.atb.context.common.util.TimeFrame)
 	 */
 	@Override
 	public final synchronized List<String> getLastContextsIds(ApplicationScenario applicationScenario, TimeFrame timeFrame) {
@@ -255,9 +246,11 @@ public class ContextExtractionService extends DeployableService implements ICont
 		return false;
 	}
 
-	/* (non-Javadoc)
-         * @see pt.uninova.context.services.interfaces.IService#invokeS(pt.uninova.context.services.interfaces.Input)
-         */
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.services.interfaces.IService#runtimeInvoke(java.lang.String)
+     */
 	@Override
 	public final boolean runtimeInvoke(String input) throws ContextFault {
 		// TODO what to do with "Input"

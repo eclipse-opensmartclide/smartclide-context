@@ -9,7 +9,7 @@ package eu.smartclide.contexthandling;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -31,6 +31,7 @@ import de.atb.context.services.faults.ContextFault;
 import de.atb.context.services.manager.ServiceManager;
 import de.atb.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
+import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class ServiceMain {
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
-        org.apache.log4j.BasicConfigurator.configure();
+        BasicConfigurator.configure();
 
         Path smartclideConfigPath = Path.of("resources");
 

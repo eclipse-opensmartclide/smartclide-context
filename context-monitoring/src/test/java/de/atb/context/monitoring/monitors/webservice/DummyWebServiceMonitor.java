@@ -26,10 +26,10 @@ public class DummyWebServiceMonitor extends WebServiceMonitor {
         super(dataSource, interpreter, monitor, indexer, configuration);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see ThreadedMonitor#monitor()
+     * @see de.atb.context.monitoring.monitors.ScheduledExecutorThreadedMonitor#monitor()
      */
     @Override
     public final void monitor() throws Exception {

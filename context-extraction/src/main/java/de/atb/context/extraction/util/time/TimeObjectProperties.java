@@ -140,7 +140,7 @@ public enum TimeObjectProperties implements IOntologyResource, IOntPropertyProvi
 	// // return model.getNsPrefixURI(this.namespace.getLocalName());
 	// }
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
 	 * @see de.atb.context.context.util.IOntologyResource#getNameSpace()
@@ -155,12 +155,10 @@ public enum TimeObjectProperties implements IOntologyResource, IOntPropertyProvi
 		return namespace.getLocalName();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.ce.util.OntPropertyProvider#getProperty(com.hp.hpl
-	 * .jena.ontology.OntModel)
+	 * @see de.atb.context.extraction.util.IOntPropertyProvider#getProperty(com.hp.hpl.jena.ontology.OntModel)
 	 */
 	@Override
 	public ObjectProperty getProperty(final OntModel model) {

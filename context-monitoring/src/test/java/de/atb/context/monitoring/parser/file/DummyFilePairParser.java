@@ -9,10 +9,10 @@ import de.atb.context.monitoring.index.Indexer;
 
 /**
  * DummyFilePairParser
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 639 $
- * 
+ *
  */
 public class DummyFilePairParser extends FilePairParser {
 
@@ -22,15 +22,13 @@ public class DummyFilePairParser extends FilePairParser {
 		super(dataSource, interpreterConfiguration, indexer, amiConfiguration);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
-	 * 
-	 * @see FilePairParser#parseObject
-	 * (de.atb.context.common.util.Pair)
+	 *
+	 * @see FilePairParser#parseObject(org.javatuples.Pair)
 	 */
 	@Override
-	protected final boolean parseObject(
-			final org.javatuples.Pair<File, File> file) {
+	protected final boolean parseObject(final org.javatuples.Pair<File, File> file) {
 		return true;
 	}
 

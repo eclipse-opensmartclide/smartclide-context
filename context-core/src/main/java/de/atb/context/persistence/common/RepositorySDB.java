@@ -9,7 +9,7 @@ package de.atb.context.persistence.common;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -74,13 +74,13 @@ extends Repository<T> {
 		}
 
 		final DataSource ds = getDataSource(bc);
-		T toReturn = null;
+		T toReturn;
 		final Model tdbModel = ds.getDefaultModel();
 		if ((clazz == OntModel.class)
 				|| implementsInterface(clazz, OntModel.class)) {
 			final OntModel baseModel = ModelFactory.createOntologyModel(
 					OntModelSpec.OWL_DL_MEM, tdbModel);
-			OntModel ontModel = null;
+			OntModel ontModel;
 			if (useReasoner) {
 				ontModel = ModelFactory.createOntologyModel(
 						PelletReasonerFactory.THE_SPEC, baseModel);
@@ -100,7 +100,7 @@ extends Repository<T> {
 	}
 
 	private synchronized DataSource initializeDataSource(final BusinessCase bc) {
-		RepositorySDB.logger.debug("Initializing DataSource for BC '%s'", bc);
+		RepositorySDB.logger.debug("Initializing DataSource for BC '{}'", bc);
 		final Store store = setupStoreForBC(bc);
 		final DataSource set = DatasetFactory.create(SDBFactory
 				.connectDataset(store));
@@ -109,7 +109,7 @@ extends Repository<T> {
 	}
 
 	private synchronized Store setupStoreForBC(final BusinessCase bc) {
-		RepositorySDB.logger.debug("Setting up Store for BC ''", bc);
+		RepositorySDB.logger.debug("Setting up Store for BC '{}'", bc);
 		final String location = getLocationForBusinessCase(bc);
 		final SDBConnection conn = new SDBConnection("jdbc:h2:" + location,
 				"sa", "");
@@ -144,16 +144,15 @@ extends Repository<T> {
 		return store;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.persistence.RepositoryBase#reset(de.atb.context
-	 * .common.util.BusinessCase)
+	 * @see de.atb.context.persistence.common.Repository#reset(de.atb.context.common.util.BusinessCase)
 	 */
 	@Override
 	public final boolean reset(final BusinessCase bc) {
 		// TODO reset maybe should add default model for BC
-		RepositorySDB.logger.debug("Resetting DB for BC '%s'", bc);
+		RepositorySDB.logger.debug("Resetting DB for BC '{}'", bc);
 		clearCache(bc);
 		initializeDataSource(bc);
 		final Store store = getStore(bc);
@@ -163,10 +162,10 @@ extends Repository<T> {
 		return true;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.persistence.RepositoryBase#shuttingDown()
+	 * @see de.atb.context.persistence.common.Repository#shuttingDown()
 	 */
 	@Override
 	protected final void shuttingDown() {
@@ -205,7 +204,7 @@ extends Repository<T> {
 			}
 			stores.clear();
 		} else {
-			RepositorySDB.logger.debug("Clearing Repository DB Cache for BC '%s'", bc);
+			RepositorySDB.logger.debug("Clearing Repository DB Cache for BC '{}'", bc);
 			final DataSource set = dataSources.remove(bc);
 			if (set != null) {
 				if (set.getDefaultModel() != null) {

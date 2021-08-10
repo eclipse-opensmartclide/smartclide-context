@@ -9,7 +9,7 @@ package de.atb.context.learning.models;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -36,10 +36,10 @@ public abstract class ModelInitializerBase implements IModelInitializer {
 
     public abstract String getModelSkeleton();
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.learning.models.IModelInitializer#initializeModel()
+     * @see de.atb.context.learning.models.IModelInitializer#initializeModel(java.lang.String)
      */
     @Override
     public final boolean initializeModel(final String filePath) { // TODO this should maybe replace by a call to DRM API
@@ -53,7 +53,7 @@ public abstract class ModelInitializerBase implements IModelInitializer {
         }
 
         if (FileUtils.ensureDirectoryExists(filePath)) {
-            try (FileWriter writer = new FileWriter(filePath);) {
+            try (FileWriter writer = new FileWriter(filePath)) {
                 writer.write(getModelSkeleton());
                 writer.flush();
                 return true;
@@ -61,7 +61,7 @@ public abstract class ModelInitializerBase implements IModelInitializer {
                 logger.error(e.getMessage(), e);
             }
         } else {
-            try (FileWriter writer = new FileWriter(filePath);) {
+            try (FileWriter writer = new FileWriter(filePath)) {
                 final File source = new File(filePath);
                 if (source.createNewFile()) {
                     writer.write(getModelSkeleton());

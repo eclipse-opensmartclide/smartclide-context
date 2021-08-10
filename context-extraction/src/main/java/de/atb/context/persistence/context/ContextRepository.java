@@ -23,6 +23,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.sdb.SDBFactory;
 import com.hp.hpl.jena.sdb.Store;
+import de.atb.context.common.util.IApplicationScenarioProvider;
 import de.atb.context.extraction.ContextContainer;
 import de.atb.context.extraction.util.base.BaseDatatypeProperties;
 import de.atb.context.extraction.util.base.BaseOntologyClasses;
@@ -103,12 +104,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		}
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#getRawContext(de.atb
-	 * .context.common.util.ApplicationScenario, java.lang.String)
+	 * @see de.atb.context.persistence.context.IContextRepository#getRawContext(de.atb.context.common.util.ApplicationScenario, java.lang.String)
 	 */
 	@Override
 	public synchronized ContextContainer getRawContext(ApplicationScenario applicationScenario, String contextId) {
@@ -118,12 +117,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		return getRawContext(applicationScenario.getBusinessCase(), contextId);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#getRawContext(de.atb
-	 * .context.common.util.BusinessCase, java.lang.String)
+	 * @see de.atb.context.persistence.context.IContextRepository#getRawContext(de.atb.context.common.util.BusinessCase, java.lang.String)
 	 */
 	@Override
 	public synchronized ContextContainer getRawContext(BusinessCase businessCase, String contextId) {
@@ -159,12 +156,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		}
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#getContext(de.atb.
-	 * context.common.util.BusinessCase, java.lang.String)
+	 * @see de.atb.context.persistence.context.IContextRepository#getContext(de.atb.context.common.util.BusinessCase, java.lang.String)
 	 */
 	@Override
 	public synchronized ContextContainer getContext(ApplicationScenario applicationScenario, String contextId) {
@@ -184,12 +179,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		return getRawContext(applicationScenario, contextId);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#getContext(de.atb.
-	 * context.common.util.BusinessCase, java.lang.String)
+	 * @see de.atb.context.services.IContextRepositoryService#getContext(de.atb.context.common.util.BusinessCase, java.lang.String)
 	 */
 	@Override
 	public synchronized ContextContainer getContext(BusinessCase businessCase, String contextId) {
@@ -249,60 +242,50 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		return null;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#executeSparqlSelectQuery
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlSelectQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
 	 */
 	@Override
 	public synchronized ResultSet executeSparqlSelectQuery(BusinessCase businessCase, String query) {
 		return executeSparqlSelectQuery(businessCase, query, false);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#executeSparqlDescribeQuery
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlDescribeQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
 	 */
 	@Override
 	public synchronized Model executeSparqlDescribeQuery(BusinessCase businessCase, String query) {
 		return executeSparqlDescribeQuery(businessCase, query, false);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.persistence.IContextRepository#
-	 * executeSparqlConstructrQuery
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
 	 */
 	@Override
 	public synchronized Model executeSparqlConstructQuery(BusinessCase businessCase, String query) {
 		return executeSparqlConstructQuery(businessCase, query, false);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#executeSparqlAskQuery
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlAskQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
 	 */
 	@Override
 	public synchronized Boolean executeSparqlAskQuery(BusinessCase businessCase, String query) {
 		return executeSparqlAskQuery(businessCase, query, false);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#executeSparqlAskQuery
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlAskQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
 	 */
 	@Override
 	public synchronized Boolean executeSparqlAskQuery(BusinessCase businessCase, String query, boolean useReasoner) {
@@ -334,12 +317,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		return result;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#executeSparqlSelectQuery
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlSelectQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
 	 */
 	@Override
 	public synchronized ResultSet executeSparqlSelectQuery(BusinessCase businessCase, String query, boolean useReasoner) {
@@ -371,12 +352,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		return result;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#executeSparqlDescribeQuery
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlDescribeQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
 	 */
 	@Override
 	public synchronized Model executeSparqlDescribeQuery(BusinessCase businessCase, String query, boolean useReasoner) {
@@ -408,12 +387,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		return result;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.persistence.IContextRepository#
-	 * executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase,
-	 * java.lang.String, boolean)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
 	 */
 	@Override
 	public synchronized Model executeSparqlConstructQuery(BusinessCase businessCase, String query, boolean useReasoner) {
@@ -445,12 +422,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		return result;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#initializeRepository
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
+	 * @see de.atb.context.persistence.context.IContextRepository#initializeRepository(de.atb.context.common.util.BusinessCase, java.lang.String)
 	 */
 	@Override
 	public synchronized void initializeRepository(BusinessCase bc, String modelUri) {
@@ -458,12 +433,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		createDefaultModel(OntModel.class, bc, modelUri, false);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#getDefaultModel(de
-	 * .atb.context.common.util.BusinessCase)
+	 * @see de.atb.context.persistence.context.IContextRepository#getDefaultModel(de.atb.context.common.util.BusinessCase)
 	 */
 	@Override
 	public synchronized Model getDefaultModel(BusinessCase businessCase) {
@@ -519,12 +492,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		return finalQuery;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#getLastContextsIds
-	 * (de.atb.context.common.util.ApplicationScenario, int)
+	 * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.ApplicationScenario, int)
 	 */
 	@Override
 	public synchronized List<String> getLastContextsIds(ApplicationScenario applicationScenario, int count) {
@@ -543,13 +514,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		return ids;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#getLastContextsIds
-	 * (de.atb.context.common.util.ApplicationScenario,
-	 * de.atb.context.common.util.TimeFrame)
+	 * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.ApplicationScenario, de.atb.context.common.util.TimeFrame)
 	 */
 	@Override
 	public synchronized List<String> getLastContextsIds(ApplicationScenario applicationScenario, TimeFrame timeFrame) {
@@ -567,12 +535,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		return ids;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#getLastContextsIds
-	 * (de.atb.context.common.util.BusinessCase, int)
+	 * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.BusinessCase, int)
 	 */
 	@Override
 	public synchronized List<String> getLastContextsIds(BusinessCase bc, int count) {
@@ -589,13 +555,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		return ids;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#getLastContextsIds
-	 * (de.atb.context.common.util.BusinessCase,
-	 * de.atb.context.common.util.TimeFrame)
+	 * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.BusinessCase, de.atb.context.common.util.TimeFrame)
 	 */
 	@Override
 	public synchronized List<String> getLastContextsIds(BusinessCase bc, TimeFrame timeFrame) {
@@ -634,12 +597,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		return qexec.execSelect();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.common.IPersistenceUnit#persist(java.
-	 * lang.Object)
+	 * @see de.atb.context.persistence.common.IPersistenceUnit#persist(IApplicationScenarioProvider)
 	 */
 	@Override
 	public void persist(ContextContainer context) {

@@ -9,7 +9,7 @@ package de.atb.context.monitoring.monitors.file;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -349,7 +349,7 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see ThreadedMonitor#isRunning()
@@ -359,7 +359,7 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
         return this.running;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see ThreadedMonitor#shutdown()
@@ -371,10 +371,10 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
         this.filesToDates.clear();
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see ThreadedMonitor#shutdown(long)
+     * @see ThreadedMonitor#shutdown(long, TimeUnit)
      */
     @Override
     protected final void shutdown(final long timeOut, final TimeUnit unit) {

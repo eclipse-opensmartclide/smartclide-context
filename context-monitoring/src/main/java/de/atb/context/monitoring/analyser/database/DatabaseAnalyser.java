@@ -43,11 +43,10 @@ public abstract class DatabaseAnalyser<OutputType extends IMonitoringDataModel<?
             amiConfiguration);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see IndexingAnalyser#analyseObject
-     * (java.lang.Object, org.apache.lucene.document.Document)
+     * @see IndexingAnalyser#analyseObject(java.lang.Object, org.apache.lucene.document.Document)
      */
     @Override
     public final List<OutputType> analyseObject(final IDatabase database,

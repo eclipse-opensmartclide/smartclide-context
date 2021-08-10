@@ -26,7 +26,7 @@ import java.io.OutputStream;
  */
 public class NullOutputStream extends OutputStream {
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
 	 * @see java.io.OutputStream#write(int)
@@ -36,7 +36,7 @@ public class NullOutputStream extends OutputStream {
 		//
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
 	 * @see java.io.OutputStream#write(byte[])
@@ -46,7 +46,7 @@ public class NullOutputStream extends OutputStream {
 		//
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
 	 * @see java.io.OutputStream#write(byte[], int, int)

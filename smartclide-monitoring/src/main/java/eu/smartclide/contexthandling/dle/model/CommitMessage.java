@@ -14,15 +14,12 @@ package eu.smartclide.contexthandling.dle.model;
  * #L%
  */
 
-import de.atb.context.common.util.BusinessCase;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import thewebsemantic.Namespace;
-import thewebsemantic.RdfType;
 
 @Getter
 @Setter

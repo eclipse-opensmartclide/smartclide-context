@@ -9,7 +9,7 @@ package de.atb.context.services;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -51,7 +51,7 @@ public class ConfigurationRepositoryService extends RepositoryService implements
         return this.repository;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see de.atb.context.services.interfaces.IService#start()
@@ -61,7 +61,7 @@ public class ConfigurationRepositoryService extends RepositoryService implements
         //
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see de.atb.context.services.interfaces.IService#stop()
@@ -71,7 +71,7 @@ public class ConfigurationRepositoryService extends RepositoryService implements
         //
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see de.atb.context.services.interfaces.IService#restart()
@@ -81,7 +81,7 @@ public class ConfigurationRepositoryService extends RepositoryService implements
         //
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see de.atb.context.services.interfaces.IService#ping()
@@ -91,12 +91,10 @@ public class ConfigurationRepositoryService extends RepositoryService implements
         return ServiceManager.PING_RESPONSE;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IConfigurationRepositoryService
-     * #getConfiguration(de.atb.context.common.util.ApplicationScenario,
-     * java.lang.String)
+     * @see de.atb.context.services.IConfigurationRepositoryService#getConfiguration(de.atb.context.common.util.ApplicationScenario, java.lang.String)
      */
     @Override
     public final String getConfiguration(final ApplicationScenario appScenario,
@@ -110,11 +108,10 @@ public class ConfigurationRepositoryService extends RepositoryService implements
         return ret;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IConfigurationRepositoryService
-     * #getConfiguration(de.atb.context.common.util.ApplicationScenario)
+     * @see de.atb.context.services.IConfigurationRepositoryService#getConfiguration(de.atb.context.common.util.ApplicationScenario)
      */
     @Override
     public final synchronized String getConfiguration(final ApplicationScenario appScenario)
@@ -130,11 +127,10 @@ public class ConfigurationRepositoryService extends RepositoryService implements
 
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IConfigurationRepositoryService
-     * #persistConfiguration(java.lang.String)
+     * @see de.atb.context.services.IConfigurationRepositoryService#persistConfiguration(java.lang.String, java.lang.String)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -157,23 +153,20 @@ public class ConfigurationRepositoryService extends RepositoryService implements
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IConfigurationRepositoryService
-     * #clearBusinessCaseDirectory(de.atb.context.common.util.BusinessCase)
+     * @see de.atb.context.services.IConfigurationRepositoryService#clearBusinessCaseDirectory(de.atb.context.common.util.BusinessCase)
      */
     @Override
     public final boolean clearBusinessCaseDirectory(final BusinessCase businessCase) {
         return getRepository().clearBaseDirectory();
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IConfigurationRepositoryService
-     * #deleteApplicationScenarioConfiguration
-     * (de.atb.context.common.util.ApplicationScenario)
+     * @see de.atb.context.services.IConfigurationRepositoryService#deleteApplicationScenarioConfiguration(de.atb.context.common.util.ApplicationScenario)
      */
     @Override
     public final boolean deleteApplicationScenarioConfiguration(
@@ -181,11 +174,10 @@ public class ConfigurationRepositoryService extends RepositoryService implements
         return getRepository().deleteApplicationScenarioConfiguration(scenario);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IConfigurationRepositoryService
-     * #clearBaseDirectory()
+     * @see de.atb.context.services.IConfigurationRepositoryService#clearBaseDirectory()
      */
     @Override
     public final boolean clearBaseDirectory() {

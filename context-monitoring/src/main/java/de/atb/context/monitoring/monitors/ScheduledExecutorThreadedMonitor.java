@@ -44,7 +44,7 @@ public abstract class ScheduledExecutorThreadedMonitor<P, A extends IMonitoringD
         super(dataSource, interpreter, monitor, indexer, configuration);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see ThreadedMonitor#isRunning()
@@ -71,11 +71,10 @@ public abstract class ScheduledExecutorThreadedMonitor<P, A extends IMonitoringD
         shutdown(2, TimeUnit.SECONDS);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * ThreadedMonitor#shutdown(long)
+     * @see ThreadedMonitor#shutdown(long, TimeUnit)
      */
     @Override
     protected final void shutdown(final long timeOut, final TimeUnit unit) {

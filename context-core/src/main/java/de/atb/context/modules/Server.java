@@ -9,7 +9,7 @@ package de.atb.context.modules;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -34,16 +34,9 @@ import java.util.logging.Logger;
  * @author Giovanni
  */
 public final class Server {
-	private static final long serialVersionUID = 1L;
-	private final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(Server.class);
+	private final org.slf4j.Logger logger = LoggerFactory.getLogger(Server.class);
 	private ServerFrame frame = null;
-	private IDeployerService client = null;
-	private ServiceRegistryRepositoryServiceWrapper repos;
-
-	public Server() {
-		//
-	}
+    private ServiceRegistryRepositoryServiceWrapper repos;
 
 	public Nodes getServices() {
 		return repos.getConnectedServices();
@@ -72,31 +65,26 @@ public final class Server {
 		 * with same serviceID are able to be connected
 		 */
 		Nodes connectedDeployers = this.repos.getConnectedServices();
-		if (connectedDeployers.getNodes() == null) {
+        IDeployerService client;
+        if (connectedDeployers.getNodes() == null) {
 			logger.info("No deployers connected to the registry");
 		} else {
-			logger.info("Number of Deployers to notify = "
-					+ connectedDeployers.getNodes().size());
+			logger.info("Number of Deployers to notify = " + connectedDeployers.getNodes().size());
 			List<Node> deployers = connectedDeployers.getNodes();
 			for (Node deployer : deployers) {
 				try {
-					URL location = new URL(deployer.getDeployer().getConfig()
-							.getLocation());
-					this.client = ServiceManager
-							.getWebservice(location.getHost(),
-									location.getPort(), IDeployerService.class);
+					URL location = new URL(deployer.getDeployer().getConfig().getLocation());
+					client = ServiceManager.getWebservice(location.getHost(), location.getPort(), IDeployerService.class);
 					if (client != null) {
 						client.unregisterRegistry();
 					} else {
 						logger.info("Unable to get Deployer Service");
 					}
 				} catch (MalformedURLException ex) {
-					Logger.getLogger(Server.class.getName()).log(Level.SEVERE,
-							null, ex);
+					Logger.getLogger(Server.class.getName()).log(Level.SEVERE,null, ex);
 				}
 			}
 		}
-		client = null;
-		logger.info("finished Deployers notifications!!");
+        logger.info("finished Deployers notifications!!");
 	}
 }

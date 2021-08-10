@@ -9,7 +9,7 @@ package de.atb.context.persistence.common;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -86,10 +86,10 @@ extends Repository<T> {
 		return false;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.persistence.RepositoryBase#shuttingDown()
+	 * @see de.atb.context.persistence.common.Repository#shuttingDown()
 	 */
 	@Override
 	protected final void shuttingDown() {
@@ -104,11 +104,10 @@ extends Repository<T> {
 		datasets.clear();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.persistence.RepositoryBase#reset(de.atb.context
-	 * .common.util.BusinessCase)
+	 * @see de.atb.context.persistence.common.Repository#reset(de.atb.context.common.util.BusinessCase)
 	 */
 	@Override
 	public final boolean reset(final BusinessCase bc) {

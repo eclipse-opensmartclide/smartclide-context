@@ -9,7 +9,7 @@ package de.atb.context.monitoring.analyser;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -29,7 +29,7 @@ import org.apache.lucene.document.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GitAnalyser extends MessageBrokerAnalyser {
+public class GitAnalyser extends MessageBrokerAnalyser<GitDataModel> {
 
     private static final Logger logger = LoggerFactory.getLogger(GitAnalyser.class);
 

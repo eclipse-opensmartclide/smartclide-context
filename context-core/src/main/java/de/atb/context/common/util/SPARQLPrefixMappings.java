@@ -9,7 +9,7 @@ package de.atb.context.common.util;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -31,10 +31,10 @@ public enum SPARQLPrefixMappings {
 
 	;
 
-	private String prefix;
-    private String url;
+	private final String prefix;
+    private final String url;
 
-	private SPARQLPrefixMappings(final String prefix, final String url) {
+	SPARQLPrefixMappings(final String prefix, final String url) {
 		this.prefix = prefix;
 		this.url = url;
 	}

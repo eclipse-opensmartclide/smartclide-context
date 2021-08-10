@@ -9,7 +9,7 @@ package de.atb.context.modules;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -39,9 +39,7 @@ import java.util.List;
  */
 public class Deployer {
 
-    private static final long serialVersionUID = 1L;
-    private final org.slf4j.Logger logger = LoggerFactory
-            .getLogger(Deployer.class);
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(Deployer.class);
     private DeployerConfigurationObject configuration = null;
     private IServiceRegistryService client = null;
     private DeployerFrame frame;
@@ -63,12 +61,9 @@ public class Deployer {
                 deployerConfig.setHost(container.getService().getHost());
                 deployerConfig.setLocation(container.getService().getLocation()
                         .toString());
-                deployerConfig.setProxy(container.getService().getProxyClass()
-                        .getName());
-                deployerConfig.setServer(container.getService()
-                        .getServerClass().getName());
-                deployerConfig.setType(container.getService().getServerClass()
-                        .getName());
+                deployerConfig.setProxy(container.getService().getProxyClass().getName());
+                deployerConfig.setServer(container.getService().getServerClass().getName());
+                deployerConfig.setType(container.getService().getServerClass().getName());
                 deployerConfig.setStatus(StatusVocabulary.FREE.getStatusName());
             } else if (!container.getService().getName().contains("Registry")
                     && !container.getService().getName().contains("Broker")) {
@@ -76,12 +71,9 @@ public class Deployer {
                 config.setId(container.getService().getId());
                 config.setName(container.getService().getName());
                 config.setHost(container.getService().getHost());
-                config.setLocation(container.getService().getLocation()
-                        .toString());
-                config.setProxy(container.getService().getProxyClass()
-                        .getName());
-                config.setServer(container.getService().getServerClass()
-                        .getName());
+                config.setLocation(container.getService().getLocation().toString());
+                config.setProxy(container.getService().getProxyClass().getName());
+                config.setServer(container.getService().getServerClass().getName());
                 config.setStatus(StatusVocabulary.FREE.getStatusName());
                 config.setType(container.getServerClass().getSimpleName());
                 configs.add(config);

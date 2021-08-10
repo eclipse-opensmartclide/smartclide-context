@@ -9,7 +9,7 @@ package de.atb.context.monitoring.monitors.file;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -93,7 +93,7 @@ public class FileTripletSystemMonitor extends
         this.pathToMonitor = new File(this.dataSource.getUri());
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see ThreadedMonitor#isRunning()
@@ -420,7 +420,7 @@ public class FileTripletSystemMonitor extends
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see ThreadedMonitor#shutdown()
@@ -432,10 +432,10 @@ public class FileTripletSystemMonitor extends
         this.filesToDates.clear();
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see ThreadedMonitor#shutdown(long)
+     * @see ThreadedMonitor#shutdown(long, TimeUnit)
      */
     @Override
     protected final void shutdown(final long timeOut, final TimeUnit unit) {

@@ -9,7 +9,7 @@ package de.atb.context.monitoring.config.models.datasources;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -43,22 +43,20 @@ public enum FilePairSystemDataSourceOptions implements IDataSourceOptionValue {
         this.valueType = valueType;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.monitoring.config.models.datasources.
-     * IDataSourceOptionValue#getKeyName()
+     * @see de.atb.context.monitoring.config.models.datasources.IDataSourceOptionValue#getKeyName()
      */
     @Override
     public String getKeyName() {
         return this.key;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.monitoring.config.models.datasources.
-     * IDataSourceOptionValue#getValueType()
+     * @see de.atb.context.monitoring.config.models.datasources.IDataSourceOptionValue#getValueType()
      */
     @Override
     public Class<? extends Serializable> getValueType() {

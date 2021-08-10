@@ -9,7 +9,7 @@ package de.atb.context.common.util;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -25,8 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class DynamicEnum<E extends DynamicEnum<E>> {
-    private static Map<Class<? extends DynamicEnum<?>>, Map<String, DynamicEnum<?>>> elements =
-            new LinkedHashMap<Class<? extends DynamicEnum<?>>, Map<String, DynamicEnum<?>>>();
+    private static final Map<Class<? extends DynamicEnum<?>>, Map<String, DynamicEnum<?>>> elements = new LinkedHashMap<>();
 
     private final String name;
 
@@ -97,8 +96,7 @@ public class DynamicEnum<E extends DynamicEnum<E>> {
     }
 
     @SuppressWarnings("unused")
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException {
         throw new InvalidObjectException("can't deserialize enum");
     }
 
@@ -111,7 +109,7 @@ public class DynamicEnum<E extends DynamicEnum<E>> {
     protected final void finalize() { }
 
 
-    public static <E> DynamicEnum<? extends DynamicEnum<?>>[] values() {
+    public static DynamicEnum<? extends DynamicEnum<?>>[] values() {
         throw new IllegalStateException("Sub class of DynaEnum must implement method valus()");
     }
 

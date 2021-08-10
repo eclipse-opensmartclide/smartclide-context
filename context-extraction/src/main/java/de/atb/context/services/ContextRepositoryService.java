@@ -9,36 +9,37 @@ package de.atb.context.services;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
+
+import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Response;
+
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
-import de.atb.context.extraction.ContextContainer;
-import de.atb.context.extraction.ContextContainerWrapper;
-import de.atb.context.persistence.context.ContextRepository;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.TimeFrame;
+import de.atb.context.extraction.ContextContainer;
+import de.atb.context.extraction.ContextContainerWrapper;
 import de.atb.context.persistence.ModelOutputLanguage;
+import de.atb.context.persistence.context.ContextRepository;
 import de.atb.context.services.faults.ContextFault;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import de.atb.context.services.infrastructure.response.InvokeResponse;
 import de.atb.context.services.interfaces.Input;
 import de.atb.context.services.interfaces.Output;
 import de.atb.context.services.manager.ServiceManager;
 import de.atb.context.tools.datalayer.models.OutputDataModel;
 import de.atb.context.tools.ontology.Configuration;
-
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Response;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ContextRepositoryService
@@ -121,12 +122,10 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#persistContext(de.
-	 * atb.context.context.ContextContainer)
+	 * @see de.atb.context.services.IContextRepositoryService#persistContext(de.atb.context.extraction.ContextContainerWrapper)
      */
     @Override
     public final synchronized void persistContext(final ContextContainerWrapper wrapper) throws ContextFault {
@@ -136,12 +135,10 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         }
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#getContext(de.atb.
-	 * context.common.util.BusinessCase, java.lang.String)
+	 * @see IContextRepositoryService#getContext(de.atb.context.common.util.BusinessCase, java.lang.String)
      */
     @Override
     public final synchronized ContextContainerWrapper getContext(final ApplicationScenario applicationScenario, final String contextId)
@@ -153,12 +150,10 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         return null;
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IContextRepositoryService#getContext(de.
-	 * atb.context.common.util.BusinessCase, java.lang.String)
+	 * @see IContextRepositoryService#getContext(de.atb.context.common.util.BusinessCase, java.lang.String)
      */
     @Override
     public final synchronized ContextContainerWrapper getContext(final BusinessCase businessCase, final String contextId) throws ContextFault {
@@ -169,12 +164,10 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         return null;
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IContextRepositoryService#getRawContext(
-	 * de.atb.context.common.util.ApplicationScenario, java.lang.String)
+	 * @see IContextRepositoryService#getRawContext(de.atb.context.common.util.ApplicationScenario, java.lang.String)
      */
     @Override
     public final synchronized ContextContainerWrapper getRawContext(final ApplicationScenario applicationScenario, final String contextId)
@@ -186,12 +179,10 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         return null;
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IContextRepositoryService#getRawContext(
-	 * de.atb.context.common.util.BusinessCase, java.lang.String)
+	 * @see IContextRepositoryService#getRawContext(de.atb.context.common.util.BusinessCase, java.lang.String)
      */
     @Override
     public final synchronized ContextContainerWrapper getRawContext(final BusinessCase businessCase, final String contextId) throws ContextFault {
@@ -202,24 +193,20 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         return null;
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#executeSparqlAskQuery
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlAskQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
      */
     @Override
     public final synchronized Boolean executeSparqlAskQuery(final BusinessCase businessCase, final String query) throws ContextFault {
         return repos.executeSparqlAskQuery(businessCase, query);
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#executeSparqlSelectQuery
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlSelectQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
      */
     @Override
     public final synchronized String executeSparqlSelectQuery(final BusinessCase businessCase, final String query) throws ContextFault {
@@ -227,12 +214,10 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         return ResultSetFormatter.asXMLString(results);
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#executeSparqlDescribeQuery
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlDescribeQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
      */
     @Override
     public final synchronized String executeSparqlDescribeQuery(final BusinessCase businessCase, final String query) throws ContextFault {
@@ -244,12 +229,10 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         }
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.persistence.IContextRepository#
-	 * executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase,
-	 * java.lang.String)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
      */
     @Override
     public final synchronized String executeSparqlConstructQuery(final BusinessCase businessCase, final String query) throws ContextFault {
@@ -261,12 +244,10 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         }
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#executeSparqlAskQuery
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlAskQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
      */
     @Override
     public final synchronized Boolean executeSparqlAskQuery(final BusinessCase businessCase, final String query, final boolean useReasoner)
@@ -274,12 +255,10 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         return repos.executeSparqlAskQuery(businessCase, query, useReasoner);
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#executeSparqlSelectQuery
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlSelectQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
      */
     @Override
     public final synchronized String executeSparqlSelectQuery(final BusinessCase businessCase, final String query, final boolean useReasoner)
@@ -288,12 +267,10 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         return ResultSetFormatter.asXMLString(results);
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#executeSparqlDescribeQuery
-	 * (de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlDescribeQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
      */
     @Override
     public final synchronized String executeSparqlDescribeQuery(final BusinessCase businessCase, final String query, final boolean useReasoner)
@@ -306,12 +283,10 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         }
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.persistence.IContextRepository#
-	 * executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase,
-	 * java.lang.String, boolean)
+	 * @see de.atb.context.persistence.context.IContextRepository#executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
      */
     @Override
     public final synchronized String executeSparqlConstructQuery(final BusinessCase businessCase, final String query, final boolean useReasoner)
@@ -324,50 +299,40 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         }
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#getLastContextsIds
-	 * (de.atb.context.common.util.BusinessCase, int)
+	 * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.BusinessCase, int)
      */
     @Override
     public final synchronized List<String> getLastContextsIds(final BusinessCase businessCase, final int count) throws ContextFault {
         return repos.getLastContextsIds(businessCase, count);
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#getLastContextsIds
-	 * (de.atb.context.common.util.BusinessCase,
-	 * de.atb.context.common.util.TimeFrame)
+	 * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.BusinessCase, de.atb.context.common.util.TimeFrame)
      */
     @Override
     public final synchronized List<String> getLastContextsIds(final BusinessCase businessCase, final TimeFrame timeFrame) throws ContextFault {
         return repos.getLastContextsIds(businessCase, timeFrame);
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IContextRepositoryService#getLastContextsIds
-	 * (de.atb.context.common.util.ApplicationScenario, int)
+	 * @see IContextRepositoryService#getLastContextsIds(de.atb.context.common.util.ApplicationScenario, int)
      */
     @Override
     public final synchronized List<String> getLastContextsIds(final ApplicationScenario applicationScenario, final int count) throws ContextFault {
         return repos.getLastContextsIds(applicationScenario, count);
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IContextRepositoryService#getLastContextsIds
-	 * (de.atb.context.common.util.ApplicationScenario,
-	 * de.atb.context.common.util.TimeFrame)
+	 * @see IContextRepositoryService#getLastContextsIds(de.atb.context.common.util.ApplicationScenario, de.atb.context.common.util.TimeFrame)
      */
     @Override
     public final synchronized List<String> getLastContextsIds(final ApplicationScenario applicationScenario, final TimeFrame timeFrame)
@@ -375,24 +340,20 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         return repos.getLastContextsIds(applicationScenario, timeFrame);
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.persistence.IContextRepository#init(de.atb.context
-	 * .common.util.BusinessCase, java.lang.String)
+	 * @see de.atb.context.persistence.context.IContextRepository#initializeRepository(de.atb.context.common.util.BusinessCase, java.lang.String)
      */
     @Override
     public final synchronized void initializeRepository(final BusinessCase bc, final String modelUri) throws ContextFault {
         repos.initializeRepository(bc, modelUri);
     }
 
-    /*
+    /**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IContextRepositoryService#getDefaultModel
-	 * (de.atb.context.common.util.BusinessCase)
+	 * @see IContextRepositoryService#getDefaultModel(de.atb.context.common.util.BusinessCase)
      */
     @Override
     public final synchronized String getDefaultModel(final BusinessCase businessCase) throws ContextFault {
@@ -405,8 +366,6 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
     }
 
     protected final synchronized String getModelAsString(final Model model, final BusinessCase businessCase) {
-        // model.close();
-        // getRepository().closeDataset(businessCase);
         return ContextRepositoryService.serializer.getModelAsString(model);
     }
 
@@ -415,8 +374,10 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         return false;
     }
 
-    /* (non-Javadoc)
-	 * @see pt.uninova.context.services.interfaces.IRepositoryService#store(java.lang.Object)
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.services.interfaces.IRepositoryService#store(java.lang.Object)
      */
     @Override
     public final String store(final Object Element) {
@@ -424,8 +385,10 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         return null;
     }
 
-    /* (non-Javadoc)
-	 * @see pt.uninova.context.services.interfaces.IRepositoryService#remove(java.lang.Object)
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.services.interfaces.IRepositoryService#remove(java.lang.Object)
      */
     @Override
     public final boolean remove(final Object Element) {

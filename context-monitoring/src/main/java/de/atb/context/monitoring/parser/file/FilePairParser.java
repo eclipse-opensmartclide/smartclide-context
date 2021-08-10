@@ -54,11 +54,10 @@ public abstract class FilePairParser extends IndexingParser<Pair<File, File>> {
             dataSource, indexer, this.document, amiConfiguration);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see IndexingParser#parse(java.lang.
-     * Object)
+     * @see IndexingParser#parse(java.lang.Object)
      */
     @Override
     public final boolean parse(final Pair<File, File> filePair) {
@@ -101,7 +100,7 @@ public abstract class FilePairParser extends IndexingParser<Pair<File, File>> {
         return parseObject(filePair);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see IndexingParser#getAnalyser()

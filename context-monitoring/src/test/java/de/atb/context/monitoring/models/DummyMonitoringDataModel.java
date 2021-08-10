@@ -49,100 +49,90 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
         this.identifier = UUID.randomUUID().toString();
     }
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IMonitoringData#fromRdfModel(java.lang
-	 * .String)
+	 * @see de.atb.context.monitoring.IMonitoringData#fromRdfModel(java.lang.String)
 	 */
 	@Override
 	public final DummyMonitoringDataModel fromRdfModel(final String rdfModel) {
 		return RdfHelper.createMonitoringData(rdfModel, DummyMonitoringDataModel.class);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IMonitoringData#fromRdfModel(com.hp.hpl
-	 * .jena.rdf.model.Model)
+	 * @see de.atb.context.monitoring.IMonitoringData#fromRdfModel(com.hp.hpl.jena.rdf.model.Model)
 	 */
 	@Override
 	public final DummyMonitoringDataModel fromRdfModel(final Model model) {
 		return RdfHelper.createMonitoringData(model, DummyMonitoringDataModel.class);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IMonitoringData#toRdfString()
+	 * @see de.atb.context.monitoring.IMonitoringData#toRdfString()
 	 */
 	@Override
 	public final String toRdfString() {
 		return ModelOutputLanguage.DEFAULT.getModelAsString(this.toRdfModel());
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IMonitoringData#toRdfModel()
+	 * @see de.atb.context.monitoring.IMonitoringData#toRdfModel()
 	 */
 	@Override
 	public final Model toRdfModel() {
 		return RdfHelper.createRdfModel(this);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IMonitoringDataModel#getBusinessCase
-	 * ()
+	 * @see IMonitoringDataModel#getBusinessCase()
 	 */
 	@Override
 	public final BusinessCase getBusinessCase() {
 		return BusinessCase.getInstance(BusinessCase.NS_DUMMY_ID, BusinessCase.NS_DUMMY_URL);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IMonitoringDataModel#
-	 * triggersContextChange()
+	 * @see IMonitoringDataModel#triggersContextChange()
 	 */
 	@Override
 	public final boolean triggersContextChange() {
 		return true;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IMonitoringDataModel#
-	 * getApplicationScenario()
+	 * @see IMonitoringDataModel#getApplicationScenario()
 	 */
 	@Override
 	public final ApplicationScenario getApplicationScenario() {
 		return ApplicationScenario.getInstance();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IMonitoringDataModel#
-	 * getContextIdentifierClassName()
+	 * @see IMonitoringDataModel#getContextIdentifierClassName()
 	 */
 	@Override
 	public final String getContextIdentifierClassName() {
 		return null;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IMonitoringDataModel#initialize()
+	 * @see IMonitoringDataModel#initialize()
 	 */
 	@Override
 	public void initialize() {

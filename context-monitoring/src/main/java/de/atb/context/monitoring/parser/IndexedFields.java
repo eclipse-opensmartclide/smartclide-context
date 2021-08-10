@@ -9,7 +9,7 @@ package de.atb.context.monitoring.parser;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -71,31 +71,27 @@ public enum IndexedFields implements IFieldable {
         return fieldable.createField(value);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IFieldable#get(org.apache.lucene
-     * .document.Document)
+     * @see IFieldable#get(org.apache.lucene.document.Document)
      */
     @Override
     public Field get(final Document document) {
         return (Field) document.getField(this.name);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IFieldable#getString(org.apache.
-     * lucene.document.Document)
+     * @see IFieldable#getString(org.apache.lucene.document.Document)
      */
     @Override
     public String getString(final Document document) {
         return get(document).stringValue();
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see IFieldable#getName()
@@ -105,7 +101,7 @@ public enum IndexedFields implements IFieldable {
         return this.name;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see java.lang.Enum#toString()
@@ -115,23 +111,20 @@ public enum IndexedFields implements IFieldable {
         return this.name;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IFieldable#create(java.lang.String)
+     * @see IFieldable#createField(java.lang.String)
      */
     @Override
     public Field createField(final String value) {
         return new Field(getName(), value, StringField.TYPE_STORED);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IFieldable#create(java.lang.String,
-     * org.apache.lucene.document.Field.Store)
+     * @see IFieldable#createField(java.lang.String, org.apache.lucene.document.Field.Store)
      */
     @Override
     public Field createField(final String value, final Store store) {

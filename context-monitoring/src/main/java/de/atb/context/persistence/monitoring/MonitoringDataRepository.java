@@ -9,7 +9,7 @@ package de.atb.context.persistence.monitoring;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -18,15 +18,7 @@ package de.atb.context.persistence.monitoring;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-
-import de.atb.context.monitoring.models.IMonitoringDataModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import thewebsemantic.RDF2Bean;
-import thewebsemantic.Sparql;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
@@ -46,14 +38,18 @@ import com.hp.hpl.jena.shared.Lock;
 import com.hp.hpl.jena.update.UpdateAction;
 import com.hp.hpl.jena.update.UpdateFactory;
 import com.hp.hpl.jena.update.UpdateRequest;
-
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.SPARQLHelper;
 import de.atb.context.common.util.TimeFrame;
 import de.atb.context.context.util.OntologyNamespace;
+import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.rdf.RdfHelper;
 import de.atb.context.persistence.common.RepositorySDB;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import thewebsemantic.RDF2Bean;
+import thewebsemantic.Sparql;
 
 /**
  * MonitoringDataRepository
@@ -84,12 +80,10 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         super(internalBaseUri);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IPersistenceUnit#persist(java.
-     * lang.Object)
+     * @see de.atb.context.persistence.common.IPersistenceUnit#persist(de.atb.context.common.util.IApplicationScenarioProvider)
      */
     @Override
     public synchronized void persist(final Type monitoringData) {
@@ -112,13 +106,10 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         model.commit();
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataRepository#
-     * getMonitoringData(BusinessCase,
-     * java.lang.Class, int)
+     * @see IMonitoringDataRepository#getMonitoringData(BusinessCase, java.lang.Class, int)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -159,12 +150,10 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         return result;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataRepository#getMonitoringData
-     * (BusinessCase, int)
+     * @see IMonitoringDataRepository#getMonitoringData(ApplicationScenario, Class, int)
      */
     @Override
     public synchronized List<Type> getMonitoringData(final ApplicationScenario applicationScenario, final Class<Type> clazz, final int count) {
@@ -216,13 +205,10 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         return result;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataRepository#getMonitoringData
-     * (BusinessCase,
-     * TimeFrame)
+     * @see IMonitoringDataRepository#getMonitoringData(ApplicationScenario, Class, TimeFrame)
      */
     @Override
     public synchronized List<Type> getMonitoringData(final ApplicationScenario applicationScenario, final Class<Type> clazz, final TimeFrame timeFrame) {
@@ -268,13 +254,10 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         return result;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataRepository#getMonitoringData
-     * (BusinessCase, java.lang.Class,
-     * java.lang.String)
+     * @see IMonitoringDataRepository#getMonitoringData(BusinessCase, java.lang.Class, java.lang.String)
      */
     @Override
     public synchronized Type getMonitoringData(final ApplicationScenario applicationScenario, final Class<Type> clazz, final String identifier) {
@@ -328,13 +311,10 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         return getMonitoringData(applicationScenario.getBusinessCase(), clazz, identifier);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataRepository#
-     * getLastIds(BusinessCase, java.lang.Class,
-     * int)
+     * @see IMonitoringDataRepository#getLastIds(BusinessCase, java.lang.Class, int)
      */
     @Override
     public synchronized List<String> getLastIds(final BusinessCase businessCase, final Class<Type> clazz, final int count) {
@@ -387,13 +367,10 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         return ids;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataRepository#getLastIds(
-     * ApplicationScenario, java.lang.Class,
-     * int)
+     * @see IMonitoringDataRepository#getLastIds(ApplicationScenario, java.lang.Class, int)
      */
     @Override
     public synchronized List<String> getLastIds(final ApplicationScenario applicationScenario, final Class<Type> clazz, final int count) {
@@ -403,13 +380,10 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         return getLastIds(applicationScenario.getBusinessCase(), clazz, count);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataRepository#
-     * getLastIds(BusinessCase, java.lang.Class,
-     * TimeFrame)
+     * @see IMonitoringDataRepository#getLastIds(BusinessCase, java.lang.Class, TimeFrame)
      */
     @Override
     public synchronized List<String> getLastIds(final BusinessCase businessCase, final Class<Type> clazz, final TimeFrame timeFrame) {
@@ -469,13 +443,10 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         return ids;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataRepository#getLastIds(
-     * ApplicationScenario, java.lang.Class,
-     * TimeFrame)
+     * @see IMonitoringDataRepository#getLastIds(ApplicationScenario, java.lang.Class, TimeFrame)
      */
     @Override
     public synchronized List<String> getLastIds(final ApplicationScenario applicationScenario, final Class<Type> clazz, final TimeFrame timeFrame) {
@@ -486,26 +457,20 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
 
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataRepository#
-     * executeSparqlUpdateQuery(BusinessCase,
-     * java.lang.String)
+     * @see IMonitoringDataRepository#executeSparqlUpdateQuery(BusinessCase, java.lang.String)
      */
     @Override
     public synchronized void executeSparqlUpdateQuery(final BusinessCase businessCase, final String query) {
         executeSparqlUpdateQueries(businessCase, query);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataRepository#
-     * executeSparqlUpdateQueries(BusinessCase,
-     * java.lang.String[])
+     * @see IMonitoringDataRepository#executeSparqlUpdateQueries(BusinessCase, java.lang.String[])
      */
     @Override
     public synchronized void executeSparqlUpdateQueries(final BusinessCase businessCase, final String... queries) {
@@ -530,13 +495,10 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataRepository#
-     * executeSparqlSelectQuery(BusinessCase,
-     * java.lang.String)
+     * @see IMonitoringDataRepository#executeSparqlSelectQuery(BusinessCase, java.lang.String)
      */
     @Override
     public synchronized ResultSet executeSparqlSelectQuery(final BusinessCase businessCase, final String query) {

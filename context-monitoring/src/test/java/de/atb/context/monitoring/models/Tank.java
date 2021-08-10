@@ -108,7 +108,7 @@ public class Tank implements Iterable<SensoricalTankInformation>, Cloneable, Ser
 		return builder.toString();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
 	 * @see java.lang.Iterable#iterator()

@@ -89,63 +89,57 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 		this.tanks.add(tank);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IMonitoringData#fromRDFModel(com.hp.hpl
-	 * .jena.rdf.model.Model)
+	 * @see de.atb.context.monitoring.IMonitoringData#fromRdfModel(com.hp.hpl.jena.rdf.model.Model)
 	 */
 	@Override
 	public TankRefillingMonitoringData fromRdfModel(Model model) {
 		return RdfHelper.createMonitoringData(model, TankRefillingMonitoringData.class);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IMonitoringData#fromXMPString(java.lang
-	 * .String)
+     * @see de.atb.context.monitoring.IMonitoringData#fromRdfModel(java.lang.String)
 	 */
 	@Override
 	public TankRefillingMonitoringData fromRdfModel(String rdfString) {
 		return RdfHelper.createMonitoringData(rdfString, TankRefillingMonitoringData.class);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IMonitoringDataModel#getBusinessCase
-	 * ()
+	 * @see de.atb.context.monitoring.models.IMonitoringDataModel#getBusinessCase()
 	 */
 	@Override
 	public BusinessCase getBusinessCase() {
 		return BusinessCase.getInstance(BusinessCase.NS_DUMMY_ID, BusinessCase.NS_DUMMY_URL);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IMonitoringData#toRDFModel()
+	 * @see de.atb.context.monitoring.IMonitoringData#toRdfModel()
 	 */
 	@Override
 	public Model toRdfModel() {
 		return RdfHelper.createRdfModel(this);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IMonitoringData#toXMPString()
+	 * @see de.atb.context.monitoring.IMonitoringData#toRdfString()
 	 */
 	@Override
 	public String toRdfString() {
 		return ModelOutputLanguage.DEFAULT.getModelAsString(this.toRdfModel());
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
 	 * @see java.lang.Object#toString()
@@ -155,44 +149,40 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
         return String.format("%s (%d tanks)", getClass().getSimpleName(), this.tanks.size());
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IMonitoringDataModel#
-	 * triggersContextChange()
+	 * @see IMonitoringDataModel#triggersContextChange()
 	 */
 	@Override
 	public boolean triggersContextChange() {
 		return true;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IMonitoringDataModel#
-	 * getApplicationScenario()
+	 * @see IMonitoringDataModel#getApplicationScenario()
 	 */
 	@Override
 	public ApplicationScenario getApplicationScenario() {
 		return ApplicationScenario.getInstance(getBusinessCase());
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see IMonitoringDataModel#
-	 * getContextIdentifierClassName()
+	 * @see IMonitoringDataModel#getContextIdentifierClassName()
 	 */
 	@Override
 	public String getContextIdentifierClassName() {
 		return null /*TankRefillingContextIdentifier.class.getName()*/;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * IMonitoringDataModel#initialize()
+	 * @see IMonitoringDataModel#initialize()
 	 */
 	@Override
 	public void initialize() {

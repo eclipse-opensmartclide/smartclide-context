@@ -9,7 +9,7 @@ package de.atb.context.monitoring.analyser.webservice;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -43,12 +43,10 @@ public abstract class WebServiceAnalyser<OutputType extends IMonitoringDataModel
         super(dataSource, interpreterConfiguration, indexer, document, amiConfiguration);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IndexingAnalyser#analyseObject
-     * (java.lang.Object, org.apache.lucene.document.Document)
+     * @see IndexingAnalyser#analyseObject(java.lang.Object, org.apache.lucene.document.Document)
      */
     @Override
     public final List<OutputType> analyseObject(final IWebService service, final Document document) {

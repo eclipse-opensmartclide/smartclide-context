@@ -36,11 +36,10 @@ public class TrfParser extends FileParser {
 		super(dataSource, fileSetting, indexer, amiConfiguration);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see FileParser#parseObject(java
-	 * .io.File)
+	 * @see FileParser#parseObject(java.io.File)
 	 */
 	@Override
 	protected boolean parseObject(File file) {

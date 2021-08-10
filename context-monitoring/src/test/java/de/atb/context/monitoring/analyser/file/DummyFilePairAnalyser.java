@@ -26,12 +26,10 @@ public class DummyFilePairAnalyser extends FilePairAnalyser<IMonitoringDataModel
 		super(dataSource, interpreterConfiguration, indexer, document, amiConfiguration);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.context.monitoring.analyser.FilePairAnalyser#analyseObject
-	 * (java.util.AbstractMap.SimpleEntry)
+	 * @see de.atb.context.monitoring.analyser.file.FilePairAnalyser#analyseObject(org.javatuples.Pair)
 	 */
 	@Override
 	public final List<IMonitoringDataModel<DummyMonitoringDataModel, ?>> analyseObject(final Pair<File, File> filePair) {

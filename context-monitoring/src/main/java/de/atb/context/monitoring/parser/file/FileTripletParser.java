@@ -55,11 +55,10 @@ public abstract class FileTripletParser extends
             .createAnalyser(dataSource, indexer, this.document, amiConfiguration);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see IndexingParser#parse(java.lang.
-     * Object)
+     * @see IndexingParser#parse(java.lang.Object)
      */
     @Override
     public final boolean parse(final Triplet<File, File, File> triplet) {
@@ -102,7 +101,7 @@ public abstract class FileTripletParser extends
         return parseObject(triplet);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see IndexingParser#getAnalyser()

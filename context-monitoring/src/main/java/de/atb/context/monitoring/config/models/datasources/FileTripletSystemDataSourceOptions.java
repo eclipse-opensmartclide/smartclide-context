@@ -45,22 +45,20 @@ public enum FileTripletSystemDataSourceOptions implements IDataSourceOptionValue
         this.valueType = valueType;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.monitoring.config.models.datasources.
-     * IDataSourceOptionValue#getKeyName()
+     * @see de.atb.context.monitoring.config.models.datasources.IDataSourceOptionValue#getKeyName()
      */
     @Override
     public String getKeyName() {
         return this.key;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.monitoring.config.models.datasources.
-     * IDataSourceOptionValue#getValueType()
+     * @see de.atb.context.monitoring.config.models.datasources.IDataSourceOptionValue#getValueType()
      */
     @Override
     public Class<? extends Serializable> getValueType() {

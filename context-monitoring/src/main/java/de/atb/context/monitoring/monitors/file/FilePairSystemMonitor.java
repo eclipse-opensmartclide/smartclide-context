@@ -92,7 +92,7 @@ public class FilePairSystemMonitor extends
         this.pathToMonitor = new File(this.dataSource.getUri());
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see ThreadedMonitor#isRunning()
@@ -403,7 +403,7 @@ public class FilePairSystemMonitor extends
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see ThreadedMonitor#shutdown()
@@ -415,10 +415,10 @@ public class FilePairSystemMonitor extends
         this.filesToDates.clear();
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see ThreadedMonitor#shutdown(long)
+     * @see ThreadedMonitor#shutdown(long, TimeUnit)
      */
     @Override
     protected final void shutdown(final long timeOut, final TimeUnit unit) {

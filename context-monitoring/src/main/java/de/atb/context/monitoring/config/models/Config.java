@@ -9,7 +9,7 @@ package de.atb.context.monitoring.config.models;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -82,90 +82,80 @@ public class Config implements IMonitoringConfiguration {
      */
     protected Map<String, Index> indexesMap = new HashMap<>();
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.monitoring.config.models.ISettings#getIndexes()
+     * @see de.atb.context.monitoring.config.models.IMonitoringConfiguration#getIndexes()
      */
     @Override
     public final List<Index> getIndexes() {
         return this.indexes;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * de.atb.context.monitoring.config.models.ISettings#getIndex(java.
-     * lang.String)
+     * @see de.atb.context.monitoring.config.models.IMonitoringConfiguration#getIndex(java.lang.String)
      */
     @Override
     public final Index getIndex(final String id) {
         return this.indexesMap.get(id);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.monitoring.config.models.ISettings#getMonitors()
+     * @see de.atb.context.monitoring.config.models.IMonitoringConfiguration#getMonitors()
      */
     @Override
     public final List<Monitor> getMonitors() {
         return this.monitors;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * de.atb.context.monitoring.config.models.ISettings#getMonitor(java
-     * .lang.String)
+     * @see de.atb.context.monitoring.config.models.IMonitoringConfiguration#getMonitor(java.lang.String)
      */
     @Override
     public final Monitor getMonitor(final String id) {
         return this.monitorsMap.get(id);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * de.atb.context.monitoring.config.models.ISettings#getDataSources()
+     * @see de.atb.context.monitoring.config.models.IMonitoringConfiguration#getDataSources()
      */
     @Override
     public final List<DataSource> getDataSources() {
         return this.dataSources;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * de.atb.context.monitoring.config.models.ISettings#getDataSource(
-     * java.lang.String)
+     * @see de.atb.context.monitoring.config.models.IMonitoringConfiguration#getDataSource(java.lang.String)
      */
     @Override
     public final DataSource getDataSource(final String id) {
         return this.datasourcesMap.get(id);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * de.atb.context.monitoring.config.models.ISettings#getInterpreters()
+     * @see de.atb.context.monitoring.config.models.IMonitoringConfiguration#getInterpreters()
      */
     @Override
     public final List<Interpreter> getInterpreters() {
         return this.interpreters;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * de.atb.context.monitoring.config.models.ISettings#getInterpreter
-     * (java.lang.String)
+     * @see de.atb.context.monitoring.config.models.IMonitoringConfiguration#getInterpreter(java.lang.String)
      */
     @Override
     public final Interpreter getInterpreter(final String id) {
