@@ -1,6 +1,6 @@
 package de.atb.context.common.io;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%

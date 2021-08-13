@@ -221,8 +221,8 @@ public abstract class ClasspathHelper {
 		try {
 			final Class<?> clazz = Class.forName(className, false, ClassLoader.getSystemClassLoader());
 			classes.add(clazz);
-		} catch (final ClassNotFoundException | NoClassDefFoundError | VerifyError cnfe) {
-			ClasspathHelper.LOGGER.error(cnfe.getMessage(), cnfe);
+		} catch (final ClassNotFoundException | NoClassDefFoundError | VerifyError e) {
+			ClasspathHelper.LOGGER.error(e.getMessage(), e);
 		}
     }
 }

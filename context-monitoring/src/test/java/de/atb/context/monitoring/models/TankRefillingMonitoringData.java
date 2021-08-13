@@ -1,6 +1,6 @@
 package de.atb.context.monitoring.models;
 
-/*-
+/*
  * #%L
  * ATB Context Monitoring Core Services
  * %%

@@ -1,6 +1,6 @@
 package de.atb.context.rdf.manager;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%

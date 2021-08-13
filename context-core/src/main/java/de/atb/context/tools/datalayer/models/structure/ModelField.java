@@ -1,6 +1,6 @@
 package de.atb.context.tools.datalayer.models.structure;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%

@@ -1,6 +1,6 @@
 package de.atb.context.ui.modules.table;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%

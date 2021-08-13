@@ -1,6 +1,6 @@
 package de.atb.context.modules.broker.status.ontology;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
@@ -18,7 +18,6 @@ package de.atb.context.modules.broker.status.ontology;
 import de.atb.context.infrastructure.Nodes;
 
 /**
- *
  * @author Giovanni
  */
 public class AvailableServices {

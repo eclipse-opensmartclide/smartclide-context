@@ -1,6 +1,6 @@
 package de.atb.context.rdf.registry;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%

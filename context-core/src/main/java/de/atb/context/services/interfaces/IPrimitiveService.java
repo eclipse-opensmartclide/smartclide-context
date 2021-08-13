@@ -1,6 +1,6 @@
 package de.atb.context.services.interfaces;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%

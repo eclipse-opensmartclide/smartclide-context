@@ -16,7 +16,6 @@ package de.atb.context.modules.config;
 
 
 /**
- *
  * @author Giovanni
  */
 public class DeployerConfigurationObject {

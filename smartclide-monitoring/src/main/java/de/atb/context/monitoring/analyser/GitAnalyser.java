@@ -1,6 +1,6 @@
 package de.atb.context.monitoring.analyser;
 
-/*-
+/*
  * #%L
  * SmartCLIDE Monitoring
  * %%

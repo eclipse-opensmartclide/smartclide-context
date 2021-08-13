@@ -1,6 +1,6 @@
 package de.atb.context.modules.broker.utils;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
@@ -16,7 +16,6 @@ package de.atb.context.modules.broker.utils;
 
 
 /**
- *
  * @author Guilherme
  */
 public class Constants {

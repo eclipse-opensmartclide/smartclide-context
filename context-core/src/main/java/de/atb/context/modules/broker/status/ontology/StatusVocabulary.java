@@ -1,6 +1,6 @@
 package de.atb.context.modules.broker.status.ontology;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
@@ -16,7 +16,6 @@ package de.atb.context.modules.broker.status.ontology;
 
 
 /**
- *
  * @author Giovanni
  */
 public enum StatusVocabulary {

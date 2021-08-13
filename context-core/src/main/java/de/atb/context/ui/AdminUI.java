@@ -1,6 +1,6 @@
 package de.atb.context.ui;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%

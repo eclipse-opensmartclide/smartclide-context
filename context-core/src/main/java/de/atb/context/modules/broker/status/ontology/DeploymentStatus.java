@@ -1,6 +1,6 @@
 package de.atb.context.modules.broker.status.ontology;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Giovanni
  */
 public class DeploymentStatus {

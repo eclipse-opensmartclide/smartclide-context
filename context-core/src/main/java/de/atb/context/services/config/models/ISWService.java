@@ -1,6 +1,6 @@
 package de.atb.context.services.config.models;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%

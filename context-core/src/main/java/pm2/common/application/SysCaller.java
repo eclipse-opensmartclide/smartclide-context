@@ -1,6 +1,6 @@
 package pm2.common.application;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%

@@ -1,6 +1,6 @@
 package de.atb.context.tools.datalayer.control;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%

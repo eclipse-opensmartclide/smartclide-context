@@ -1,6 +1,6 @@
 package de.atb.context.tools.ontology;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%

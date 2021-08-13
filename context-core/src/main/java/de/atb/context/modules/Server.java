@@ -1,6 +1,6 @@
 package de.atb.context.modules;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
@@ -30,7 +30,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Giovanni
  */
 public final class Server {
