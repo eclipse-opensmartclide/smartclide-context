@@ -138,7 +138,7 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
     /**
 	 * (non-Javadoc)
 	 *
-	 * @see IContextRepositoryService#getContext(de.atb.context.common.util.BusinessCase, java.lang.String)
+	 * @see de.atb.context.services.IContextRepositoryService#getContext(de.atb.context.common.util.ApplicationScenario, java.lang.String)
      */
     @Override
     public final synchronized ContextContainerWrapper getContext(final ApplicationScenario applicationScenario, final String contextId)

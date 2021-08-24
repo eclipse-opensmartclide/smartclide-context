@@ -257,7 +257,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     /**
      * (non-Javadoc)
      *
-     * @see IMonitoringDataRepository#getMonitoringData(BusinessCase, java.lang.Class, java.lang.String)
+     * @see IMonitoringDataRepository#getMonitoringData(de.atb.context.common.util.ApplicationScenario, java.lang.Class, java.lang.String)
      */
     @Override
     public synchronized Type getMonitoringData(final ApplicationScenario applicationScenario, final Class<Type> clazz, final String identifier) {

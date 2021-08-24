@@ -113,7 +113,7 @@ public class AmIMonitoringDataRepositoryServiceWrapper<Type extends IMonitoringD
     /**
      * (non-Javadoc)
      *
-     * @see IMonitoringDataRepository#getMonitoringData(de.atb.context.common.util.BusinessCase, java.lang.Class, de.atb.context.common.util.TimeFrame)
+     * @see IMonitoringDataRepository#getMonitoringData(de.atb.context.common.util.ApplicationScenario, java.lang.Class, de.atb.context.common.util.TimeFrame)
      */
     @Override
     public final List<Type> getMonitoringData(final ApplicationScenario applicationScenario, final Class<Type> clazz, final TimeFrame timeFrame)
