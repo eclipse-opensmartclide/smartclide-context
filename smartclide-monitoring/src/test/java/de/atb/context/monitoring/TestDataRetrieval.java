@@ -9,6 +9,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 
@@ -18,12 +19,10 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import de.atb.context.common.util.ApplicationScenario;
-import de.atb.context.common.util.BusinessCase;
 import de.atb.context.monitoring.config.models.Config;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSourceOptions;
 import de.atb.context.monitoring.models.GitDataModel;
 import de.atb.context.monitoring.models.GitMessage;
-import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.services.AmIMonitoringService;
 import de.atb.context.services.IAmIMonitoringDataRepositoryService;
 import de.atb.context.services.IAmIMonitoringService;
@@ -52,8 +51,6 @@ import static org.junit.Assert.assertNotNull;
  * @author scholze
  * @version $LastChangedRevision: 577 $
  */
-
-
 public class TestDataRetrieval {
 
     private static final Logger logger = LoggerFactory.getLogger(TestDataRetrieval.class);
@@ -75,7 +72,7 @@ public class TestDataRetrieval {
     // starts a new rabbitmq message broker in a docker container.
     // @Rule must be final.
     @Rule
-    public final RabbitMQContainer container = new RabbitMQContainer(RABBITMQ_3_ALPINE);
+    public final RabbitMQContainer container = new RabbitMQContainer(RABBITMQ_3_ALPINE).withAdminPassword(null);
 
     @Before
     public void setup() throws Exception {
@@ -83,12 +80,14 @@ public class TestDataRetrieval {
         final Integer rabbitMQContainerAmqpPort = container.getAmqpPort();
         setupBroker(rabbitMQContainerHost, rabbitMQContainerAmqpPort);
 
-        createFakeDleListener(rabbitMQContainerHost, rabbitMQContainerAmqpPort);
+        createFakeDleListener();
 
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
+        //noinspection ConstantConditions
         final String monitoringConfig = Path.of(getClass().getResource("/monitoring-config.xml").toURI()).toString();
+        //noinspection ConstantConditions
         final String serviceConfig = Path.of(getClass().getResource("/services-config.xml").toURI()).toString();
 
         updateMessageBrokerDataSource(monitoringConfig, rabbitMQContainerHost, rabbitMQContainerAmqpPort);
@@ -102,7 +101,7 @@ public class TestDataRetrieval {
         ServiceManager.getLSWServiceContainer().add(serviceContainer);
 
         for (SWServiceContainer container : ServiceManager.getLSWServiceContainer()) {
-            if (container.getServerClass().toString().contains("AmIMonitoringDataRepository")) {
+            if (Objects.requireNonNull(container.getServerClass()).toString().contains("AmIMonitoringDataRepository")) {
                 reposService = ServiceManager.getWebservice(container);
             }
         }
@@ -144,7 +143,7 @@ public class TestDataRetrieval {
 
         Thread.sleep(10000);
 
-        // get the monitored data from the repository (latest registry)
+        // get the monitored data from the repository (the latest registry)
         final List<GitDataModel> data =
                 monitoringDataRepository.getMonitoringData(ApplicationScenario.getInstance(), GitDataModel.class, 1);
 
@@ -189,7 +188,7 @@ public class TestDataRetrieval {
         persister.write(config, new File(monitoringConfig));
     }
 
-    private void createFakeDleListener(final String host, final Integer port) throws IOException {
+    private void createFakeDleListener() throws IOException {
         channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC, true);
         final String queue = channel.queueDeclare("", true, false, false, null).getQueue();
         channel.queueBind(queue, EXCHANGE_NAME, ROUTING_KEY_DLE);
