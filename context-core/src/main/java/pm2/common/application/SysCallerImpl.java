@@ -18,11 +18,14 @@ import pm2.common.io.*;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static pm2.common.application.ObjectKinds.*;
 
 public class SysCallerImpl implements SysCaller {
 
+    private static final Logger logger = LoggerFactory.getLogger(SysCallerImpl.class);
 	private int handleCounter;
 	private boolean failAccess; // can be used to generate failures for caller testing
 	private String sLastError;
@@ -393,16 +396,16 @@ public class SysCallerImpl implements SysCaller {
 		}
 		switch (kind) {
 		case POKind_CoreService_Monitoring_conf:
-			System.out.println("Calling POKindCoreServiceMonitoringConfOpenAM ...");
+			logger.info("Calling POKindCoreServiceMonitoringConfOpenAM ...");
 			return poki1.POKindCoreServiceConfOpenAM(name, path, kind);
 		case POKind_CoreServices_conf:
-			System.out.println("Calling POKindCoreServicesConfOpenAM ...");
+			logger.info("Calling POKindCoreServicesConfOpenAM ...");
 			return poki2.POKindCoreServicesConfOpenAM(name, path, kind);
 		case POKind_CoreService_AppScenConf:
-			System.out.println("Calling POKindCoreServiceAppScenConfOpenAM ...");
+            logger.info("Calling POKindCoreServiceAppScenConfOpenAM ...");
 			return poki3.POKindCoreServiceAppScenConfOpenAM(name, path, kind);
 		case POKind_X:
-			System.out.println("Calling OpenAM for POKind_X.");
+            logger.info("Calling OpenAM for POKind_X.");
 			return false;
 		}
 		return true;
@@ -416,16 +419,16 @@ public class SysCallerImpl implements SysCaller {
 		}
 		switch (kind) {
 		case POKind_CoreService_Monitoring_conf:
-			System.out.println("Calling POKindCoreServiceMonitoringConfCloseAM ...");
+            logger.info("Calling POKindCoreServiceMonitoringConfCloseAM ...");
 			return poki1.POKindCoreServiceConfCloseAM(name,kind);
 		case POKind_CoreServices_conf:
-			System.out.println("Calling POKindCoreServicesConfCloseAM ...");
+            logger.info("Calling POKindCoreServicesConfCloseAM ...");
 			return poki2.POKindCoreServicesConfCloseAM(name,kind);
 		case POKind_CoreService_AppScenConf:
-			System.out.println("Calling POKindCoreServiceAppScenConfCloseAM ...");
+            logger.info("Calling POKindCoreServiceAppScenConfCloseAM ...");
 			return poki3.POKindCoreServiceAppScenConfCloseAM(name, kind);
 		case POKind_X:
-			System.out.println("Calling CloseAM for POKind_X.");
+            logger.info("Calling CloseAM for POKind_X.");
 			return false;
 		}
 		return true;
@@ -441,16 +444,16 @@ public class SysCallerImpl implements SysCaller {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		switch (kind) {
 		case POKind_CoreService_Monitoring_conf:
-			System.out.println("Calling POKindCoreServiceMonitoringConfReadAM ...");
+            logger.info("Calling POKindCoreServiceMonitoringConfReadAM ...");
 			return poki1.POKindCoreServiceConfReadAM(name, path, kind, count, offset);
 		case POKind_CoreServices_conf:
-			System.out.println("Calling POKindCoreServicesConfReadAM ...");
+            logger.info("Calling POKindCoreServicesConfReadAM ...");
 			return poki2.POKindCoreServicesConfReadAM(name, path, kind, count, offset);
 		case POKind_CoreService_AppScenConf:
-			System.out.println("Calling POKindCoreServiceAppScenConfReadAM ...");
+            logger.info("Calling POKindCoreServiceAppScenConfReadAM ...");
 			return poki3.POKindCoreServiceAppScenConfReadAM(name, path, kind, count, offset);
 		case POKind_X:
-			System.out.println("Calling ReadAM for POKind_X.");
+            logger.info("Calling ReadAM for POKind_X.");
 			return null;
 		}
 		return baos.toByteArray();
@@ -464,18 +467,18 @@ public class SysCallerImpl implements SysCaller {
 		}
 		switch (kind) {
 		case POKind_CoreService_Monitoring_conf:
-			System.out.println("Calling POKindCoreServiceMonitoringConfWriteAM ...");
-			System.out.println("---not supported---");
+            logger.info("Calling POKindCoreServiceMonitoringConfWriteAM ...");
+            logger.info("---not supported---");
 			break;
 		case POKind_CoreServices_conf:
-			System.out.println("Calling POKindCoreServicesConfWriteAM ...");
-			System.out.println("---not supported---");
+            logger.info("Calling POKindCoreServicesConfWriteAM ...");
+            logger.info("---not supported---");
 			break;
 		case POKind_CoreService_AppScenConf:
-			System.out.println("Calling POKindCoreServiceAppScenConfWriteAM ...");
+            logger.info("Calling POKindCoreServiceAppScenConfWriteAM ...");
 			return poki3.POKindCoreServiceAppScenConfWriteAM(name, kind, buf);
 		case POKind_X:
-			System.out.println("Calling WriteAM for POKind_X.");
+            logger.info("Calling WriteAM for POKind_X.");
 			return false;
 		}
 		return true;

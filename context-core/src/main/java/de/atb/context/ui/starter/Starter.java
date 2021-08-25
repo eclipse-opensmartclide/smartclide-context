@@ -57,11 +57,10 @@ public abstract class Starter {
 		if (args.length > 0) {
 			this.configFilePath = args[0];
 		} else {
-			System.err
-					.println("Please specify configuration xml file as first argument!");
+			logger.error("Please specify configuration xml file as first argument!");
 			System.exit(-1);
 		}
-		System.out.println(this.configFilePath);
+		logger.info(this.configFilePath);
 	}
 
 	public final void validateStartupParameters() {
@@ -74,7 +73,7 @@ public abstract class Starter {
 	public abstract void validateAdditionalStartupParameters();
 
 	protected final void exitWithErrorMessage(final String message) {
-		System.err.println(message);
+		logger.error(message);
 		System.exit(-1);
 	}
 

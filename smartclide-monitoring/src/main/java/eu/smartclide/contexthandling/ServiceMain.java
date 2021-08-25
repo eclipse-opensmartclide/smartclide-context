@@ -45,8 +45,6 @@ public class ServiceMain {
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
-        org.apache.log4j.BasicConfigurator.configure();
-
         Path smartclideConfigPath = Path.of("resources");
 
         // Environment Variable
@@ -66,7 +64,6 @@ public class ServiceMain {
             // check if default folder exist
             if (!Files.isDirectory(smartclideConfigPath)) {
                 logger.error("The config directory for the SmartCLIDE Context Handling does not exist!");
-                System.err.println("The config directory for the SmartCLIDE Context Handling does not exist!");
                 System.exit(1);
             }
         }

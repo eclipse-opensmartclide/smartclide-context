@@ -22,12 +22,9 @@ import com.jgoodies.forms.layout.FormLayout;
 import de.atb.context.starter.StarterComponents;
 import de.atb.context.ui.config.ServicesConfigurationDialog;
 import de.atb.context.ui.util.Icon;
-import de.atb.context.ui.util.JTextAreaAppender;
 import de.atb.context.ui.util.UIHelper;
 import de.atb.context.ui.util.UIType;
 import de.atb.context.ui.util.interfaces.ICommunicationBetweenUIs;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -137,13 +134,7 @@ public class StarterFrame extends JFrame implements ActionListener,
         JScrollPane scroll = new JScrollPane(text,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        JTextAreaAppender appender = new JTextAreaAppender(text, scroll);
         text.setEditable(false);
-
-        /* Start and Configuration of Log4j */
-        org.apache.log4j.Logger logger = LogManager.getRootLogger();
-        logger.setLevel(Level.INFO);
-        logger.addAppender(appender);
 
         window.add(builder.getPanel(), BorderLayout.NORTH);
         window.add(scroll, BorderLayout.CENTER);

@@ -14,7 +14,7 @@ package de.atb.context.services.async;
  * #L%
  */
 
-
+import org.slf4j.LoggerFactory;
 import de.atb.context.services.infrastructure.response.InvokeResponse;
 import de.atb.context.services.interfaces.Output;
 
@@ -30,12 +30,13 @@ import java.util.logging.Logger;
  */
 public class MyAsyncHandler implements AsyncHandler<InvokeResponse> {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MyAsyncHandler.class);
 	private InvokeResponse reply;
 
 	@Override
 	public final void handleResponse(final Response<InvokeResponse> rspns) {
 		try {
-			System.err.println("handleResponse called");
+			logger.info("handleResponse called");
 			reply = rspns.get();
 		} catch (InterruptedException | ExecutionException ex) {
 			Logger.getLogger(MyAsyncHandler.class.getName()).log(Level.SEVERE,
