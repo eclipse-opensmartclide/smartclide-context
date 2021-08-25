@@ -279,7 +279,7 @@ public class JsonReader implements Closeable {
 	 * JsonReader and is useful when you encounter a class that JsonReader
 	 * cannot instantiate using its internal exhausting attempts (trying all
 	 * constructors, varying arguments to them, etc.)
-	 * 
+	 *
 	 * @param c class
 	 * @param factory factory
 	 */
@@ -1052,7 +1052,7 @@ public class JsonReader implements Closeable {
 	/**
 	 * Convert a root JsonObject that represents parsed JSON, into an actual
 	 * Java object.
-	 * 
+	 *
 	 * @param root
 	 *            JsonObject instance that was the root object from the JSON
 	 *            input that was parsed in an earlier call to JsonReader.
@@ -1069,7 +1069,7 @@ public class JsonReader implements Closeable {
 	 * representing a Java Object graph), to a Java object instance. The root
 	 * map came from using the JsonReader to parse a JSON graph (using the API
 	 * that puts the graph into Maps, not the typed representation).
-	 * 
+	 *
 	 * @param root
 	 *            JsonObject instance that was the root object from the JSON
 	 *            input that was parsed in an earlier call to JsonReader.
@@ -1291,7 +1291,7 @@ public class JsonReader implements Closeable {
 	 * an indexable collection, the unresolved references are set back into the
 	 * proper element location. For non-indexable collections (Sets), the
 	 * unresolved references are added via .add().
-	 * 
+	 *
 	 * @param stack
 	 *            a Stack (LinkedList) used to support graph traversal.
 	 * @param jsonObj
@@ -1357,7 +1357,7 @@ public class JsonReader implements Closeable {
 	 * an indexable collection, the unresolved references are set back into the
 	 * proper element location. For non-indexable collections (Sets), the
 	 * unresolved references are added via .add().
-	 * 
+	 *
 	 * @param jsonObj
 	 *            a Map-of-Map representation of the JSON input stream.
 	 * @throws IOException
@@ -1448,7 +1448,7 @@ public class JsonReader implements Closeable {
 	 * Process java.util.Map and it's derivatives. These can be written
 	 * specially so that the serialization would not expose the derivative class
 	 * internals (internal fields of TreeMap for example).
-	 * 
+	 *
 	 * @param stack
 	 *            a Stack (LinkedList) used to support graph traversal.
 	 * @param jsonObj
@@ -1575,7 +1575,7 @@ public class JsonReader implements Closeable {
 	 * Java object, performing any necessary conversions on primitives, or deep
 	 * traversals for field assignments to other objects, arrays, Collections,
 	 * or Maps.
-	 * 
+	 *
 	 * @param stack
 	 *            Stack (LinkedList) used for graph traversal.
 	 * @param jsonObj
@@ -1856,7 +1856,7 @@ public class JsonReader implements Closeable {
 	/**
 	 * Convert an input JsonObject map (known to represent a Map.class or
 	 * derivative) that has regular keys and values to have its keys placed into
-	 * 
+	 *
 	 * @param map
 	 *            Map to convert
 	 */
@@ -2198,7 +2198,7 @@ public class JsonReader implements Closeable {
 	 *             for stream errors or parsing errors.
 	 */
 	private Number readNumber(final int paramC) throws IOException {
-		int c = paramC; 
+		int c = paramC;
 		final FastPushbackReader in = _in;
 		final char[] numBuf = _numBuf;
 		numBuf[0] = (char) c;
@@ -2768,7 +2768,7 @@ public class JsonReader implements Closeable {
 	 * For all fields where the value was "@ref":"n" where 'n' was the id of an
 	 * object that had not yet been encountered in the stream, make the final
 	 * substitution.
-	 * 
+	 *
 	 * @throws IOException Throws an IOException in case ...
 	 */
 	private void patchUnresolvedReferences() throws IOException {
@@ -2779,21 +2779,14 @@ public class JsonReader implements Closeable {
 			JsonObject objReferenced = _objsRead.get(ref.refId);
 
 			if (objReferenced == null) {
-				// System.err.println("Back reference (" + ref.refId +
-				// ") does not match any object id in input, field '" +
-				// ref.field + '\'');
 				continue;
 			}
 
 			if (objReferenced.target == null) {
-				// System.err.println("Back referenced object does not exist,  @ref "
-				// + ref.refId + ", field '" + ref.field + '\'');
 				continue;
 			}
 
 			if (objToFix == null) {
-				// System.err.println("Referencing object is null, back reference, @ref "
-				// + ref.refId + ", field '" + ref.field + '\'');
 				continue;
 			}
 

@@ -55,16 +55,16 @@ public abstract class ThreadedMonitor<P, A extends IMonitoringDataModel<?, ?>> e
                               final Indexer indexer,
                               final AmIMonitoringConfiguration configuration) {
 
-        if(dataSource == null) {
+        if (dataSource == null) {
             throw new IllegalArgumentException("dataSource may not be null!");
         }
-        if(interpreter == null) {
+        if (interpreter == null) {
             throw new IllegalArgumentException("interpreter may not be null!");
         }
-        if(indexer == null) {
+        if (indexer == null) {
             throw new IllegalArgumentException("indexer may not be null!");
         }
-        if(monitor == null) {
+        if (monitor == null) {
             throw new IllegalArgumentException("monitor may not be null!");
         }
 

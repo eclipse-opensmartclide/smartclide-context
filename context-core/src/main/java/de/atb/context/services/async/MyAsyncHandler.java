@@ -14,38 +14,37 @@ package de.atb.context.services.async;
  * #L%
  */
 
-import org.slf4j.LoggerFactory;
-import de.atb.context.services.infrastructure.response.InvokeResponse;
-import de.atb.context.services.interfaces.Output;
-
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Response;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Response;
+
+import de.atb.context.services.infrastructure.response.InvokeResponse;
+import de.atb.context.services.interfaces.Output;
+import org.slf4j.LoggerFactory;
+
 /**
- *
  * @author Giovanni
  */
 public class MyAsyncHandler implements AsyncHandler<InvokeResponse> {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MyAsyncHandler.class);
-	private InvokeResponse reply;
+    private InvokeResponse reply;
 
-	@Override
-	public final void handleResponse(final Response<InvokeResponse> rspns) {
-		try {
-			logger.info("handleResponse called");
-			reply = rspns.get();
-		} catch (InterruptedException | ExecutionException ex) {
-			Logger.getLogger(MyAsyncHandler.class.getName()).log(Level.SEVERE,
-					null, ex);
-		}
-	}
+    @Override
+    public final void handleResponse(final Response<InvokeResponse> rspns) {
+        try {
+            logger.info("handleResponse called");
+            reply = rspns.get();
+        } catch (InterruptedException | ExecutionException ex) {
+            Logger.getLogger(MyAsyncHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
-	public final Output getResponse() {
-		return reply.getTestValue();
-	}
+    public final Output getResponse() {
+        return reply.getTestValue();
+    }
 
 }
