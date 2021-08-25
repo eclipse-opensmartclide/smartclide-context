@@ -29,7 +29,6 @@ import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.parser.IndexingParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-import org.apache.logging.log4j.core.util.Assert;
 import org.apache.lucene.document.Document;
 
 /**
@@ -56,10 +55,18 @@ public abstract class ThreadedMonitor<P, A extends IMonitoringDataModel<?, ?>> e
                               final Indexer indexer,
                               final AmIMonitoringConfiguration configuration) {
 
-        Assert.requireNonEmpty(dataSource, "dataSource may not be null!");
-        Assert.requireNonEmpty(interpreter, "interpreter may not be null!");
-        Assert.requireNonEmpty(monitor, "monitor may not be null!");
-        Assert.requireNonEmpty(indexer, "indexer may not be null!");
+        if(dataSource == null) {
+            throw new IllegalArgumentException("dataSource may not be null!");
+        }
+        if(interpreter == null) {
+            throw new IllegalArgumentException("interpreter may not be null!");
+        }
+        if(indexer == null) {
+            throw new IllegalArgumentException("indexer may not be null!");
+        }
+        if(monitor == null) {
+            throw new IllegalArgumentException("monitor may not be null!");
+        }
 
         this.dataSource = dataSource;
         this.interpreter = interpreter;
