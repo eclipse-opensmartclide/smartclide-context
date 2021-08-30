@@ -2753,21 +2753,14 @@ public class JsonReader implements Closeable {
 			JsonObject objReferenced = _objsRead.get(ref.refId);
 
 			if (objReferenced == null) {
-				// System.err.println("Back reference (" + ref.refId +
-				// ") does not match any object id in input, field '" +
-				// ref.field + '\'');
 				continue;
 			}
 
 			if (objReferenced.target == null) {
-				// System.err.println("Back referenced object does not exist,  @ref "
-				// + ref.refId + ", field '" + ref.field + '\'');
 				continue;
 			}
 
 			if (objToFix == null) {
-				// System.err.println("Referencing object is null, back reference, @ref "
-				// + ref.refId + ", field '" + ref.field + '\'');
 				continue;
 			}
 

@@ -31,7 +31,6 @@ import de.atb.context.services.faults.ContextFault;
 import de.atb.context.services.manager.ServiceManager;
 import de.atb.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +45,6 @@ public class ServiceMain {
     private static void initialize() {
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
-
-        BasicConfigurator.configure();
 
         Path smartclideConfigPath = Path.of("resources");
 
@@ -68,7 +65,6 @@ public class ServiceMain {
             // check if default folder exist
             if (!Files.isDirectory(smartclideConfigPath)) {
                 logger.error("The config directory for the SmartCLIDE Context Handling does not exist!");
-                System.err.println("The config directory for the SmartCLIDE Context Handling does not exist!");
                 System.exit(1);
             }
         }

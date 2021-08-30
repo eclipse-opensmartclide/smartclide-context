@@ -599,8 +599,6 @@ public class KMBApi {
             writer.close();
             inputReader.close();
             theConnection.disconnect();
-            System.out.println();
-            System.out.println();
         } catch (final IOException e) {
             throw new ContextFault(e.getMessage(), e.getCause());
         }
@@ -647,8 +645,6 @@ public class KMBApi {
             writer.close();
             inputReader.close();
             theConnection.disconnect();
-            System.out.println();
-            System.out.println();
         } catch (final IOException e) {
             throw new ContextFault(e.getMessage(), e.getCause());
         }
