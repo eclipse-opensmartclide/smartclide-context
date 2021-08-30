@@ -4,7 +4,7 @@ package de.atb.context.extraction;
  * #%L
  * ATB Context Extraction Core Service
  * %%
- * Copyright (C) 2018 - 2019 ATB
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -14,15 +14,14 @@ package de.atb.context.extraction;
  * #L%
  */
 
-
 import com.hp.hpl.jena.ontology.OntModel;
 
 /**
  * IContextReasoner
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 647 $
- * 
+ *
  */
 public interface IContextReasoner<Context extends OntModel> {
 

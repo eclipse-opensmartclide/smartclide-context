@@ -4,7 +4,7 @@ package de.atb.context.monitoring.parser.messagebroker;
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2021 ATB
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -31,10 +31,10 @@ import java.util.Date;
 
 /**
  * WebServiceParser
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 143 $
- * 
+ *
  */
 public abstract class MessageBrokerParser extends IndexingParser<String> {
 
@@ -63,7 +63,7 @@ public abstract class MessageBrokerParser extends IndexingParser<String> {
 
 	/**
 	 * Abstract method to be implemented by the webservice specific parser.
-	 * 
+	 *
 	 * @param message
 	 *            message to parsed.
 	 * @param document

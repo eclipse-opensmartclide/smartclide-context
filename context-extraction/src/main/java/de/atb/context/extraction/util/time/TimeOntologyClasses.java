@@ -1,22 +1,10 @@
-/*
- * @(#)TimeOntologyClasses.java
- *
- * $Id: TimeOntologyClasses.java 647 2016-10-20 15:13:20Z scholze $
- * 
- * $Rev:: 647                  $ 	last change revision
- * $Date:: 2016-10-20 17:13:20#$	last change date
- * $Author:: scholze             $	last change author
- * 
- * Copyright 2011-15 Sebastian Scholze (ATB). All rights reserved.
- *
- */
 package de.atb.context.extraction.util.time;
 
 /*
  * #%L
  * ATB Context Extraction Core Service
  * %%
- * Copyright (C) 2018 - 2019 ATB
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -40,10 +28,10 @@ import java.util.UUID;
 
 /**
  * TimeOntologyClasses
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 647 $
- * 
+ *
  */
 @Getter
 public enum TimeOntologyClasses implements IOntologyResource {
@@ -99,7 +87,7 @@ public enum TimeOntologyClasses implements IOntologyResource {
 	/**
 	 * Creates an instance of this Class in the given Ontology with a randomly
 	 * generated Id.
-	 * 
+	 *
 	 * @param model
 	 *            The ontology where the created instance should be contained
 	 *            in.
@@ -122,9 +110,9 @@ public enum TimeOntologyClasses implements IOntologyResource {
 	// // return model.getNsPrefixURI(this.namespace.getLocalName());
 	// }
 
-	/*
+	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.atb.context.context.util.IOntologyResource#getNameSpace()
 	 */
 	@Override
@@ -167,7 +155,7 @@ public enum TimeOntologyClasses implements IOntologyResource {
 	/**
 	 * Creates an instance of this Class in the given Ontology with the given
 	 * Id.
-	 * 
+	 *
 	 * @param model
 	 *            The ontology where the created instance should be contained
 	 *            in.

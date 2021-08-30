@@ -4,7 +4,7 @@ package de.atb.context.common.util;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -30,10 +30,7 @@ public class SPARQLHelper {
 	private SPARQLHelper() {}
 
 	public static String appendDefaultPrefixes(final String sparqlQuery) {
-		final StringBuilder builder = new StringBuilder();
-		builder.append(SPARQLPrefixMappings.getAllAsPrefixString());
-		builder.append(sparqlQuery);
-		return builder.toString();
+        return SPARQLPrefixMappings.getAllAsPrefixString() + sparqlQuery;
 	}
 
 	public static synchronized <T> String getRdfNamespace(

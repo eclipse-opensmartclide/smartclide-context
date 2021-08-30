@@ -4,7 +4,7 @@ package de.atb.context.persistence.common;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -23,11 +23,9 @@ import de.atb.context.services.faults.ContextFault;
 /**
  * IPersistenceUnit
  *
+ * @param <T> Param
  * @author scholze
  * @version $LastChangedRevision: 417 $
- * @param <T>
- *            Param
- *
  */
 public interface IPersistenceUnit<T extends IApplicationScenarioProvider> {
 

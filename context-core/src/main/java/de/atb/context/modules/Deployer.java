@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.atb.context.modules;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -44,9 +39,7 @@ import java.util.List;
  */
 public class Deployer {
 
-    private static final long serialVersionUID = 1L;
-    private final org.slf4j.Logger logger = LoggerFactory
-            .getLogger(Deployer.class);
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(Deployer.class);
     private DeployerConfigurationObject configuration = null;
     private IServiceRegistryService client = null;
     private DeployerFrame frame;
@@ -68,12 +61,9 @@ public class Deployer {
                 deployerConfig.setHost(container.getService().getHost());
                 deployerConfig.setLocation(container.getService().getLocation()
                         .toString());
-                deployerConfig.setProxy(container.getService().getProxyClass()
-                        .getName());
-                deployerConfig.setServer(container.getService()
-                        .getServerClass().getName());
-                deployerConfig.setType(container.getService().getServerClass()
-                        .getName());
+                deployerConfig.setProxy(container.getService().getProxyClass().getName());
+                deployerConfig.setServer(container.getService().getServerClass().getName());
+                deployerConfig.setType(container.getService().getServerClass().getName());
                 deployerConfig.setStatus(StatusVocabulary.FREE.getStatusName());
             } else if (!container.getService().getName().contains("Registry")
                     && !container.getService().getName().contains("Broker")) {
@@ -81,12 +71,9 @@ public class Deployer {
                 config.setId(container.getService().getId());
                 config.setName(container.getService().getName());
                 config.setHost(container.getService().getHost());
-                config.setLocation(container.getService().getLocation()
-                        .toString());
-                config.setProxy(container.getService().getProxyClass()
-                        .getName());
-                config.setServer(container.getService().getServerClass()
-                        .getName());
+                config.setLocation(container.getService().getLocation().toString());
+                config.setProxy(container.getService().getProxyClass().getName());
+                config.setServer(container.getService().getServerClass().getName());
                 config.setStatus(StatusVocabulary.FREE.getStatusName());
                 config.setType(container.getServerClass().getSimpleName());
                 configs.add(config);

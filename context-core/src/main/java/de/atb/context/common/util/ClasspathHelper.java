@@ -4,7 +4,7 @@ package de.atb.context.common.util;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -68,8 +68,7 @@ public abstract class ClasspathHelper {
 		final List<Class<?>> matchingClasses = new ArrayList<>();
 		final List<Class<?>> classes = ClasspathHelper.getAllClasses(
 				packagePrefix, includeJars);
-		ClasspathHelper.LOGGER.debug(String.format("checking %s classes",
-				Integer.valueOf(classes.size())));
+		ClasspathHelper.LOGGER.debug(String.format("checking %s classes", classes.size()));
 		for (final Class<?> clazz : classes) {
 			if (classOrIface.isAssignableFrom(clazz)) {
 				matchingClasses.add(clazz);
@@ -119,8 +118,7 @@ public abstract class ClasspathHelper {
 	}
 
 	private static String getClassName(final String fileName) {
-		return fileName.substring(0, fileName.length() - 6).replaceAll(
-				"/|\\\\", "\\.");
+		return fileName.substring(0, fileName.length() - 6).replaceAll("/|\\\\", "\\.");
 	}
 
 	private static List<Class<?>> getClassesFromJar(final File path,
@@ -128,7 +126,7 @@ public abstract class ClasspathHelper {
 		final List<Class<?>> classes = new ArrayList<>();
 		ClasspathHelper.LOGGER.debug(String.format("Getting classes for %s",
 				path));
-		try (JarFile jar = new JarFile(path);) {
+		try (JarFile jar = new JarFile(path)) {
 			if (!path.canRead()) {
 				return classes;
 			}
@@ -219,18 +217,12 @@ public abstract class ClasspathHelper {
 		return fileList;
 	}
 
-	private static void loadClass(final List<Class<?>> classes,
-			final String className) {
+	private static void loadClass(final List<Class<?>> classes, final String className) {
 		try {
-			final Class<?> clazz = Class.forName(className, false,
-					ClassLoader.getSystemClassLoader());
+			final Class<?> clazz = Class.forName(className, false, ClassLoader.getSystemClassLoader());
 			classes.add(clazz);
-		} catch (final ClassNotFoundException cnfe) {
-			ClasspathHelper.LOGGER.error(cnfe.getMessage(), cnfe);
-		} catch (final NoClassDefFoundError e) {
+		} catch (final ClassNotFoundException | NoClassDefFoundError | VerifyError e) {
 			ClasspathHelper.LOGGER.error(e.getMessage(), e);
-		} catch (final VerifyError ve) {
-			ClasspathHelper.LOGGER.error(ve.getMessage(), ve);
 		}
-	}
+    }
 }

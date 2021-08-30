@@ -1,10 +1,10 @@
 package de.atb.context.common.io;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -31,7 +31,6 @@ public class FileUtils {
     private FileUtils() {
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T deserializeObjectFromFile(final String file) {
         return deserializeObjectFromFile(new File(file));
     }
@@ -69,7 +68,7 @@ public class FileUtils {
     public static <T> void serializeToFile(final T object, final File file) {
         try (
             FileOutputStream fOut = new FileOutputStream(file);
-            ObjectOutputStream oOut = new ObjectOutputStream(fOut);
+            ObjectOutputStream oOut = new ObjectOutputStream(fOut)
         ) {
             oOut.writeObject(object);
         } catch (IOException e) {
@@ -115,10 +114,7 @@ public class FileUtils {
             }
             logger.info(path);
             return new File(path).mkdirs();
-        } else if (file.exists()) {
-            return true;
-        }
-        return false;
+        } else return file.exists();
     }
 
     // For Service Composition Editor BPMN File management

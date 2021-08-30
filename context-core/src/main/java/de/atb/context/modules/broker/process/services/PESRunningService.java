@@ -1,10 +1,10 @@
 package de.atb.context.modules.broker.process.services;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -26,24 +26,24 @@ import java.util.HashMap;
  * @author Guilherme
  */
 public class PESRunningService<T extends Configuration> {
-    
 
-    //Id of the Service inside the PES   
+
+    // ID of the Service inside the PES
     String serviceID;
 
     T pesConfig;
     //Not used - only for info
     boolean isRestartable;
-    boolean continuosOperationMode; //true -> continuous _ false -> static 
-    boolean isStarter; 
+    boolean continuosOperationMode; //true -> continuous _ false -> static
+    boolean isStarter;
     HashMap <String,PESFlowSpecs> flowspecs;
     ArrayList<String> dataOutputIds;
     ArrayList<String> receivers;
     OutputDataModel outputModel;
-    
+
     boolean delayFromStartSettled;
     int delayFromStart;
-    
+
     public PESRunningService() {
         this.dataOutputIds = new ArrayList<>();
         this.isStarter = false;
@@ -113,12 +113,11 @@ public class PESRunningService<T extends Configuration> {
     public void addDataOutputId(String outputId) {
         this.dataOutputIds.add(outputId);
     }
-    
-    
+
     public ArrayList<String> getReceivers() {
         return receivers;
     }
-    
+
     public void setReceivers(ArrayList<String> receivers) {
         this.receivers = receivers;
     }

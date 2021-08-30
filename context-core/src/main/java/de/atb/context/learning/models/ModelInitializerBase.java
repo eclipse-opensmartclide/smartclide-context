@@ -4,7 +4,7 @@ package de.atb.context.learning.models;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -36,10 +36,10 @@ public abstract class ModelInitializerBase implements IModelInitializer {
 
     public abstract String getModelSkeleton();
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.learning.models.IModelInitializer#initializeModel()
+     * @see de.atb.context.learning.models.IModelInitializer#initializeModel(java.lang.String)
      */
     @Override
     public final boolean initializeModel(final String filePath) { // TODO this should maybe replace by a call to DRM API
@@ -53,7 +53,7 @@ public abstract class ModelInitializerBase implements IModelInitializer {
         }
 
         if (FileUtils.ensureDirectoryExists(filePath)) {
-            try (FileWriter writer = new FileWriter(filePath);) {
+            try (FileWriter writer = new FileWriter(filePath)) {
                 writer.write(getModelSkeleton());
                 writer.flush();
                 return true;
@@ -61,7 +61,7 @@ public abstract class ModelInitializerBase implements IModelInitializer {
                 logger.error(e.getMessage(), e);
             }
         } else {
-            try (FileWriter writer = new FileWriter(filePath);) {
+            try (FileWriter writer = new FileWriter(filePath)) {
                 final File source = new File(filePath);
                 if (source.createNewFile()) {
                     writer.write(getModelSkeleton());

@@ -1,10 +1,10 @@
 package de.atb.context.monitoring.monitors;
 
-/*-
+/*
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -44,7 +44,7 @@ public abstract class ScheduledExecutorThreadedMonitor<P, A extends IMonitoringD
         super(dataSource, interpreter, monitor, indexer, configuration);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see ThreadedMonitor#isRunning()
@@ -71,11 +71,10 @@ public abstract class ScheduledExecutorThreadedMonitor<P, A extends IMonitoringD
         shutdown(2, TimeUnit.SECONDS);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * ThreadedMonitor#shutdown(long)
+     * @see ThreadedMonitor#shutdown(long, TimeUnit)
      */
     @Override
     protected final void shutdown(final long timeOut, final TimeUnit unit) {

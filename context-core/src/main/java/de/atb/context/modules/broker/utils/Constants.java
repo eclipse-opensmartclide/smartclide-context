@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.atb.context.modules.broker.utils;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -20,11 +15,7 @@ package de.atb.context.modules.broker.utils;
  */
 
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 /**
- *
  * @author Guilherme
  */
 public class Constants {
@@ -56,21 +47,17 @@ public class Constants {
     public static final String ONTOLOGY_CONFIG_SERVICE_FAIL = "config_service_fail";
     public static final String ONTOLOGY_CONFIG_SERVICE_SUCCESS = "config_service_success";
     public static final String ONTOLOGY_CONFIG_SERVICE_THROW = "config_service_throw";
-    
-    
-    
+
     public static final String ONTOLOGY_START_SERVICE = "startservice";
     public static final String ONTOLOGY_START_SERVICE_THROW = "startservice_throw";
     public static final String ONTOLOGY_START_SERVICE_SUCCESS = "startservice_succcess";
-    
-    
+
     public static final String TRUE = "true";
     public static final String FALSE = "false";
-    
-    
+
     public static final String ONTOLOGY_REGISTRY_CONNECTION_LOST="registry_connection_lost";
     public static final String ONTOLOGY_SERVICE_UNAVAILABLE="service_unavailable_on_registry";
-    
+
     public static final String ONTOLOGY_START_RUNTIME="start_runtime";
     public static final String ONTOLOGY_DELETE_PROCESS_AGENT = "delete_process_agents";
     public static final String ONTOLOGY_LAUNCHING_PROCESS_AGENT = "launching_process";

@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.atb.context.services.interfaces;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -32,11 +27,9 @@ import de.atb.context.tools.datalayer.models.OutputDataModel;
  * @author Guilherme
  */
 public class DataInfo {
-    
-    private static final org.slf4j.Logger logger = LoggerFactory
-            .getLogger(DataInfo.class);
 
-    
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DataInfo.class);
+
     ServiceInfo reposLocation;
     String dataId;
     int period;
@@ -51,8 +44,7 @@ public class DataInfo {
     public void setOutPutModel(OutputDataModel outPutModel) {
         this.outPutModel = outPutModel;
     }
-    
-    
+
     public ServiceInfo getReposLocation() {
         return reposLocation;
     }
@@ -100,11 +92,8 @@ public class DataInfo {
     public void setFlowType(String flowType) {
         this.flowType = flowType;
     }
-    
-    
-    
-    public boolean intanceWrapperFromServiceInfo(){
- 
+
+    public boolean intanceWrapperFromServiceInfo() {
         Class<? extends IRepositoryService> clazz;
         try {
             //obtain subclass of Configuration
@@ -124,6 +113,5 @@ public class DataInfo {
             logger.info("This Service ProxyClass is unkown: " + this.reposLocation.getProxy());
         }
         return false;
-    } 
-    
+    }
 }

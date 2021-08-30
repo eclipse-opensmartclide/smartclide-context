@@ -1,22 +1,10 @@
-/*
- * @(#)ServiceManager.java
- *
- * $Id: ServiceManager.java 679 2016-11-24 18:29:04Z gsimoes $
- *
- * $Rev:: 679                  $ 	last change revision
- * $Date:: 2016-11-24 19:29:04#$	last change date
- * $Author:: gsimoes           $	last change author
- *
- * Copyright 2011-15 Oliver Kotte. All rights reserved.
- *
- */
 package de.atb.context.services.manager;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0

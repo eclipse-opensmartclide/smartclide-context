@@ -1,10 +1,10 @@
 package de.atb.context.monitoring.models;
 
-/*-
+/*
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -14,9 +14,15 @@ package de.atb.context.monitoring.models;
  * #L%
  */
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
+import com.hp.hpl.jena.rdf.model.Model;
 import de.atb.context.common.Version;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
@@ -26,13 +32,10 @@ import de.atb.context.persistence.ModelOutputLanguage;
 import lombok.Getter;
 import lombok.Setter;
 import org.simpleframework.xml.Root;
-
 import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 import thewebsemantic.Transient;
-
-import com.hp.hpl.jena.rdf.model.Model;
 
 /**
  * A TankRefillingMonitoringData describes
@@ -61,16 +64,16 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
     private String identifier;
 
 	@Transient
-	private Map<Long, Map<String, SensoricalTankInformation>> timeStampMapping = new HashMap<Long, Map<String, SensoricalTankInformation>>();
+	private Map<Long, Map<String, SensoricalTankInformation>> timeStampMapping = new HashMap<>();
 	@Transient
-	private List<Long> sortedTimestamps = new ArrayList<Long>();
+	private List<Long> sortedTimestamps = new ArrayList<>();
 	@Transient
-	private List<String> tankNames = new ArrayList<String>();
+	private List<String> tankNames = new ArrayList<>();
 
 	/**
 	 * The List of tanks that were monitored.
 	 */
-    private List<Tank> tanks = new ArrayList<Tank>();
+    private List<Tank> tanks = new ArrayList<>();
 
     public TankRefillingMonitoringData() {
         this.identifier = UUID.randomUUID().toString();
@@ -86,119 +89,106 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 		this.tanks.add(tank);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.proseco.monitoring.IMonitoringData#fromRDFModel(com.hp.hpl
-	 * .jena.rdf.model.Model)
+	 * @see de.atb.context.monitoring.IMonitoringData#fromRdfModel(com.hp.hpl.jena.rdf.model.Model)
 	 */
 	@Override
 	public TankRefillingMonitoringData fromRdfModel(Model model) {
 		return RdfHelper.createMonitoringData(model, TankRefillingMonitoringData.class);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.proseco.monitoring.IMonitoringData#fromXMPString(java.lang
-	 * .String)
+     * @see de.atb.context.monitoring.IMonitoringData#fromRdfModel(java.lang.String)
 	 */
 	@Override
 	public TankRefillingMonitoringData fromRdfModel(String rdfString) {
 		return RdfHelper.createMonitoringData(rdfString, TankRefillingMonitoringData.class);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.proseco.monitoring.models.IMonitoringDataModel#getBusinessCase
-	 * ()
+	 * @see de.atb.context.monitoring.models.IMonitoringDataModel#getBusinessCase()
 	 */
 	@Override
 	public BusinessCase getBusinessCase() {
 		return BusinessCase.getInstance(BusinessCase.NS_DUMMY_ID, BusinessCase.NS_DUMMY_URL);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.proseco.monitoring.IMonitoringData#toRDFModel()
+	 * @see de.atb.context.monitoring.IMonitoringData#toRdfModel()
 	 */
 	@Override
 	public Model toRdfModel() {
 		return RdfHelper.createRdfModel(this);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.proseco.monitoring.IMonitoringData#toXMPString()
+	 * @see de.atb.context.monitoring.IMonitoringData#toRdfString()
 	 */
 	@Override
 	public String toRdfString() {
 		return ModelOutputLanguage.DEFAULT.getModelAsString(this.toRdfModel());
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(getClass().getSimpleName());
-		builder.append(String.format(" (%d tanks)", Integer.valueOf(this.tanks.size())));
-		return builder.toString();
+        return String.format("%s (%d tanks)", getClass().getSimpleName(), this.tanks.size());
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.proseco.monitoring.models.IMonitoringDataModel#
-	 * triggersContextChange()
+	 * @see IMonitoringDataModel#triggersContextChange()
 	 */
 	@Override
 	public boolean triggersContextChange() {
 		return true;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.proseco.monitoring.models.IMonitoringDataModel#
-	 * getApplicationScenario()
+	 * @see IMonitoringDataModel#getApplicationScenario()
 	 */
 	@Override
 	public ApplicationScenario getApplicationScenario() {
 		return ApplicationScenario.getInstance(getBusinessCase());
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.proseco.monitoring.models.IMonitoringDataModel#
-	 * getContextIdentifierClassName()
+	 * @see IMonitoringDataModel#getContextIdentifierClassName()
 	 */
 	@Override
 	public String getContextIdentifierClassName() {
 		return null /*TankRefillingContextIdentifier.class.getName()*/;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.atb.proseco.monitoring.models.IMonitoringDataModel#initialize()
+	 * @see IMonitoringDataModel#initialize()
 	 */
 	@Override
 	public void initialize() {
-		timeStampMapping = new HashMap<Long, Map<String, SensoricalTankInformation>>();
-		tankNames = new ArrayList<String>();
-		sortedTimestamps = new ArrayList<Long>();
+		timeStampMapping = new HashMap<>();
+		tankNames = new ArrayList<>();
+		sortedTimestamps = new ArrayList<>();
 		if ((tanks != null) && (tanks.size() > 0)) {
 			for (Tank tank : tanks) {
 				tankNames.add(tank.getName());
@@ -209,7 +199,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 						sortedTimestamps.add(timestamp);
 					}
 					if (subMap == null) {
-						subMap = new HashMap<String, SensoricalTankInformation>();
+						subMap = new HashMap<>();
 					}
 					subMap.put(tank.getName(), info);
 					timeStampMapping.put(timestamp, subMap);

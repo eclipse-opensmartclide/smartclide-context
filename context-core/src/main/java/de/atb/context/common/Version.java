@@ -4,7 +4,7 @@ package de.atb.context.common;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -54,8 +54,7 @@ public enum Version {
 	}
 
 	public String getVersionString() {
-		return String.format("%d.%d.%d", Integer.valueOf(major),
-				Integer.valueOf(minor), Integer.valueOf(build));
+		return String.format("%d.%d.%d", major, minor, build);
 	}
 
 }

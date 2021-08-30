@@ -4,7 +4,7 @@ package de.atb.context.monitoring.analyser.file;
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -41,12 +41,10 @@ public abstract class FileTripletAnalyser<OutputType extends IMonitoringDataMode
         super(dataSource, interpreterConfiguration, indexer, document, amiConfiguration);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IndexingAnalyser#analyseObject
-     * (java.lang.Object, org.apache.lucene.document.Document)
+     * @see IndexingAnalyser#analyseObject(java.lang.Object, org.apache.lucene.document.Document)
      */
     @Override
     public final List<OutputType> analyseObject(final Triplet<File, File, File> fileTriplet, final Document document) {

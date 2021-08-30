@@ -4,7 +4,7 @@ package de.atb.context.services.faults.marshal;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -28,13 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * SelfLearningFaultDetails
+ * ContextFaultDetails
  *
  * @author scholze
  * @version $LastChangedRevision: 417 $
  *
  */
-
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class ContextFaultDetails implements Serializable {

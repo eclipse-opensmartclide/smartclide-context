@@ -4,7 +4,7 @@ package de.atb.context.monitoring.monitors.file;
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -349,7 +349,7 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see ThreadedMonitor#isRunning()
@@ -359,7 +359,7 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
         return this.running;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see ThreadedMonitor#shutdown()
@@ -371,10 +371,10 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
         this.filesToDates.clear();
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see ThreadedMonitor#shutdown(long)
+     * @see ThreadedMonitor#shutdown(long, TimeUnit)
      */
     @Override
     protected final void shutdown(final long timeOut, final TimeUnit unit) {

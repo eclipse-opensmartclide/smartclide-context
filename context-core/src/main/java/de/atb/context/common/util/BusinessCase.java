@@ -4,7 +4,7 @@ package de.atb.context.common.util;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -36,7 +36,7 @@ public class BusinessCase {
     public static final String NS_DUMMY_ID = "dummy";
     public static final String NS_DUMMY_URL = BusinessCase.NS_BASE_URL + "bc-dummy/";
 
-    private static volatile Map<String, BusinessCase> settings = new HashMap<String, BusinessCase>();
+    private static final Map<String, BusinessCase> settings = new HashMap<>();
     @XmlElement
     private String id;
     @XmlElement

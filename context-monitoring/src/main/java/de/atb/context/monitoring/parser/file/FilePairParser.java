@@ -4,7 +4,7 @@ package de.atb.context.monitoring.parser.file;
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -54,11 +54,10 @@ public abstract class FilePairParser extends IndexingParser<Pair<File, File>> {
             dataSource, indexer, this.document, amiConfiguration);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see IndexingParser#parse(java.lang.
-     * Object)
+     * @see IndexingParser#parse(java.lang.Object)
      */
     @Override
     public final boolean parse(final Pair<File, File> filePair) {
@@ -101,7 +100,7 @@ public abstract class FilePairParser extends IndexingParser<Pair<File, File>> {
         return parseObject(filePair);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see IndexingParser#getAnalyser()

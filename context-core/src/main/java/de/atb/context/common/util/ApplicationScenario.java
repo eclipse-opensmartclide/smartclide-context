@@ -4,7 +4,7 @@ package de.atb.context.common.util;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -14,18 +14,24 @@ package de.atb.context.common.util;
  * #L%
  */
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import de.atb.context.common.configuration.ApplicationScenarioConfiguration;
 import de.atb.context.common.configuration.IConfigurationBean;
 import de.atb.context.learning.models.IModelInitializer;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.bind.annotation.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * ApplicationScenario
@@ -124,7 +130,7 @@ public class ApplicationScenario implements IModelInitializer {
                 .toArray(new ApplicationScenario[filteredScenarios.size()]);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see de.atb.context.learning.models.IModelInitializer#getScenario()
@@ -137,10 +143,10 @@ public class ApplicationScenario implements IModelInitializer {
         return null;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.learning.models.IModelInitializer#initializeModel()
+     * @see de.atb.context.learning.models.IModelInitializer#initializeModel(String)
      */
     @Override
     public boolean initializeModel(final String filePath) {
@@ -170,9 +176,7 @@ public class ApplicationScenario implements IModelInitializer {
         try {
             // FIXME: temporary workaround
             if (configurationClass == null && configurationClassName != null) {
-                final Class<? extends ApplicationScenarioConfiguration<?>> clazz =
-                    (Class<? extends ApplicationScenarioConfiguration<?>>) Class.forName(configurationClassName);
-                configurationClass = clazz;
+                configurationClass = (Class<? extends ApplicationScenarioConfiguration<?>>) Class.forName(configurationClassName);
                 return true;
             }
         } catch (final ClassNotFoundException e) {
@@ -185,12 +189,11 @@ public class ApplicationScenario implements IModelInitializer {
     protected boolean createInitializer() {
         try {
             if (initializer == null) {
-                final Class<? extends IModelInitializer> clazz = (Class<? extends IModelInitializer>) Class
-                        .forName(modelInitializerClassName);
-                initializer = clazz.newInstance();
+                final Class<? extends IModelInitializer> clazz = (Class<? extends IModelInitializer>) Class.forName(modelInitializerClassName);
+                initializer = clazz.getDeclaredConstructor().newInstance();
             }
             return true;
-        } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             logger.error(e.getMessage(), e);
         }
         return false;

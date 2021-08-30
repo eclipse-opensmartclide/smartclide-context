@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.atb.context.tools.ontology.utils;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -37,14 +32,14 @@ public class ConfigurationSerializer {
      * @param config The Configuration to be used
      * @return returns a new specific Configuration object
      */
-    
-  
+
+
     public static <T extends Configuration> T setConfigurationToJsonAndAddToValue(T config) {
 
         Gson gson = new GsonBuilder().disableHtmlEscaping().create();
         String stringfyJSON = gson.toJson(config);
         config.setValue(stringfyJSON);
-        return config; 
+        return config;
     }
 
     public static <T extends Configuration> String setConfigurationToJson(T config) {

@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.atb.context.services.wrapper;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -69,11 +64,11 @@ public class ServiceWrapper<Service extends IService> {
                 ArrayList<String> dataOutputIds, String pesId, HashMap<String,PESFlowSpecs> flowSpecs, String serviceId, OutputDataModel outModel){
              return service.setupRuntimeSpecs(host, port, className, dataOutputIds, pesId, flowSpecs, serviceId, outModel);
         };
-        
+
         public boolean setNotifierClient(String host, int port, String className){
              return service.setNotifierClient(host, port, className);
         };
-        
+
         public ServiceInfo getReposInfo(){
              return service.getReposInfo();
         };
@@ -81,5 +76,5 @@ public class ServiceWrapper<Service extends IService> {
 	public final boolean runtimeInvoke(String flowId) {
 		return service.runtimeInvoke(flowId);
 	}
-        
+
 }

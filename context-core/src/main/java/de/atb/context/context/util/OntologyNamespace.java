@@ -4,7 +4,7 @@ package de.atb.context.context.util;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -30,13 +30,12 @@ public class OntologyNamespace implements IOntologyResource {
     /**
      * Contains the prefix for the Namespace.
      */
-    private String localName;
-    private int ordinal;
-    private String absoluteUri;
-    private BusinessCase businessCase;
+    private final String localName;
+    private final String absoluteUri;
+    private final BusinessCase businessCase;
 
     private static final String NS_FORMAT = "PREFIX %1$s: <%2$s>\n";
-    private static volatile Map<String, OntologyNamespace> settings = new HashMap<String, OntologyNamespace>();
+    private static final Map<String, OntologyNamespace> settings = new HashMap<>();
 
     public static OntologyNamespace getInstance() {
         if (settings.get("base") == null) {

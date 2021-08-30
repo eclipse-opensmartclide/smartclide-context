@@ -1,10 +1,10 @@
 package de.atb.context.tools.ontology;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -24,6 +24,6 @@ public class AppSpecificServiceConfiguration extends Configuration {
     public AppSpecificServiceConfiguration() {
         super(AppSpecificServiceConfiguration.class.getName());
     }
-    
-    
+
+
 }

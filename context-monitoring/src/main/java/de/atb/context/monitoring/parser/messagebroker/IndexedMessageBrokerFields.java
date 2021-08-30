@@ -4,7 +4,7 @@ package de.atb.context.monitoring.parser.messagebroker;
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2021 ATB
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -23,10 +23,10 @@ import org.apache.lucene.document.StringField;
 
 /**
  * Fields
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 143 $
- * 
+ *
  */
 public enum IndexedMessageBrokerFields implements IFieldable {
 
@@ -50,33 +50,29 @@ public enum IndexedMessageBrokerFields implements IFieldable {
 		this.name = name;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * IFieldable#get(org.apache.lucene
-	 * .document.Document)
+	 *
+	 * @see IFieldable#get(org.apache.lucene.document.Document)
 	 */
 	@Override
 	public Field get(final Document document) {
         return (Field) document.getField(this.name);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * IFieldable#getString(org.apache.
-	 * lucene.document.Document)
+	 *
+	 * @see IFieldable#getString(org.apache.lucene.document.Document)
 	 */
 	@Override
 	public String getString(final Document document) {
 		return get(document).stringValue();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IFieldable#getName()
 	 */
 	@Override
@@ -89,24 +85,20 @@ public enum IndexedMessageBrokerFields implements IFieldable {
 		return this.name;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * IFieldable#create(java.lang.String)
+	 *
+	 * @see IFieldable#createField(java.lang.String)
 	 */
 	@Override
 	public Field createField(final String value) {
         return new Field(getName(), value, StringField.TYPE_STORED);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * IFieldable#create(java.lang.String,
-	 * org.apache.lucene.document.Field.Store,
-	 * org.apache.lucene.document.Field.Index)
+	 *
+	 * @see IFieldable#createField(java.lang.String, org.apache.lucene.document.Field.Store)
 	 */
 	@Override
 	public Field createField(final String value, final Store store) {

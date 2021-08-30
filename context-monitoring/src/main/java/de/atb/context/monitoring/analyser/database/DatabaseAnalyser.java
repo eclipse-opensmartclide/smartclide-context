@@ -4,7 +4,7 @@ package de.atb.context.monitoring.analyser.database;
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -43,11 +43,10 @@ public abstract class DatabaseAnalyser<OutputType extends IMonitoringDataModel<?
             amiConfiguration);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see IndexingAnalyser#analyseObject
-     * (java.lang.Object, org.apache.lucene.document.Document)
+     * @see IndexingAnalyser#analyseObject(java.lang.Object, org.apache.lucene.document.Document)
      */
     @Override
     public final List<OutputType> analyseObject(final IDatabase database,

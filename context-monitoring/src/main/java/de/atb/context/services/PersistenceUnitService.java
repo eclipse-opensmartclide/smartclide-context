@@ -4,7 +4,7 @@ package de.atb.context.services;
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -45,13 +45,10 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
         repos = persistenceStore;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IPersistenceService#
-     * addPersistencePreProcessor
-     * (de.atb.context.common.util.ApplicationScenario, java.lang.String,
-     * java.lang.String)
+     * @see de.atb.context.services.interfaces.IPersistenceService#addPersistencePreProcessor(de.atb.context.common.util.ApplicationScenario, java.lang.String, java.lang.String)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -78,13 +75,10 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IPersistenceService#
-     * addPersistencePostProcessor
-     * (de.atb.context.common.util.ApplicationScenario, java.lang.String,
-     * java.lang.String)
+     * @see de.atb.context.services.interfaces.IPersistenceService#addPersistencePostProcessor(de.atb.context.common.util.ApplicationScenario, java.lang.String, java.lang.String)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -110,13 +104,10 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IPersistenceService#
-     * removePersistencePreProcessor
-     * (de.atb.context.common.util.ApplicationScenario, java.lang.String,
-     * java.lang.String)
+     * @see de.atb.context.services.interfaces.IPersistenceService#removePersistencePreProcessor(de.atb.context.common.util.ApplicationScenario, java.lang.String, java.lang.String)
      */
     @Override
     public final boolean removePersistencePreProcessor(final ApplicationScenario applicationScenario, final String id, final String className)
@@ -137,12 +128,10 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IPersistenceService#
-     * removePersistencePreProcessor
-     * (de.atb.context.common.util.ApplicationScenario, java.lang.String)
+     * @see de.atb.context.services.interfaces.IPersistenceService#removePersistencePreProcessor(de.atb.context.common.util.ApplicationScenario, java.lang.String)
      */
     @Override
     public final boolean removePersistencePreProcessor(final ApplicationScenario applicationScenario, final String id) throws ContextFault {
@@ -161,13 +150,10 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IPersistenceService#
-     * removePersistencePostProcessor
-     * (de.atb.context.common.util.ApplicationScenario, java.lang.String,
-     * java.lang.String)
+     * @see de.atb.context.services.interfaces.IPersistenceService#removePersistencePostProcessor(de.atb.context.common.util.ApplicationScenario, java.lang.String, java.lang.String)
      */
     @Override
     public final boolean removePersistencePostProcessor(final ApplicationScenario applicationScenario, final String id, final String className)
@@ -188,12 +174,10 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IPersistenceService#
-     * removePersistencePostProcessor
-     * (de.atb.context.common.util.ApplicationScenario, java.lang.String)
+     * @see de.atb.context.services.interfaces.IPersistenceService#removePersistencePostProcessor(de.atb.context.common.util.ApplicationScenario, java.lang.String)
      */
     @Override
     public final boolean removePersistencePostProcessor(final ApplicationScenario applicationScenario, final String id) throws ContextFault {
@@ -212,12 +196,10 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IPersistenceService#
-     * triggerPreProcessors(de.atb.context.common.util.ApplicationScenario,
-     * java.lang.String, java.lang.String)
+     * @see de.atb.context.services.interfaces.IPersistenceService#triggerPreProcessors(de.atb.context.common.util.ApplicationScenario, java.lang.String, java.lang.String)
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
@@ -233,13 +215,10 @@ public abstract class PersistenceUnitService<Type extends IApplicationScenarioPr
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see de.atb.context.services.interfaces.IPersistenceService#
-     * triggerPostProcessors
-     * (de.atb.context.common.util.ApplicationScenario, java.lang.String,
-     * java.lang.String)
+     * @see de.atb.context.services.interfaces.IPersistenceService#triggerPostProcessors(de.atb.context.common.util.ApplicationScenario, java.lang.String, java.lang.String)
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override

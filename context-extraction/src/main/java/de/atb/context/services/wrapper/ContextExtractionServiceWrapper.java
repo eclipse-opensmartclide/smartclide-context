@@ -4,7 +4,7 @@ package de.atb.context.services.wrapper;
  * #%L
  * ATB Context Extraction Core Service
  * %%
- * Copyright (C) 2018 - 2019 ATB
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -27,10 +27,10 @@ import java.util.List;
 
 /**
  * ContextExtractionServiceWrapper
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 647 $
- * 
+ *
  */
 public class ContextExtractionServiceWrapper extends ServiceWrapper<IContextExtractionService> {
 

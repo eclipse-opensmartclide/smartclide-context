@@ -4,7 +4,7 @@ package de.atb.context.extraction.util;
  * #%L
  * ATB Context Extraction Core Service
  * %%
- * Copyright (C) 2018 - 2019 ATB
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -14,24 +14,21 @@ package de.atb.context.extraction.util;
  * #L%
  */
 
-
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
 
 /**
  * IOntPropertyProvider
- * 
+ *
+ * @param <T> the type of property this Provider provides.
  * @author scholze
  * @version $LastChangedRevision: 647 $
- * @param <T>
- *            the type of property this Provider provides.
- * 
  */
 public interface IOntPropertyProvider<T extends OntProperty> {
 
 	/**
 	 * Gets the Property from the given Ontology.
-	 * 
+	 *
 	 * @param model
 	 *            The Ontology to retrieve the property from.
 	 * @return the Property from the given Ontology.

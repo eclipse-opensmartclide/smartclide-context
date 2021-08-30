@@ -4,7 +4,7 @@ package de.atb.context.common.util;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -112,8 +112,7 @@ public class TimeFrame {
 		if (cal == null) {
 			return null;
 		}
-		return String.format(TimeFrame.XSD_FORMAT_STRING,
-				new XSDDateTime(cal).toString());
+		return String.format(TimeFrame.XSD_FORMAT_STRING, new XSDDateTime(cal));
 	}
 
 	public final String getXSDLexicalFormForEndTime() {
@@ -121,14 +120,12 @@ public class TimeFrame {
 		if (cal == null) {
 			return null;
 		}
-		return String.format(TimeFrame.XSD_FORMAT_STRING,
-				new XSDDateTime(cal).toString());
+		return String.format(TimeFrame.XSD_FORMAT_STRING, new XSDDateTime(cal));
 	}
 
 	public final boolean contains(final Date time) {
 		if (time != null) {
-			return (time.getTime() >= startTime.getTime())
-					&& (time.getTime() <= endTime.getTime());
+			return (time.getTime() >= startTime.getTime()) && (time.getTime() <= endTime.getTime());
 		}
 		return false;
 	}

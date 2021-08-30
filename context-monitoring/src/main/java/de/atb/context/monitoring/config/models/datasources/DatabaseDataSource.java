@@ -4,7 +4,7 @@ package de.atb.context.monitoring.config.models.datasources;
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -31,7 +31,7 @@ import java.net.URI;
  * @version $LastChangedRevision: 156 $
  */
 @RdfType("DatabaseDataSource")
-@Namespace("http://diversity-project.eu/")
+@Namespace("http://atb-bremen.de/")
 public class DatabaseDataSource extends DataSource {
 
     /**

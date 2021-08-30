@@ -4,7 +4,7 @@ package de.atb.context.persistence.common;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -86,10 +86,10 @@ extends Repository<T> {
 		return false;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.persistence.RepositoryBase#shuttingDown()
+	 * @see de.atb.context.persistence.common.Repository#shuttingDown()
 	 */
 	@Override
 	protected final void shuttingDown() {
@@ -104,11 +104,10 @@ extends Repository<T> {
 		datasets.clear();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.persistence.RepositoryBase#reset(de.atb.context
-	 * .common.util.BusinessCase)
+	 * @see de.atb.context.persistence.common.Repository#reset(de.atb.context.common.util.BusinessCase)
 	 */
 	@Override
 	public final boolean reset(final BusinessCase bc) {

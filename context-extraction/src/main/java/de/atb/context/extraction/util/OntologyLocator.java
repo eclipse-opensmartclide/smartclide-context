@@ -4,7 +4,7 @@ package de.atb.context.extraction.util;
  * #%L
  * ATB Context Extraction Core Service
  * %%
- * Copyright (C) 2018 - 2019 ATB
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -20,10 +20,10 @@ import com.hp.hpl.jena.util.FileManager;
 
 /**
  * OntologyLocator
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 647 $
- * 
+ *
  */
 public class OntologyLocator {
 
@@ -38,7 +38,7 @@ public class OntologyLocator {
 	 * Add an entry for an alternative copy of the document with the given
 	 * document URI.
 	 * </p>
-	 * 
+	 *
 	 * @param docURI
 	 *            The public URI of the ontology document
 	 * @param locationURL
@@ -54,7 +54,7 @@ public class OntologyLocator {
 	 * Remove an entry for an alternative copy of the document with the given
 	 * document URI.
 	 * </p>
-	 * 
+	 *
 	 * @param docURI
 	 *            The public URI of the ontology document
 	 */

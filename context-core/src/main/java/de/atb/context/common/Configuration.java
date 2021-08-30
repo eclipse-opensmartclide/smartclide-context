@@ -4,7 +4,7 @@ package de.atb.context.common;
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -52,7 +52,7 @@ public abstract class Configuration<T> {
         this.configurationClass = clazz;
         this.configurationName = configurationName;
 
-        logger.info("Loading %s...", configurationName);
+        logger.info("Loading {}...", configurationName);
         final Serializer serializer = new Persister();
         try {
             this.configurationBean = serializer.read(this.configurationClass,
@@ -74,7 +74,7 @@ public abstract class Configuration<T> {
         this.configurationClass = clazz;
         this.configurationFileName = configFileName;
         this.configurationName = configurationName;
-        logger.info("Loading %s...", configurationName);
+        logger.info("Loading {}...", configurationName);
         readConfigurationFile();
 
     }
@@ -97,9 +97,9 @@ public abstract class Configuration<T> {
         try {
             if (source.exists() || source.createNewFile()) {
                 serializer.write(getConfig(), source);
-                logger.info("%s saved!", this.configurationName);
+                logger.info("{} saved!", this.configurationName);
             } else {
-                logger.warn("%s could not be saved, because the file %s could not be created!", this.configurationName, source.getAbsolutePath());
+                logger.warn("{} could not be saved, because the file {} could not be created!", this.configurationName, source.getAbsolutePath());
             }
         } catch (final Exception e) {
             logger.error("Could not save the " + this.configurationName
@@ -108,7 +108,7 @@ public abstract class Configuration<T> {
     }
 
     public final void refresh() {
-        logger.info("Reloading %s...", this.configurationName);
+        logger.info("Reloading {}...", this.configurationName);
         readConfigurationFile();
     }
 

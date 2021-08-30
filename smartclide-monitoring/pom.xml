@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>parent</artifactId>
         <groupId>de.atb.context</groupId>
+        <artifactId>parent</artifactId>
         <version>2.0.0</version>
     </parent>
 

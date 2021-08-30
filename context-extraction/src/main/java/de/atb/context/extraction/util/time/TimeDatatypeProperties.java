@@ -1,22 +1,10 @@
-/*
- * @(#)TimeDatatypeProperties.java
- *
- * $Id: TimeDatatypeProperties.java 647 2016-10-20 15:13:20Z scholze $
- * 
- * $Rev:: 647                  $ 	last change revision
- * $Date:: 2016-10-20 17:13:20#$	last change date
- * $Author:: scholze             $	last change author
- * 
- * Copyright 2011-15 Sebastian Scholze (ATB). All rights reserved.
- *
- */
 package de.atb.context.extraction.util.time;
 
 /*
  * #%L
  * ATB Context Extraction Core Service
  * %%
- * Copyright (C) 2018 - 2019 ATB
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -37,10 +25,10 @@ import lombok.Getter;
 
 /**
  * TimeDatatypeProperties
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 647 $
- * 
+ *
  */
 @Getter
 public enum TimeDatatypeProperties implements IOntologyResource, IOntPropertyProvider<DatatypeProperty> {
@@ -138,9 +126,9 @@ public enum TimeDatatypeProperties implements IOntologyResource, IOntPropertyPro
 	// // return model.getNsPrefixURI(this.namespace.getLocalName());
 	// }
 
-	/*
+	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.atb.context.context.util.IOntologyResource#getNameSpace()
 	 */
 	@Override
@@ -153,12 +141,10 @@ public enum TimeDatatypeProperties implements IOntologyResource, IOntPropertyPro
 		return namespace.getLocalName();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.atb.context.ce.util.OntPropertyProvider#getProperty(com.hp.hpl
-	 * .jena.ontology.OntModel)
+	 *
+	 * @see de.atb.context.extraction.util.IOntPropertyProvider#getProperty(com.hp.hpl.jena.ontology.OntModel)
 	 */
 	@Override
 	public DatatypeProperty getProperty(final OntModel model) {

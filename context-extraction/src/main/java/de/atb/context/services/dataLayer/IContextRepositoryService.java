@@ -4,7 +4,7 @@ package de.atb.context.services.dataLayer;
  * #%L
  * ATB Context Extraction Core Service
  * %%
- * Copyright (C) 2018 - 2019 ATB
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -29,5 +29,5 @@ import javax.jws.soap.SOAPBinding.Style;
 @WebService(name = "ContextRepositoryService", targetNamespace = "http://www.atb-bremen.de")
 @SOAPBinding(style = Style.DOCUMENT)
 public interface IContextRepositoryService extends IRepositoryService {
-    
+
 }

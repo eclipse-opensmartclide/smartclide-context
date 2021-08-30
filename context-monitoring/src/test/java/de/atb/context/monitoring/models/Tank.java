@@ -1,15 +1,15 @@
 package de.atb.context.monitoring.models;
 
-/*-
+/*
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -29,17 +29,17 @@ import thewebsemantic.RdfType;
 
 /**
  * Tank
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 881 $
- * 
+ *
  */
 @RdfType("Tank")
 @Namespace(BusinessCase.NS_BASE_URL)
 public class Tank implements Iterable<SensoricalTankInformation>, Cloneable, Serializable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 4036681492756962749L;
 
@@ -50,7 +50,7 @@ public class Tank implements Iterable<SensoricalTankInformation>, Cloneable, Ser
 	protected String name;
 
 	private String id;
-	
+
 	@Id
 	public String getId() {
 		if (id == null) {
@@ -108,9 +108,9 @@ public class Tank implements Iterable<SensoricalTankInformation>, Cloneable, Ser
 		return builder.toString();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override

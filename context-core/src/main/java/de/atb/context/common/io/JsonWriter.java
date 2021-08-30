@@ -1,10 +1,10 @@
 package de.atb.context.common.io;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -69,17 +70,15 @@ import java.util.*;
  *         implied. See the License for the specific language governing
  *         permissions and limitations under the License.
  */
-@SuppressWarnings({ "rawtypes", "serial", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class JsonWriter implements Closeable, Flushable {
 	public static final String DATE_FORMAT = "DATE_FORMAT";
-	public static final String ISO_DATE_FORMAT = "yyyy-MM-dd";
-	public static final String ISO_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 	public static final String TYPE = "TYPE";
 	public static final String PRETTY_PRINT = "PRETTY_PRINT";
 	private static final Map<String, ClassMeta> _classMetaCache = new HashMap<>();
 	private static final List<Object[]> _writers = new ArrayList<>();
 	private static final Set<Class> _notCustom = new HashSet<>();
-	private static Object[] _byteStrings = new Object[256];
+	private static final Object[] _byteStrings = new Object[256];
 	private static final String newLine = System.getProperty("line.separator");
 	private final Map<Object, Long> _objVisited = new IdentityHashMap<>();
 	private final Map<Object, Long> _objsReferenced = new IdentityHashMap<>();
@@ -152,12 +151,12 @@ public class JsonWriter implements Closeable, Flushable {
 		try (JsonWriter writer = new JsonWriter(stream, optionalArgs)) {
 			writer.write(item);
 		}
-		return new String(stream.toByteArray(), "UTF-8");
+		return stream.toString(StandardCharsets.UTF_8);
 	}
 
 	/**
 	 * Format the passed in JSON string in a nice, human readable format.
-	 * 
+	 *
 	 * @param json
 	 *            String input JSON
 	 * @return String containing equivalent JSON, formatted nicely for human
@@ -194,20 +193,13 @@ public class JsonWriter implements Closeable, Flushable {
 	 *            DATE_FORMAT key is not used, then dates will be formatted as
 	 *            longs. This long can be turned back into a date by using 'new
 	 *            Date(longValue)'.
-	 * @throws IOException If an I/O error occurs
-	 */
-	public JsonWriter(final OutputStream out, final Map<String, Object> optionalArgs)
-			throws IOException {
+     */
+	public JsonWriter(final OutputStream out, final Map<String, Object> optionalArgs) {
 		_args.get().clear();
 		_args.get().putAll(optionalArgs);
 
-		try {
-			_out = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			throw new IOException(
-					"Unsupported encoding.  Get a JVM that supports UTF-8", e);
-		}
-	}
+        _out = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
+    }
 
 	public interface JsonClassWriter {
 		void write(Object o, boolean showType, Writer out) throws IOException;
@@ -387,7 +379,7 @@ public class JsonWriter implements Closeable, Flushable {
 		}
 
 		@Override
-		public void writePrimitiveForm(final Object o, final Writer out) throws IOException {
+		public void writePrimitiveForm(final Object o, final Writer out) {
 		}
 	}
 
@@ -410,7 +402,7 @@ public class JsonWriter implements Closeable, Flushable {
 		}
 
 		@Override
-		public void writePrimitiveForm(final Object o, final Writer out) throws IOException {
+		public void writePrimitiveForm(final Object o, final Writer out) {
 		}
 	}
 
@@ -473,7 +465,7 @@ public class JsonWriter implements Closeable, Flushable {
 		}
 
 		@Override
-		public void writePrimitiveForm(final Object o, final Writer out) throws IOException {
+		public void writePrimitiveForm(final Object o, final Writer out) {
 		}
 	}
 
@@ -537,7 +529,7 @@ public class JsonWriter implements Closeable, Flushable {
 		}
 
 		@Override
-		public void writePrimitiveForm(final Object o, final Writer out) throws IOException {
+		public void writePrimitiveForm(final Object o, final Writer out) {
 		}
 	}
 
@@ -1495,7 +1487,7 @@ public class JsonWriter implements Closeable, Flushable {
 
 	/**
 	 * Write an element that is contained in some type of collection or Map.
-	 * 
+	 *
 	 * @param o
 	 *            Collection element to output in JSON format.
 	 * @throws IOException

@@ -1,37 +1,4 @@
-/*
- * @(#)TestMonitoringService.java
- *
- * $Id: TestMonitoringService.java 686 2016-12-02 15:53:40Z scholze $
- * 
- * $Rev:: 577                  $ 	last change revision
- * $Date:: 2012-04-11 12:49:28#$	last change date
- * $Author:: scholze             $	last change author
- * 
- * Copyright 2011-15 Sebastian Scholze (ATB). All rights reserved.
- *
- */
 package de.atb.context.services;
-
-/*
- * #%L
- * ProSEco AmI Monitoring Core Services
- * %%
- * Copyright (C) 2015 ATB
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 
 import java.io.File;
 import java.io.FileNotFoundException;

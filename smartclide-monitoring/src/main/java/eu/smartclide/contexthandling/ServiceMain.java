@@ -1,9 +1,10 @@
 package eu.smartclide.contexthandling;
-/*-
+
+/*
  * #%L
  * SmartCLIDE Monitoring
  * %%
- * Copyright (C) 2017 - 2019 ATB
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0

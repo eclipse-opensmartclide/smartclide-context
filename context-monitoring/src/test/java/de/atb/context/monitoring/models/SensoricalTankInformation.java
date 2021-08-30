@@ -1,15 +1,15 @@
 package de.atb.context.monitoring.models;
 
-/*-
+/*
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -25,17 +25,17 @@ import thewebsemantic.Transient;
 
 /**
  * TankSensoricalInformation
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 881 $
- * 
+ *
  */
 @RdfType("SensoricalTankInformation")
 @Namespace(BusinessCase.NS_DUMMY_URL)
 public class SensoricalTankInformation implements Serializable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 5851024469044552342L;
 

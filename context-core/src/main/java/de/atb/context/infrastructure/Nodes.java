@@ -1,10 +1,10 @@
 package de.atb.context.infrastructure;
 
-/*-
+/*
  * #%L
  * ATB Context Extraction Core Lib
  * %%
- * Copyright (C) 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -23,7 +23,7 @@ import java.util.List;
  * @author Giovanni
  */
 public class Nodes {
-	private List<Node> nodes = new ArrayList();
+	private List<Node> nodes = new ArrayList<>();
 
 	public Nodes() {
 	}

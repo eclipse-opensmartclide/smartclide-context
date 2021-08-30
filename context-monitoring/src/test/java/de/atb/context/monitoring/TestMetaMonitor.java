@@ -27,17 +27,17 @@ import de.atb.context.monitoring.monitors.ThreadedMonitor;
 
 /**
  * TestMetaMonitor
- * 
+ *
  * @author scholze
  * @version $LastChangedRevision: 699 $
- * 
+ *
  */
 public class TestMetaMonitor {
 
 	private static final Logger logger = LoggerFactory.getLogger(TestMetaMonitor.class);
 
 	private static MonitoringConfiguration config;
-	private static List<ThreadedMonitor<?, ?>> monitors = new ArrayList<ThreadedMonitor<?, ?>>();
+	private static List<ThreadedMonitor<?, ?>> monitors = new ArrayList<>();
 
 	@BeforeClass
 	public static void beforeClass() {

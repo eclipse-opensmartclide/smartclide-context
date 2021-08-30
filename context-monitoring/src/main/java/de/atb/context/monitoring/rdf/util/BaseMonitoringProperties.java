@@ -4,7 +4,7 @@ package de.atb.context.monitoring.rdf.util;
  * #%L
  * ATB Context Monitoring Core Services
  * %%
- * Copyright (C) 2015 - 2020 ATB – Institut für angewandte Systemtechnik Bremen GmbH
+ * Copyright (C) 2021 ATB – Institut für angewandte Systemtechnik Bremen GmbH
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -73,58 +73,50 @@ public enum BaseMonitoringProperties implements IMonitoringDataResource, IMonito
         this.dataType = type;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see IMonitoringPropertyProvider#
-     * getProperty(com.hp.hpl.jena.rdf.model.Model)
+     * @see IMonitoringPropertyProvider#getProperty(com.hp.hpl.jena.rdf.model.Model)
      */
     @Override
     public Property getProperty(final Model model) {
         return model.getProperty(getUri(model));
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataResource#getLocalName
-     * ()
+     * @see IMonitoringDataResource#getLocalName()
      */
     @Override
     public String getLocalName() {
         return this.localName;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataResource#getURI
-     * (com.hp.hpl.jena.rdf.model.Model)
+     * @see IMonitoringDataResource#getUri(com.hp.hpl.jena.rdf.model.Model)
      */
     @Override
     public String getUri(final Model model) {
         return model.getNsPrefixURI(this.namespace.getLocalName()) + this.localName;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see IMonitoringDataResource#
-     * getNameSpacePrefix()
+     * @see IMonitoringDataResource#getNameSpacePrefix()
      */
     @Override
     public String getNameSpacePrefix() {
         return this.namespace.getLocalName();
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringDataResource#getNameSpace
-     * (com.hp.hpl.jena.rdf.model.Model)
+     * @see IMonitoringDataResource#getNameSpace(com.hp.hpl.jena.rdf.model.Model)
      */
     @Override
     public String getNameSpace(final Model model) {
@@ -136,12 +128,10 @@ public enum BaseMonitoringProperties implements IMonitoringDataResource, IMonito
         return this.localName;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
-     * @see
-     * IMonitoringPropertyProvider#getValue
-     * (com.hp.hpl.jena.rdf.model.Resource)
+     * @see IMonitoringPropertyProvider#getValue(com.hp.hpl.jena.rdf.model.Resource)
      */
     @SuppressWarnings("unchecked")
     @Override
