@@ -113,6 +113,8 @@ public class ServiceMain {
     public static void main(String[] args) {
         initialize();
 
+        // TODO: add DleGitMonitorProgressListener as progress listener in GitMonitor
+
         if (reposService != null) {
             monitoringDataRepository = new AmIMonitoringDataRepositoryServiceWrapper(reposService);
             logger.debug(monitoringDataRepository.ping());

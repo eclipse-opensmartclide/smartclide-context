@@ -25,7 +25,7 @@ import org.apache.lucene.document.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractMonitor<P> implements MonitoringProgressListener<P, IMonitoringDataModel<?, ?>> {
+public abstract class AbstractMonitor<P> implements MonitoringProgressListener<P, IMonitoringDataModel<?, ?>> {
 
     protected final Logger logger = LoggerFactory.getLogger(AbstractMonitor.class);
 

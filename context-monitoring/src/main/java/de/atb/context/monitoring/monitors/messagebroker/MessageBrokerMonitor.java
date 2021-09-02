@@ -14,15 +14,10 @@ package de.atb.context.monitoring.monitors.messagebroker;
  * #L%
  */
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.TimeoutException;
 
-import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import com.rabbitmq.client.Envelope;
 import de.atb.context.monitoring.analyser.messagebroker.MessageBrokerAnalyser;
@@ -35,9 +30,9 @@ import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSour
 import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.monitors.ScheduledExecutorThreadedMonitor;
+import de.atb.context.monitoring.monitors.messagebroker.util.MessageBrokerUtil;
 import de.atb.context.monitoring.parser.messagebroker.MessageBrokerParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * WebServiceMonitor
@@ -56,8 +51,7 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
         handleMessage(delivery.getEnvelope(), message);
     };
 
-    private final CancelCallback cancelCallback = consumerTag -> {
-    };
+    private final CancelCallback cancelCallback = consumerTag -> logger.info("{} cancelled!", consumerTag);
 
     public MessageBrokerMonitor(final DataSource dataSource,
                                 final Interpreter interpreter,
@@ -95,11 +89,8 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
                 this.parser = getParser(setting);
             }
 
-            final Channel channel = createChannel();
-            channel.exchangeDeclare(dataSource.getExchange(), BuiltinExchangeType.TOPIC, true);
-            final String queue = channel.queueDeclare("", true, false, false, null).getQueue();
-            channel.queueBind(queue, dataSource.getExchange(), dataSource.getTopic());
-            channel.basicConsume(queue, true, deliverCallback, cancelCallback);
+            final Channel channel = MessageBrokerUtil.connectToTopicExchange(dataSource);
+            MessageBrokerUtil.registerListenerOnTopic(channel, dataSource, deliverCallback, cancelCallback);
         }
     }
 
@@ -120,25 +111,5 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
         } catch (Exception e) {
             logger.error("Unknown error in MessageBrokerMonitor.handleMessageBroker()", e);
         }
-    }
-
-    private Channel createChannel() throws IOException, TimeoutException {
-        final ConnectionFactory factory = new ConnectionFactory();
-
-        factory.setHost(dataSource.getMessageBrokerServer());
-        factory.setPort(dataSource.getMessageBrokerPort());
-
-        final String userName = dataSource.getUserName();
-        if (StringUtils.isNotBlank(userName)) {
-            factory.setUsername(userName);
-        }
-        final String password = dataSource.getPassword();
-        if (StringUtils.isNotBlank(password)) {
-            factory.setPassword(password);
-        }
-
-        final Connection connection = factory.newConnection();
-
-        return connection.createChannel();
     }
 }

@@ -77,6 +77,10 @@ public class MessageBrokerDataSource extends DataSource {
         return this.getOptionValue(MessageBrokerDataSourceOptions.Topic, true);
     }
 
+	public final String getDleTopic() {
+        return this.getOptionValue(MessageBrokerDataSourceOptions.DleTopic, true);
+    }
+
     public final Credentials getCredentials() {
 		String userName = this.getUserName();
 		String password = this.getPassword();
