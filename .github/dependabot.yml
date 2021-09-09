@@ -5,10 +5,10 @@ updates:
     schedule:
       # Check for maven dependency updates every weekday at 07:00 UTC
       interval: "daily"
-      time: "07:00"
+      time: "08:00"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       # Check for updates to GitHub Actions every weekday at 07:00 UTC
       interval: "daily"
-      time: "07:00"
+      time: "08:00"
