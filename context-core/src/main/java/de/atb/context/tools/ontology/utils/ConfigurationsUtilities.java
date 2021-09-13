@@ -15,7 +15,6 @@ package de.atb.context.tools.ontology.utils;
  */
 
 
-import de.atb.context.kmb.KMBApi;
 import de.atb.context.services.faults.ContextFault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,20 +29,12 @@ public class ConfigurationsUtilities {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ConfigurationsUtilities.class);
     static String deployableConfigStringId = "Task_";
-    static KMBApi kmbapi = new KMBApi();
     static String configNamespace = ("ContextHandling_Ontological_Model:");
 
     private ConfigurationsUtilities() {}
 
     public static boolean writeDeployableConfiguration(String pesId, String configId, String configJsonString, KMBConfigsVocabulary voc, String classSimpleName) {
-        try {
-            kmbapi.writeElementInformation(pesId, unifyStringForKMBInformation(voc.getSearchName(), configId));
-            kmbapi.writeElementConfiguration(configId, placeNameSpaceBeforeName(classSimpleName), configJsonString);
-            return true;
-        } catch (ContextFault e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return false;
+        throw new ContextFault("Not implemented.");
     }
 
 
