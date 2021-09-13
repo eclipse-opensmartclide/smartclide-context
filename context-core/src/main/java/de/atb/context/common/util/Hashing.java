@@ -47,6 +47,7 @@ public class Hashing {
 	 * @param toHash
 	 *            the string to get the MD5 hash for.
 	 * @return the MD5 hash for the specified string.
+     * @deprecated
 	 */
 	public static String getMD5Hash(final String toHash) {
 		return Hashing.getStringHash(toHash, Hashing.ALGORITHM_MD5);
@@ -58,6 +59,7 @@ public class Hashing {
 	 * @param toHash
 	 *            the string to get the SHA-1 hash for.
 	 * @return the SHA-1 hash for the specified string.
+     * @deprecated
 	 */
 	public static String getSHA1Hash(final String toHash) {
 		return Hashing.getStringHash(toHash, Hashing.ALGORITHM_SHA1);
@@ -71,7 +73,7 @@ public class Hashing {
 	 * @return the SHA-256 hash for the specified string.
 	 */
 	public static String getSHA256Hash(final String toHash) {
-		return Hashing.getStringHash(toHash, Hashing.ALGORITHM_SHA1);
+		return Hashing.getStringHash(toHash, Hashing.ALGORITHM_SHA256);
 	}
 
 	/**
@@ -81,7 +83,7 @@ public class Hashing {
 	 *            the string to get the hash for.
 	 * @param algorithm
 	 *            the message digest algorithm used for hashing (like &quot;
-	 *            {@code MD5}&quot; or &quot;<code>SHA-1</code>&quot;).
+     * 	 *            {@code SHA256}&quot;).
 	 * @return the hash for the specified string.
 	 */
 	public static String getStringHash(final String toHash,
@@ -103,6 +105,7 @@ public class Hashing {
 	 *            the name (and path) of the file to calculate the MD5 checksum
 	 *            for.
 	 * @return the MD5 based checksum of the given file.
+     * @deprecated
 	 */
 	public static String getMD5Checksum(final String fileName) {
 		return Hashing.getChecksum(new File(fileName), Hashing.ALGORITHM_MD5);
@@ -115,7 +118,8 @@ public class Hashing {
 	 *            the name (and path) of the file to calculate the SHA-1
 	 *            checksum for.
 	 * @return the SHA-1 based checksum of the given file.
-	 */
+     * @deprecated
+     */
 	public static String getSHA1Checksum(final String fileName) {
 		return Hashing.getChecksum(new File(fileName), Hashing.ALGORITHM_SHA1);
 	}
@@ -139,7 +143,8 @@ public class Hashing {
 	 * @param file
 	 *            the file to calculate the MD5 checksum for.
 	 * @return the MD5 based checksum of the given file.
-	 */
+     * @deprecated
+     */
 	public static String getMD5Checksum(final File file) {
 		return Hashing.getChecksum(file, Hashing.ALGORITHM_MD5);
 	}
@@ -150,7 +155,8 @@ public class Hashing {
 	 * @param file
 	 *            the file to calculate the SHA-1 checksum for.
 	 * @return the SHA-1 based checksum of the given file.
-	 */
+     * @deprecated
+     */
 	public static String getSHA1Checksum(final File file) {
 		return Hashing.getChecksum(file, Hashing.ALGORITHM_SHA1);
 	}
@@ -174,7 +180,7 @@ public class Hashing {
 	 *            for.
 	 * @param algorithm
 	 *            the message digest algorithm used for hashing (like &quot;
-	 *            {@code MD5}&quot; or &quot;<code>SHA-1</code>&quot;).
+     * 	 *            {@code SHA256}&quot;).
 	 * @return the checksum of the given file.
 	 */
 	public static String getChecksum(final String fileName,
@@ -189,7 +195,7 @@ public class Hashing {
 	 *            the file to calculate the MD5 checksum for.
 	 * @param algorithm
 	 *            the message digest algorithm used for hashing (like &quot;
-	 *            {@code MD5}&quot; or &quot;<code>SHA-1</code>&quot;).
+     * 	 *            {@code SHA256}&quot;).
 	 * @return the checksum of the given file.
 	 */
 	public static String getChecksum(final File file, final String algorithm) {
@@ -228,7 +234,7 @@ public class Hashing {
 	 *            the file to calulcate the hash of.
 	 * @param algorithm
 	 *            the message digest algorithm used for hashing (like &quot;
-	 *            {@code MD5}&quot; or &quot;<code>SHA-1</code>&quot;).
+	 *            {@code SHA256}&quot;).
 	 * @return the array of bytes for the resulting hash value.
 	 * @throws NoSuchAlgorithmException
 	 *             if no Provider supports a MessageDigestSpi implementation for
