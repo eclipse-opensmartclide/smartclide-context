@@ -101,7 +101,7 @@ public class CredentialsTest {
   public void test08()  throws Throwable  {
       Credentials credentials0 = new Credentials("", "k1Y*]s0");
       String string0 = credentials0.getSHA256HashedPassword();
-      assertEquals("e8f17df7d637bfe25d5b3b54a0e8df4f5259892e", string0);
+      assertEquals("966a12e9889d78efc54cfee8573d196841e2eb7e254fed3cd27b3a616b5eee69", string0);
   }
 
   @Test(timeout = 4000)
