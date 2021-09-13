@@ -182,7 +182,7 @@ public class HashingTest {
   public void test23()  throws Throwable  {
       String string0 = Hashing.getSHA256Hash("da39a3ee5e6b4b0d3255bfef95601890afd80709");
       assertNotNull(string0);
-      assertEquals("10a34637ad661d98ba3344717656fcc76209c2f8", string0);
+      assertEquals("07e23ede2756aa3f5f7cc9759117c4910875e032c27b8556a1e20626224f10ec", string0);
   }
 
   @Test(timeout = 4000)
