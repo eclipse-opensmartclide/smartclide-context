@@ -13,16 +13,13 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 
-import com.google.gson.Gson;
-import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.monitoring.config.models.Config;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSourceOptions;
 import de.atb.context.monitoring.models.GitDataModel;
 import de.atb.context.monitoring.models.GitMessage;
+import de.atb.context.monitoring.monitors.messagebroker.util.MessageBrokerUtil;
 import de.atb.context.services.AmIMonitoringService;
 import de.atb.context.services.IAmIMonitoringDataRepositoryService;
 import de.atb.context.services.IAmIMonitoringService;
@@ -30,8 +27,6 @@ import de.atb.context.services.SWServiceContainer;
 import de.atb.context.services.manager.ServiceManager;
 import de.atb.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-import eu.smartclide.contexthandling.dle.model.CommitMessage;
-import eu.smartclide.contexthandling.dle.model.DleMessage;
 import org.apache.cxf.endpoint.Server;
 import org.junit.After;
 import org.junit.Before;
@@ -42,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.RabbitMQContainer;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
@@ -57,10 +53,10 @@ public class TestDataRetrieval {
 
     private static final String RABBITMQ_3_ALPINE = "rabbitmq:3-alpine";
     private static final String EXCHANGE_NAME = "smartclide-monitoring";
-    private static final String ROUTING_KEY_MONITORING = "monitoring.git.commits.*";
-    private static final String ROUTING_KEY_DLE = "dle.commits.*";
+    private static final String ROUTING_KEY_MONITORING = "monitoring.git.commits";
+    private static final String ROUTING_KEY_DLE = "dle.git.commits";
+    private static final String QUEUE_PREFIX_DLE = "Fake-DLE";
     private static final String DATASOURCE_GIT = "datasource-git";
-    private static final Gson GSON = new Gson();
 
     private static Server server;
     private static IAmIMonitoringService service;
@@ -78,7 +74,7 @@ public class TestDataRetrieval {
     public void setup() throws Exception {
         final String rabbitMQContainerHost = container.getHost();
         final Integer rabbitMQContainerAmqpPort = container.getAmqpPort();
-        setupBroker(rabbitMQContainerHost, rabbitMQContainerAmqpPort);
+        channel = MessageBrokerUtil.connectToTopicExchange(rabbitMQContainerHost, rabbitMQContainerAmqpPort, EXCHANGE_NAME);
 
         createFakeDleListener();
 
@@ -95,6 +91,8 @@ public class TestDataRetrieval {
         AmIMonitoringConfiguration amiConfig = new AmIMonitoringConfiguration();
         amiConfig.setId("TEST_GITMESSAGE");
         amiConfig.setServiceConfiguration(readFile(monitoringConfig));
+
+        // TODO: add DleGitMonitorProgressListener as progress listener in GitMonitor
 
         SWServiceContainer serviceContainer = new SWServiceContainer("AmI-repository", serviceConfig);
         ServiceManager.registerWebservice(serviceContainer);
@@ -138,8 +136,7 @@ public class TestDataRetrieval {
                 .noOfModifiedFiles(3)
                 .noOfPushesInBranch(17)
                 .build();
-        final String message = GSON.toJson(gitMessage);
-        publishMessage(ROUTING_KEY_MONITORING, message);
+        MessageBrokerUtil.convertAndSendToTopic(channel, EXCHANGE_NAME, ROUTING_KEY_MONITORING, gitMessage);
 
         Thread.sleep(10000);
 
@@ -147,15 +144,17 @@ public class TestDataRetrieval {
         final List<GitDataModel> data =
                 monitoringDataRepository.getMonitoringData(ApplicationScenario.getInstance(), GitDataModel.class, 1);
 
-        assertNotNull(data);
-        assertFalse(data.isEmpty());
-
-        final List<GitMessage> gitMessages = data.get(data.size() - 1).getGitMessages();
-        for (GitMessage gm : gitMessages) {
-            convertAndSendToDle(gm);
-        }
-
-        Thread.sleep(5000);
+        assertEquals(1, data.size());
+        final List<GitMessage> gitMessages = data.get(0).getGitMessages();
+        assertEquals(1, gitMessages.size());
+        final GitMessage fromRepo = gitMessages.get(0);
+        assertEquals(gitMessage.getTimestamp(), fromRepo.getTimestamp());
+        assertEquals(gitMessage.getUser(), fromRepo.getUser());
+        assertEquals(gitMessage.getRepository(), fromRepo.getRepository());
+        assertEquals(gitMessage.getBranch(), fromRepo.getBranch());
+        assertEquals(gitMessage.getNoOfCommitsInBranch(), fromRepo.getNoOfCommitsInBranch());
+        assertEquals(gitMessage.getNoOfModifiedFiles(), fromRepo.getNoOfModifiedFiles());
+        assertEquals(gitMessage.getNoOfPushesInBranch(), fromRepo.getNoOfPushesInBranch());
     }
 
     private String readFile(String filename) {
@@ -167,14 +166,6 @@ public class TestDataRetrieval {
             logger.error(e.getMessage(), e);
         }
         return "";
-    }
-
-    private void setupBroker(final String host, final Integer port) throws IOException, TimeoutException {
-        final ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(host);
-        factory.setPort(port);
-        final Connection connection = factory.newConnection();
-        channel = connection.createChannel();
     }
 
     private void updateMessageBrokerDataSource(final String monitoringConfig, final String host, final Integer port)
@@ -189,34 +180,14 @@ public class TestDataRetrieval {
     }
 
     private void createFakeDleListener() throws IOException {
-        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC, true);
-        final String queue = channel.queueDeclare("", true, false, false, null).getQueue();
-        channel.queueBind(queue, EXCHANGE_NAME, ROUTING_KEY_DLE);
-        channel.basicConsume(
-                queue,
+        MessageBrokerUtil.registerListenerOnTopic(
+                channel,
+                EXCHANGE_NAME,
+                ROUTING_KEY_DLE,
+                QUEUE_PREFIX_DLE,
                 (t, m) -> logger.info("DLE received message: {}", new String(m.getBody(), StandardCharsets.UTF_8)),
                 (t) -> logger.info("cancelled!")
         );
-    }
-
-    private void convertAndSendToDle(final GitMessage gm) throws IOException {
-        logger.debug("{}", gm);
-        final DleMessage dleMessage = DleMessage.builder()
-                .monitor(
-                        CommitMessage.builder()
-                                .user(gm.getUser())
-                                .branch(gm.getBranch())
-                                .files(gm.getNoOfModifiedFiles())
-                                .build()
-                )
-                .build();
-        final String dleMessageJson = GSON.toJson(dleMessage);
-        publishMessage(ROUTING_KEY_DLE, dleMessageJson);
-    }
-
-    private void publishMessage(final String routingKey, final String message) throws IOException {
-        logger.info("Publishing message: {}", message);
-        channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes(StandardCharsets.UTF_8));
     }
 
 }

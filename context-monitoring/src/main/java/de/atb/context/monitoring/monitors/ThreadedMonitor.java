@@ -45,7 +45,7 @@ public abstract class ThreadedMonitor<P, A extends IMonitoringDataModel<?, ?>> e
     protected Interpreter interpreter;
     protected Monitor monitor;
     protected AmIMonitoringConfiguration amiConfiguration;
-    protected List<MonitoringProgressListener<P, A>> progressListeners = new ArrayList<>();
+    protected final List<MonitoringProgressListener<P, A>> progressListeners = new ArrayList<>();
 
     private Thread thread;
 
@@ -152,26 +152,12 @@ public abstract class ThreadedMonitor<P, A extends IMonitoringDataModel<?, ?>> e
                                    final IndexingAnalyser<A, P> analyser) {
         if (parser.parse(objectToParse)) {
             final Document document = parser.getDocument();
-            this.indexer.addDocumentToIndex(document);
             this.raiseParsedEvent(objectToParse, document);
+            this.indexer.addDocumentToIndex(document);
+            this.raiseIndexedEvent(document);
             final List<A> analysedModels = analyser.analyse(objectToParse);
             this.raiseAnalysedEvent(analysedModels, objectToParse, analyser.getDocument());
         }
-    }
-
-    /**
-     * Adds the given Document to the Index underlying this indexer and informs
-     * potential listeners about the indexed document.
-     * <p>
-     * Please note that calling this method will not check if the given document
-     * already exists in the index. Therefore checking has to be implemented by
-     * other classes (see {@link IndexingParser#isIndexUpToDate(String, long)}.
-     *
-     * @param document the Document to be indexed.
-     */
-    protected final void addDocumentToIndex(final Document document) {
-        this.indexer.addDocumentToIndex(document);
-        raiseIndexedEvent(document);
     }
 
     /**
