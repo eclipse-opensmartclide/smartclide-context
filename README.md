@@ -3,16 +3,16 @@ SmartCLIDE Context Handling Component
 
 ## Preconditions to build and run
 
-To build and run KEES, the following software is required:#
+To build and run smartclide-context, the following software is required:#
 
 - Java (at least version 11)
 - ...
 
-## How to build KEES
+## How to build smartclide-context
 
 1. ... TO DO
 
-## How to configure KEES
+## How to configure smartclide-context
 
 ### Monitoring Config
 
@@ -223,7 +223,7 @@ Missing yet
 The "services-config.xml" configuration file can also be changed by using the Admin UI.
 
 
-## How to run KEES
+## How to run smartclide-context
 
 1. ... TO DO describe how the docker containers are started
 
