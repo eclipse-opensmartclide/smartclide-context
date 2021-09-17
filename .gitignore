@@ -13,6 +13,8 @@ pom.xml.versionsBackup
 .factorypath
 
 #lucene
-# TODO: remove this ignore once monitoring folder has been moved
-context-monitoring/monitoring/
-smartclide-monitoring/monitoring/
+/monitoring
+/context-core/monitoring/
+/context-extraction/monitoring/
+/context-monitoring/monitoring/
+/smartclide-monitoring/monitoring/

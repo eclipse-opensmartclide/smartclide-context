@@ -80,6 +80,8 @@ public class DleGitMonitorProgressListener implements MonitoringProgressListener
 
     private void send(final DleMessage dleMessage) {
         try {
+            // simulate that actual context-extraction will take some time
+            Thread.sleep(1000);
             MessageBrokerUtil.convertAndSendToTopic(channel, exchange, topic, dleMessage);
         } catch (Exception e) {
             LOGGER.error("Failed to send {} to {}/{}", dleMessage, exchange, topic, e);
