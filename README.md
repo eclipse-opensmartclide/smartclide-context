@@ -227,8 +227,6 @@ Each interpreter entry has the following mandatory attributes
 
 The "services-config.xml" configuration file can also be changed by using the Admin UI.
 
-
 ## How to run Context Handling
 
 1. ... TO DO describe how the docker containers are started
-
