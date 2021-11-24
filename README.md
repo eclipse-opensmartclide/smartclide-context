@@ -107,26 +107,32 @@ In the following the xml schema for the monitoring configuration is listed. Belo
 ```
 <?xml version="1.0" encoding="utf-8"?>
 <config xmlns="http://www.atb-bremen.de"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.atb-bremen.de monitoring-config.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.atb-bremen.de monitoring-config.xsd">
 
-   <indexes>
-      <index id="index-dummy" location="indexes/dummy"></index>
-   </indexes>
+    <indexes>
+        <index id="index-git" location="target/indexes/git"/>
+    </indexes>
 
-   <datasources>
-      <datasource id="datasource-dummy" type="file" monitor="de.atb.context.monitoring.monitors.file.FilePairSystemMonitor" uri="target/test-classes/filepairmonitor" options="extensionOne=1&amp;extensionTwo=2" class="de.atb.context.monitoring.config.models.datasources.FilePairSystemDataSource" />
-   </datasources>
+    <datasources>
+        <datasource id="datasource-git" type="messagebroker"
+                    monitor="de.atb.context.monitoring.monitors.GitMonitor"
+                    uri=""
+                    options="server=localhost&amp;port=5672&amp;exchange=smartclide-monitoring&amp;topic=monitoring.git.*&amp;dle-topic=dle.git.commits"
+                    class="de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSource"/>
+    </datasources>
 
-   <interpreters>
-      <interpreter id="interpreter-dummy">
-         <configuration type="*" parser="de.atb.context.monitoring.parser.file.DummyFilePairParser" analyser="de.atb.context.monitoring.analyser.file.DummyFilePairAnalyser" />
-      </interpreter>
-   </interpreters>
+    <interpreters>
+        <interpreter id="interpreter-git">
+            <configuration type="*"
+                           parser="de.atb.context.monitoring.parser.GitParser"
+                           analyser="de.atb.context.monitoring.analyser.GitAnalyser"/>
+        </interpreter>
+    </interpreters>
 
-   <monitors>
-      <monitor id="monitor-dummy" datasource="datasource-dummy" interpreter="interpreter-dummy" index="index-dummy" />
-   </monitors>
+    <monitors>
+        <monitor id="monitor-git" datasource="datasource-git" interpreter="interpreter-git" index="index-git"/>
+    </monitors>
 </config>
 ```
 

@@ -26,5 +26,4 @@
     <monitors>
         <monitor id="monitor-git" datasource="datasource-git" interpreter="interpreter-git" index="index-git"/>
     </monitors>
-
 </config>
