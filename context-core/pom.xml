@@ -176,14 +176,6 @@
         </dependency>
         <!-- End H2DB for DataLayer ! -->
 
-        <!-- SwingX ! -->
-        <dependency>
-            <groupId>org.swinglabs</groupId>
-            <artifactId>swingx</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-        <!-- END_SwingX ! -->
-
         <!-- Ontology Handlers ! -->
         <dependency>
             <groupId>net.sourceforge.owlapi</groupId>
@@ -192,8 +184,8 @@
         </dependency>
         <dependency>
             <groupId>edu.stanford.protege</groupId>
-            <artifactId>org.protege.editor.owl.codegeneration</artifactId>
-            <version>1.0.2</version>
+            <artifactId>code-generation</artifactId>
+            <version>2.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.testng</groupId>

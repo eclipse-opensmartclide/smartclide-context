@@ -24,7 +24,6 @@ import de.atb.context.services.registration.RegistrationTableModel;
 import de.atb.context.services.registration.Registration_Mngr;
 import de.atb.context.ui.util.Icon;
 import de.atb.context.ui.util.interfaces.ICommunicationBetweenUIs;
-import org.jdesktop.swingx.JXTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import de.atb.context.modules.Deployer;
@@ -60,7 +59,7 @@ public class ConfigurationDeployerDialog extends JDialog implements
 	private boolean currentServiceUpdatePending = false;
 	private boolean ignoreServiceFieldChanges = false;
 	private Registration_Mngr regMng;
-	private JXTable RegTable;
+	private JTable RegTable;
 	private Integer oldSelectionIndex = null;
 	private JButton btnOk, btnCancel, btnTest, btnPingUpdate;
 	private JLabel lblWarnPort, lblWarnUrl, lblConnection;
@@ -134,10 +133,10 @@ public class ConfigurationDeployerDialog extends JDialog implements
 		builder.addSeparator("", CC.xyw(1, 19, 6, CC.FILL, CC.FILL));
 
 		RegistrationTableModel model = new RegistrationTableModel(regMng);
-		RegTable = new JXTable(model);
+		RegTable = new JTable(model);
 		JScrollPane scroll = new JScrollPane(RegTable);
 
-		RegTable.setShowGrid(false, false);
+		RegTable.setShowGrid(false);
 		RegTable.setRowSelectionAllowed(true);
 		RegTable.setColumnSelectionAllowed(false);
 		RegTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
