@@ -16,7 +16,7 @@ package de.atb.context.monitoring.monitors.file;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,15 +37,6 @@ import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.monitors.ThreadedMonitor;
 import de.atb.context.monitoring.parser.IndexingParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-import name.pachler.nio.file.ClosedWatchServiceException;
-import name.pachler.nio.file.FileSystems;
-import name.pachler.nio.file.Path;
-import name.pachler.nio.file.Paths;
-import name.pachler.nio.file.StandardWatchEventKind;
-import name.pachler.nio.file.WatchEvent;
-import name.pachler.nio.file.WatchKey;
-import name.pachler.nio.file.WatchService;
-import name.pachler.nio.file.ext.ExtendedWatchEventKind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,18 +172,21 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
 
             @Override
             public void run() {
-                WatchService watchService = FileSystems.getDefault().newWatchService();
+                WatchService watchService = null;
+                try {
+                    watchService = FileSystems.getDefault().newWatchService();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 Path watchedPath = Paths.get(pathToMonitor.getAbsolutePath());
                 this.logger.debug("Started monitoring '" + watchedPath + "'");
                 WatchKey signalledKey;
                 try {
                     watchedPath.register(watchService,
-                                         StandardWatchEventKind.ENTRY_CREATE,
-                                         StandardWatchEventKind.ENTRY_MODIFY,
-                                         StandardWatchEventKind.ENTRY_DELETE,
-                                         StandardWatchEventKind.OVERFLOW,
-                                         ExtendedWatchEventKind.ENTRY_RENAME_FROM,
-                                         ExtendedWatchEventKind.ENTRY_RENAME_TO);
+                                         StandardWatchEventKinds.ENTRY_CREATE,
+                                         StandardWatchEventKinds.ENTRY_MODIFY,
+                                         StandardWatchEventKinds.ENTRY_DELETE,
+                                         StandardWatchEventKinds.OVERFLOW);
                     while (true) {
                         try {
                             signalledKey = watchService.take();
@@ -238,12 +232,12 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
                 fileModified(file, time, setting);
             } else if (e.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
                 fileDeleted(file, time, setting);
-            } else if (e.kind() == ExtendedWatchEventKind.ENTRY_RENAME_FROM) {
+/*            } else if (e.kind() == ExtendedWatchEventKind.ENTRY_RENAME_FROM) {
                 from = file;
             } else if (e.kind() == ExtendedWatchEventKind.ENTRY_RENAME_TO) {
                 fileRenamed(from, file, time, setting);
                 from = null;
-            } else {
+*/            } else {
                 this.logger.debug("Event " + e.kind() + " will be ignored");
             }
         }
