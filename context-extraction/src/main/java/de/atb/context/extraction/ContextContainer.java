@@ -33,7 +33,6 @@ import de.atb.context.context.util.OntologyNamespace;
 import de.atb.context.persistence.ModelOutputLanguage;
 import lombok.Getter;
 import lombok.Setter;
-import org.mindswap.pellet.jena.PelletReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,11 +65,11 @@ public class ContextContainer extends OntModelImpl implements
     protected Date capturedAt;
 
     public ContextContainer() {
-        super(PelletReasonerFactory.THE_SPEC);
+        super(OntModelSpec.OWL_MEM);
     }
 
     public ContextContainer(boolean useReasoner) {
-        super(useReasoner ? PelletReasonerFactory.THE_SPEC
+        super(useReasoner ? OntModelSpec.OWL_MEM
                 : OntModelSpec.OWL_DL_MEM);
     }
 
@@ -79,7 +78,7 @@ public class ContextContainer extends OntModelImpl implements
     }
 
     public ContextContainer(OntModel base, boolean useReasoner) {
-        super(useReasoner ? PelletReasonerFactory.THE_SPEC
+        super(useReasoner ? OntModelSpec.OWL_MEM
                 : OntModelSpec.OWL_DL_MEM, base);
     }
 
@@ -96,14 +95,14 @@ public class ContextContainer extends OntModelImpl implements
 
     public ContextContainer(ApplicationScenario scenario,
                             boolean useReasoner) {
-        super(useReasoner ? PelletReasonerFactory.THE_SPEC
+        super(useReasoner ? OntModelSpec.OWL_MEM
                 : OntModelSpec.OWL_DL_MEM);
         applicationScenario = scenario;
     }
 
     public ContextContainer(ApplicationScenario scenario,
                             OntModel base, boolean useReasoner) {
-        super(useReasoner ? PelletReasonerFactory.THE_SPEC
+        super(useReasoner ? OntModelSpec.OWL_MEM
                 : OntModelSpec.OWL_DL_MEM, base);
         applicationScenario = scenario;
     }

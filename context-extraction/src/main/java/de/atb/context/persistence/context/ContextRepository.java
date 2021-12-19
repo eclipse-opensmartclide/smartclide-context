@@ -34,7 +34,6 @@ import de.atb.context.context.util.OntologyNamespace;
 import de.atb.context.persistence.common.RepositorySDB;
 import lombok.Getter;
 import lombok.Setter;
-import org.mindswap.pellet.jena.PelletReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -303,7 +302,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		Model model = dataset.getDefaultModel();
 		OntModel ontModel = null;
 		if (useReasoner) {
-			ontModel = ModelFactory.createOntologyModel(PelletReasonerFactory.THE_SPEC, model);
+			ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
 		} else {
 			ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
 		}
@@ -338,7 +337,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		Model model = dataset.getDefaultModel();
 		OntModel ontModel = null;
 		if (useReasoner) {
-			ontModel = ModelFactory.createOntologyModel(PelletReasonerFactory.THE_SPEC, model);
+			ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
 		} else {
 			ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
 		}
@@ -373,7 +372,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		Model model = dataset.getDefaultModel();
 		OntModel ontModel = null;
 		if (useReasoner) {
-			ontModel = ModelFactory.createOntologyModel(PelletReasonerFactory.THE_SPEC, model);
+			ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
 		} else {
 			ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, ontModel);
 		}
@@ -408,7 +407,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 		Model model = dataset.getDefaultModel();
 		OntModel ontModel = null;
 		if (useReasoner) {
-			ontModel = ModelFactory.createOntologyModel(PelletReasonerFactory.THE_SPEC, model);
+			ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
 		} else {
 			ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
 		}
