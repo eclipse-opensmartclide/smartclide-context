@@ -114,14 +114,6 @@
         </dependency>
         <!-- end Apache CXF ! -->
 
-        <!-- SimpleXMLFramework ! -->
-        <dependency>
-            <groupId>org.simpleframework</groupId>
-            <artifactId>simple-xml</artifactId>
-            <version>2.7.1</version>
-        </dependency>
-        <!-- End SimpleXMLFramework ! -->
-
         <!-- H2DB for DataLayer ! -->
         <dependency>
             <groupId>com.h2database</groupId>
