@@ -70,7 +70,7 @@
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
-            <version>8.11.0</version>
+            <version>8.11.1</version>
         </dependency>
         <!-- Pellet dependencies -->
         <dependency>
