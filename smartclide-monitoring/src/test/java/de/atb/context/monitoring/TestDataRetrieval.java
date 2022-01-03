@@ -3,31 +3,25 @@ package de.atb.context.monitoring;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.Channel;
+import de.atb.context.common.ContextPathUtils;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.monitoring.config.models.Config;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSourceOptions;
 import de.atb.context.monitoring.models.GitDataModel;
 import de.atb.context.monitoring.models.GitMessage;
 import de.atb.context.monitoring.monitors.messagebroker.util.MessageBrokerUtil;
-import de.atb.context.services.AmIMonitoringService;
 import de.atb.context.services.IAmIMonitoringDataRepositoryService;
-import de.atb.context.services.IAmIMonitoringService;
-import de.atb.context.services.SWServiceContainer;
 import de.atb.context.services.manager.ServiceManager;
 import de.atb.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper;
-import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-import org.apache.cxf.endpoint.Server;
+import eu.smartclide.contexthandling.ServiceMain;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -38,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.RabbitMQContainer;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * TestMonitoringService
@@ -57,11 +49,10 @@ public class TestDataRetrieval {
     private static final String ROUTING_KEY_DLE = "dle.git.commits";
     private static final String QUEUE_PREFIX_DLE = "Fake-DLE";
     private static final String DATASOURCE_GIT = "datasource-git";
+    private static final String MONITORING_CONFIG_FILE_NAME = "monitoring-config.xml";
+    private static final String AMI_REPOSITORY_ID = "AmI-repository";
 
-    private static Server server;
-    private static IAmIMonitoringService service;
-    private static AmIMonitoringDataRepositoryServiceWrapper<GitDataModel> monitoringDataRepository;
-    private static IAmIMonitoringDataRepositoryService<GitDataModel> reposService;
+    private AmIMonitoringDataRepositoryServiceWrapper<GitDataModel> monitoringDataRepository;
 
     private Channel channel;
 
@@ -72,47 +63,35 @@ public class TestDataRetrieval {
 
     @Before
     public void setup() throws Exception {
+        // setup message broker
         final String rabbitMQContainerHost = container.getHost();
         final Integer rabbitMQContainerAmqpPort = container.getAmqpPort();
         channel = MessageBrokerUtil.connectToTopicExchange(rabbitMQContainerHost, rabbitMQContainerAmqpPort, EXCHANGE_NAME);
 
+        // setup fake DLE
         createFakeDleListener();
 
-        Properties props = System.getProperties();
-        props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
+        // write dynamically allocated message broker host and port to monitoring config file
+        final Path monitoringConfigFilePath = ContextPathUtils.getConfigDirPath().resolve(MONITORING_CONFIG_FILE_NAME);
+        updateMessageBrokerDataSource(monitoringConfigFilePath, rabbitMQContainerHost, rabbitMQContainerAmqpPort);
 
-        //noinspection ConstantConditions
-        final String monitoringConfig = Path.of(getClass().getResource("/monitoring-config.xml").toURI()).toString();
-        //noinspection ConstantConditions
-        final String serviceConfig = Path.of(getClass().getResource("/services-config.xml").toURI()).toString();
+        // start service
+        ServiceMain.startService();
 
-        updateMessageBrokerDataSource(monitoringConfig, rabbitMQContainerHost, rabbitMQContainerAmqpPort);
-
-        AmIMonitoringConfiguration amiConfig = new AmIMonitoringConfiguration();
-        amiConfig.setId("TEST_GITMESSAGE");
-        amiConfig.setServiceConfiguration(readFile(monitoringConfig));
-
-        // TODO: add DleGitMonitorProgressListener as progress listener in GitMonitor
-
-        SWServiceContainer serviceContainer = new SWServiceContainer("AmI-repository", serviceConfig);
-        ServiceManager.registerWebservice(serviceContainer);
-        ServiceManager.getLSWServiceContainer().add(serviceContainer);
-
-        for (SWServiceContainer container : ServiceManager.getLSWServiceContainer()) {
-            if (Objects.requireNonNull(container.getServerClass()).toString().contains("AmIMonitoringDataRepository")) {
-                reposService = ServiceManager.getWebservice(container);
-            }
-        }
-        monitoringDataRepository = new AmIMonitoringDataRepositoryServiceWrapper<>(reposService);
-
-        server = ServiceManager.registerWebservice(AmIMonitoringService.class);
-        service = ServiceManager.getWebservice(IAmIMonitoringService.class);
-        service.configureService(amiConfig);
+        // get repository service
+        monitoringDataRepository = ServiceManager.getLSWServiceContainer().stream()
+                .filter(container -> container.getId().equals(AMI_REPOSITORY_ID))
+                .findFirst()
+                .map(container -> {
+                    final IAmIMonitoringDataRepositoryService<GitDataModel> repositoryService =
+                            ServiceManager.getWebservice(container);
+                    return new AmIMonitoringDataRepositoryServiceWrapper<>(repositoryService);
+                })
+                .orElseThrow(() -> new RuntimeException("Could not setup AmI-repository!"));
     }
 
     @After
     public void tearDown() throws IOException, TimeoutException {
-        ServiceManager.shutdownServiceAndEngine(server);
         monitoringDataRepository.shutdown();
 
         if (channel != null) {
@@ -122,9 +101,7 @@ public class TestDataRetrieval {
 
     @Test
     public void testDataRetrieval() throws IOException, InterruptedException {
-        // start monitoring service (the repository is implicitly started from within the monitoring service)
-        service.start();
-
+        // wait for services to start
         Thread.sleep(10000);
 
         final GitMessage gitMessage = GitMessage.builder()
@@ -157,26 +134,15 @@ public class TestDataRetrieval {
         assertEquals(gitMessage.getNoOfPushesInBranch(), fromRepo.getNoOfPushesInBranch());
     }
 
-    private String readFile(String filename) {
-        File f = new File(filename);
-        try {
-            byte[] bytes = Files.readAllBytes(f.toPath());
-            return new String(bytes, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
-        return "";
-    }
-
-    private void updateMessageBrokerDataSource(final String monitoringConfig, final String host, final Integer port)
+    private void updateMessageBrokerDataSource(final Path monitoringConfig, final String host, final Integer port)
             throws Exception {
         final Persister persister = new Persister();
-        final Config config = persister.read(Config.class, new File(monitoringConfig));
+        final Config config = persister.read(Config.class, new File(monitoringConfig.toString()));
         final Map<String, String> optionsMap = config.getDataSource(DATASOURCE_GIT).getOptionsMap();
         optionsMap.put(MessageBrokerDataSourceOptions.MessageBrokerServer.getKeyName(), host);
         optionsMap.put(MessageBrokerDataSourceOptions.MessageBrokerPort.getKeyName(), port.toString());
         config.getDataSource(DATASOURCE_GIT).setOptions(optionsMap);
-        persister.write(config, new File(monitoringConfig));
+        persister.write(config, new File(monitoringConfig.toString()));
     }
 
     private void createFakeDleListener() throws IOException {

@@ -14,11 +14,19 @@ package de.atb.context.persistence.common;
  * #L%
  */
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import de.atb.context.common.ContextPathUtils;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.IApplicationScenarioProvider;
@@ -29,12 +37,6 @@ import de.atb.context.persistence.processors.IPersistenceProcessor;
 import org.mindswap.pellet.jena.PelletReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Repository
@@ -128,9 +130,9 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
         return Repository.getLocationForBusinessCase(this.basicLocation, bc);
     }
 
-    protected static synchronized String getLocationForBusinessCase(
-            final String baseUri, final BusinessCase bc) {
-        return String.format("%s%s%s%s%s", ".", File.separator, baseUri, File.separator, bc);
+    protected static synchronized String getLocationForBusinessCase(final String baseUri, final BusinessCase bc) {
+        final Path dataDirPath = ContextPathUtils.getDataDirPath();
+        return String.format("%s%s%s%s%s", dataDirPath, File.separator, baseUri, File.separator, bc);
     }
 
     protected abstract void shuttingDown();
