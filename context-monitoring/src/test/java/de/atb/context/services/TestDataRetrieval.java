@@ -14,7 +14,6 @@ import de.atb.context.services.manager.ServiceManager;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

@@ -15,7 +15,6 @@ package de.atb.context.monitoring.parser.webservice;
  */
 
 
-import de.atb.context.monitoring.index.FieldTypeFactory;
 import de.atb.context.monitoring.index.IFieldable;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;

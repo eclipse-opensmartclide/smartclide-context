@@ -2,12 +2,15 @@ package de.atb.context.monitoring.config;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
 import de.atb.context.monitoring.config.MonitoringConfiguration;
-import de.atb.context.monitoring.config.models.datasources.*;
+import de.atb.context.monitoring.config.models.datasources.DatabaseDataSource;
+import de.atb.context.monitoring.config.models.datasources.FilePairSystemDataSource;
+import de.atb.context.monitoring.config.models.datasources.FileSystemDataSource;
+import de.atb.context.monitoring.config.models.datasources.FileTripletSystemDataSource;
+import de.atb.context.monitoring.config.models.datasources.WebServiceDataSource;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

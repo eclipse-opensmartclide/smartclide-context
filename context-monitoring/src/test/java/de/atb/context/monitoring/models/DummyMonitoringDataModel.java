@@ -13,7 +13,6 @@ import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 

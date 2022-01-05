@@ -12,12 +12,15 @@ import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.persistence.monitoring.MonitoringDataRepository;
 import de.atb.context.persistence.processors.DummyMonitoringDataPersistencePostProcessor;
 import de.atb.context.persistence.processors.DummyMonitoringDataPersistencePreProcessor;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.time.ZoneId;
 import java.util.*;
 
 /**

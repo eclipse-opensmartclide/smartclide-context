@@ -17,7 +17,8 @@ package de.atb.context.ui;
 
 import de.atb.context.ui.starter.MainStarterFrame;
 
-import javax.swing.*;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
