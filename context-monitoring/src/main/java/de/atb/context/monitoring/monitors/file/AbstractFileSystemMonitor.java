@@ -162,6 +162,7 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
                     }
                 } catch (IOException e) {
                     this.logger.error(e.getMessage(), e);
+                    shutdown();
                 }
             }
         }, "File watch service Thread");
