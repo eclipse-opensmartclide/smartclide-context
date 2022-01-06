@@ -100,8 +100,4 @@ public class FileSystemMonitor extends AbstractFileSystemMonitor<File> {
         }
     }
 
-    @Override
-    protected IndexingParser<File> getParser(final InterpreterConfiguration setting) {
-        return setting.createFileParser(this.dataSource, this.indexer, this.amiConfiguration);
-    }
 }

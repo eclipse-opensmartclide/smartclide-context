@@ -17,9 +17,7 @@ package de.atb.context.monitoring.monitors.file;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.atb.context.common.io.FileUtils;
 import de.atb.context.monitoring.analyser.IndexingAnalyser;
@@ -35,8 +33,6 @@ import de.atb.context.monitoring.parser.IndexingParser;
 import de.atb.context.monitoring.parser.file.FileTripletParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import org.javatuples.Triplet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * FileTripletSystemMonitor
@@ -47,7 +43,6 @@ import org.slf4j.LoggerFactory;
  */
 public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<File, File, File>> {
 
-    protected Map<String, Long> filesToDates = new HashMap<>();
     protected Triplet<File, File, File> filePair;
 
     public FileTripletSystemMonitor(final DataSource dataSource,
@@ -141,11 +136,6 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
         } else {
             this.logger.debug("File " + fileName + " will be ignored!");
         }
-    }
-
-    @Override
-    protected IndexingParser<Triplet<File, File, File>> getParser(final InterpreterConfiguration setting) {
-        return setting.createParser(this.dataSource, this.indexer, this.amiConfiguration);
     }
 
     protected final Triplet<File, File, File> updateFilePair(final File file) {

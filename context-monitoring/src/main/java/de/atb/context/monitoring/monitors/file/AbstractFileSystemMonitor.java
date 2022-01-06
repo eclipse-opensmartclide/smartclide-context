@@ -196,7 +196,9 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
     protected abstract void handleFile(final String fileName, final Long time,
                                     final InterpreterConfiguration setting);
 
-    protected abstract IndexingParser<P> getParser(final InterpreterConfiguration setting);
+    protected IndexingParser<P> getParser(final InterpreterConfiguration setting) {
+        return setting.createParser(this.dataSource, this.indexer, this.amiConfiguration);
+    }
 
     protected final void fileExisting(final String file, final Long time,
                                       final InterpreterConfiguration setting) {

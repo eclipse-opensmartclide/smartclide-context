@@ -33,8 +33,6 @@ import de.atb.context.monitoring.parser.IndexingParser;
 import de.atb.context.monitoring.parser.file.FilePairParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import org.javatuples.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * FilePairSystemMonitor
@@ -127,11 +125,6 @@ public class FilePairSystemMonitor extends AbstractFileSystemMonitor<Pair<File, 
         } else {
             this.logger.debug("File " + fileName + " will be ignored!");
         }
-    }
-
-    @Override
-    protected IndexingParser<Pair<File, File>> getParser(final InterpreterConfiguration setting) {
-        return setting.createParser(this.dataSource, this.indexer, this.amiConfiguration);
     }
 
     protected final Pair<File, File> updateFilePair(final File file) {
