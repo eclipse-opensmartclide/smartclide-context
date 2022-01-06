@@ -239,12 +239,7 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
                 fileModified(file, time, setting);
             } else if (e.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
                 fileDeleted(file, time, setting);
-/*            } else if (e.kind() == ExtendedWatchEventKind.ENTRY_RENAME_FROM) {
-                from = file;
-            } else if (e.kind() == ExtendedWatchEventKind.ENTRY_RENAME_TO) {
-                fileRenamed(from, file, time, setting);
-                from = null;
-*/            } else {
+            } else {
                 this.logger.debug("Event " + e.kind() + " will be ignored");
             }
         }
@@ -262,23 +257,6 @@ public class FileSystemMonitor extends ThreadedMonitor<File, IMonitoringDataMode
             this.filesToDates.put(file, time);
         }
         handleFile(file, time, setting);
-    }
-
-    protected final void fileRenamed(final String from, final String to,
-                                     final Long time, final InterpreterConfiguration setting) {
-        if (this.logger.isTraceEnabled()) {
-            this.logger.trace(from
-                              + " renamed to "
-                              + to
-                              + " at "
-                              + this.getDefaultDateFormat().format(
-                new Date(time)));
-        }
-        if (setting != null) {
-            this.filesToDates.put(to, time);
-            this.filesToDates.remove(from);
-        }
-        handleFile(to, time, setting);
     }
 
     protected final void fileCreated(final String file, final Long time,

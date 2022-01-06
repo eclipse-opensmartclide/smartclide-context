@@ -299,23 +299,6 @@ public class FileTripletSystemMonitor extends
         handleFile(file, time, setting);
     }
 
-    protected final void fileRenamed(final String from, final String to,
-                                     final Long time, final InterpreterConfiguration setting) {
-        if (this.logger.isTraceEnabled()) {
-            this.logger.trace(from
-                              + " renamed to "
-                              + to
-                              + " at "
-                              + this.getDefaultDateFormat().format(
-                new Date(time)));
-        }
-        if (setting != null) {
-            this.filesToDates.put(to, time);
-            this.filesToDates.remove(from);
-        }
-        handleFile(to, time, setting);
-    }
-
     protected final void fileCreated(final String file, final Long time,
                                      final InterpreterConfiguration setting) {
         if (this.logger.isTraceEnabled()) {
