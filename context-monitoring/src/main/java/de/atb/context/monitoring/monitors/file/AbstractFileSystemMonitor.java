@@ -172,7 +172,6 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
                                            final Long time) {
         String watchedPath = String.valueOf(Paths.get(this.pathToMonitor
             .getAbsolutePath()));
-        String from = null;
         for (WatchEvent<?> e : events) {
             Path context = (Path) e.context();
             String file = watchedPath + java.io.File.separator
