@@ -138,7 +138,7 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
         }
     }
 
-    protected final Triplet<File, File, File> updateFileTriplet(final File file) {
+    protected final void updateFileTriplet(final File file) {
         if (this.fileTriplet == null) {
             this.fileTriplet = Triplet.with(null, null, null);
         }
