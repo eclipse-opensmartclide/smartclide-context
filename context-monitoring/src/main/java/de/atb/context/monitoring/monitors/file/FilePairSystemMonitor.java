@@ -211,7 +211,7 @@ public class FilePairSystemMonitor extends
                 try {
                     this.watchService = FileSystems.getDefault().newWatchService();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
                 }
                 Path watchedPath = Paths.get(pathToMonitor.getAbsolutePath());
                 this.logger.debug("Started monitoring '" + watchedPath + "'");
