@@ -16,22 +16,10 @@ package de.atb.context.monitoring.monitors.file;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.nio.file.ClosedWatchServiceException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import de.atb.context.common.io.FileUtils;
 import de.atb.context.monitoring.analyser.IndexingAnalyser;
@@ -43,7 +31,6 @@ import de.atb.context.monitoring.config.models.Monitor;
 import de.atb.context.monitoring.config.models.datasources.FileTripletSystemDataSource;
 import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
-import de.atb.context.monitoring.monitors.ThreadedMonitor;
 import de.atb.context.monitoring.parser.IndexingParser;
 import de.atb.context.monitoring.parser.file.FileTripletParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
@@ -58,17 +45,12 @@ import org.slf4j.LoggerFactory;
  * @author scholze
  * @version $LastChangedRevision: 143 $
  */
-public class FileTripletSystemMonitor extends
-    ThreadedMonitor<Triplet<File, File, File>, IMonitoringDataModel<?, ?>>
-    implements Runnable {
+public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<File, File, File>> {
 
     protected File pathToMonitor;
-    protected Thread watchDaemon;
 
     protected Map<String, Long> filesToDates = new HashMap<>();
     protected Triplet<File, File, File> filePair;
-
-    private static final Long EVENT_FIRING_OFFSET = 100L;
 
     private final Logger logger = LoggerFactory
         .getLogger(FileTripletSystemMonitor.class);
@@ -89,68 +71,6 @@ public class FileTripletSystemMonitor extends
         this.logger.info("Initializing " + this.getClass().getSimpleName()
                          + " for uri: " + dataSource.getUri());
         this.pathToMonitor = new File(this.dataSource.getUri());
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see ThreadedMonitor#isRunning()
-     */
-    @Override
-    public final boolean isRunning() {
-        return this.running;
-    }
-
-    @Override
-    public final void pause() {
-        this.running = false;
-        stopWatcher();
-    }
-
-    @Override
-    public final void restart() {
-        this.running = true;
-        stopWatcher();
-        this.filesToDates.clear();
-        startWatcher();
-    }
-
-    @Override
-    public final void run() {
-        try {
-            this.running = true;
-            Thread.currentThread().setName(
-                this.getClass().getSimpleName() + " ("
-                + this.dataSource.getId() + ")");
-            this.logger.info("Really starting "
-                             + this.getClass().getSimpleName() + " ");
-            monitor();
-            startWatcher();
-        } catch (Exception e) {
-            this.logger.error("Error starting FileSystemMonitor! ", e);
-        }
-    }
-
-    @Override
-    public final void monitor() throws Exception {
-        this.logger.info("Starting monitoring for path " + this.pathToMonitor);
-        this.filesToDates.clear();
-    }
-
-    protected final void stopWatcher() {
-        if (this.watchDaemon != null) {
-            this.watchDaemon.interrupt();
-            try {
-                this.watchDaemon.join(2000);
-            } catch (InterruptedException e) {
-                this.logger.warn(e.getMessage(), e);
-                Thread.currentThread().interrupt();
-            }
-        }
-    }
-
-    protected final void prepareWatcher() {
-        iterateFiles(this.pathToMonitor);
     }
 
     protected final void iterateFiles(final File directory) {
@@ -211,140 +131,6 @@ public class FileTripletSystemMonitor extends
 
     }
 
-    protected final void startWatcher() {
-        prepareWatcher();
-        final File pathToMonitor = this.pathToMonitor;
-        this.watchDaemon = new Thread(new Runnable() {
-            private final Logger logger = LoggerFactory.getLogger(getClass());
-
-            @Override
-            public void run() {
-                WatchService watchService = null;
-                try {
-                    watchService = FileSystems.getDefault().newWatchService();
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-                Path watchedPath = Paths.get(pathToMonitor.getAbsolutePath());
-                this.logger.debug("Started monitoring '" + watchedPath + "'");
-                WatchKey signalledKey;
-                try {
-                    watchedPath.register(watchService,
-                                         StandardWatchEventKinds.ENTRY_CREATE,
-                                         StandardWatchEventKinds.ENTRY_MODIFY,
-                                         StandardWatchEventKinds.ENTRY_DELETE,
-                                         StandardWatchEventKinds.OVERFLOW);
-                    while (true) {
-                        try {
-                            signalledKey = watchService.take();
-                            Long time = System.currentTimeMillis();
-                            handleWatchEvents(signalledKey.pollEvents(), time);
-                            signalledKey.reset();
-                        } catch (InterruptedException ix) {
-                            this.logger
-                                .warn("Watch service was interrupted, closing...");
-                            // this.logger.debug(ix.getMessage(), ix);
-                            watchService.close();
-                            Thread.currentThread().interrupt();
-                            break;
-                        } catch (ClosedWatchServiceException cwse) {
-                            this.logger
-                                .warn("Watch service closed, terminating...");
-                            this.logger.info(cwse.getMessage(), cwse);
-                            break;
-                        }
-                    }
-                } catch (IOException e) {
-                    this.logger.error(e.getMessage(), e);
-                }
-            }
-        }, "File watch service Thread");
-        this.watchDaemon.start();
-    }
-
-    protected final void handleWatchEvents(final List<WatchEvent<?>> events,
-                                           final Long time) {
-        String watchedPath = String.valueOf(Paths.get(this.pathToMonitor
-                                                          .getAbsolutePath()));
-        String from = null;
-        for (WatchEvent<?> e : events) {
-            Path context = (Path) e.context();
-            String file = watchedPath + java.io.File.separator
-                          + context.toString();
-            InterpreterConfiguration setting = this.interpreter
-                .getConfiguration(file);
-            if (e.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
-                fileCreated(file, time, setting);
-            } else if (e.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
-                fileModified(file, time, setting);
-            } else if (e.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
-                fileDeleted(file, time, setting);
-            } else {
-                this.logger.debug("Event " + e.kind() + " will be ignored");
-            }
-        }
-    }
-
-    protected final void fileExisting(final String file, final Long time,
-                                      final InterpreterConfiguration setting) {
-        if (this.logger.isTraceEnabled()) {
-            this.logger.trace(file
-                              + " already existed at "
-                              + this.getDefaultDateFormat().format(
-                new Date(time)));
-        }
-        if (setting != null) {
-            this.filesToDates.put(file, time);
-        }
-        handleFile(file, time, setting);
-    }
-
-    protected final void fileCreated(final String file, final Long time,
-                                     final InterpreterConfiguration setting) {
-        if (this.logger.isTraceEnabled()) {
-            this.logger.trace(file
-                              + " created at "
-                              + this.getDefaultDateFormat().format(
-                new Date(time)));
-        }
-        if (setting != null) {
-            this.filesToDates.put(file, time);
-        }
-        handleFile(file, time, setting);
-    }
-
-    protected final void fileDeleted(final String file, final Long time,
-                                     final InterpreterConfiguration setting) {
-        if (this.logger.isTraceEnabled()) {
-            this.logger.trace(file
-                              + " deleted at "
-                              + this.getDefaultDateFormat().format(
-                new Date(time)));
-        }
-        this.filesToDates.remove(file);
-    }
-
-    protected final boolean fileModified(final String file, final Long time,
-                                         final InterpreterConfiguration setting) {
-        boolean modified = false;
-        Long oldTime = this.filesToDates.get(file);
-        if (oldTime == null || oldTime + EVENT_FIRING_OFFSET < time) {
-            modified = this.filesToDates.put(file, time) != null;
-        }
-
-        if (this.logger.isTraceEnabled() && modified) {
-            this.logger.trace(file
-                              + " modified at "
-                              + this.getDefaultDateFormat().format(
-                new Date(time)));
-        }
-        if (modified) {
-            handleFile(file, time, setting);
-        }
-        return modified;
-    }
-
-    @SuppressWarnings("unchecked")
     protected final void handleFile(final String fileName, final Long time,
                                     final InterpreterConfiguration setting) {
         if (setting != null) {
@@ -393,39 +179,5 @@ public class FileTripletSystemMonitor extends
             this.filePair.setAt2(file);
         }
         return this.filePair;
-    }
-
-    protected final DateFormat getDefaultDateFormat() {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see ThreadedMonitor#shutdown()
-     */
-    @Override
-    public final void shutdown() {
-        this.running = false;
-        stopWatcher();
-        this.filesToDates.clear();
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see ThreadedMonitor#shutdown(long, TimeUnit)
-     */
-    @Override
-    protected final void shutdown(final long timeOut, final TimeUnit unit) {
-        if (this.isRunning() && (this.watchDaemon != null)) {
-            try {
-                stopWatcher();
-                this.watchDaemon.join(unit.toMillis(timeOut));
-            } catch (InterruptedException e) {
-                this.logger.warn(e.getMessage(), e);
-                Thread.currentThread().interrupt();
-            }
-        }
     }
 }
