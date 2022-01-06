@@ -15,8 +15,6 @@ package de.atb.context.rdf.registry.impl;
  */
 
 
-import org.protege.owl.codegeneration.impl.WrappedIndividualImpl;
-import org.protege.owl.codegeneration.inference.CodeGenerationInference;
 import org.semanticweb.owlapi.model.IRI;
 import de.atb.context.rdf.registry.Deployer_OntologyWrapper;
 import de.atb.context.rdf.registry.SW_Service_Configuration_OntologyWrapper;
@@ -32,10 +30,9 @@ import java.util.Collection;
  *
  * @version generated on Mon Oct 05 21:07:01 BST 2015 by Giovanni
  */
-public class DefaultSW_Service_OntologyWrapper extends WrappedIndividualImpl implements SW_Service_OntologyWrapper {
+public class DefaultSW_Service_OntologyWrapper implements SW_Service_OntologyWrapper {
 
-    public DefaultSW_Service_OntologyWrapper(CodeGenerationInference inference, IRI iri) {
-        super(inference, iri);
+    public DefaultSW_Service_OntologyWrapper(IRI iri) {
     }
 
 

@@ -42,25 +42,11 @@ public interface Deployer_OntologyWrapper extends SW_Service_OntologyWrapper {
     Collection<? extends SW_Service_OntologyWrapper> getHasDeployerSWServices();
 
     /**
-     * Checks if the class has a hasDeployer_SWServices property value.<p>
-     *
-     * @return true if there is a hasDeployer_SWServices property value.
-     */
-    boolean hasHasDeployerSWServices();
-
-    /**
      * Adds a hasDeployer_SWServices property value.<p>
      *
      * @param newHasDeployerSWServices the hasDeployer_SWServices property value to be added
      */
     void addHasDeployerSWServices(SW_Service_OntologyWrapper newHasDeployerSWServices);
-
-    /**
-     * Removes a hasDeployer_SWServices property value.<p>
-     *
-     * @param oldHasDeployerSWServices the hasDeployer_SWServices property value to be removed.
-     */
-    void removeHasDeployerSWServices(SW_Service_OntologyWrapper oldHasDeployerSWServices);
 
     /* ***************************************************
      * Property http://www.semanticweb.org/giovanni/ontologies/2014/10/untitled-ontology-55#hasSWService_Configuration

@@ -15,12 +15,6 @@ package de.atb.context.rdf.registry;
  */
 
 
-import org.protege.owl.codegeneration.CodeGenerationFactory;
-import org.protege.owl.codegeneration.WrappedIndividual;
-import org.protege.owl.codegeneration.impl.FactoryHelper;
-import org.protege.owl.codegeneration.impl.ProtegeJavaMapping;
-import org.protege.owl.codegeneration.inference.CodeGenerationInference;
-import org.protege.owl.codegeneration.inference.SimpleInference;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
@@ -38,54 +32,31 @@ import java.util.Collection;
  * Source Class: MyFactory<br>
  * @version generated on Mon Oct 05 21:07:01 BST 2015 by Giovanni
  */
-public class MyFactory implements CodeGenerationFactory {
+public class MyFactory {
     private OWLOntology ontology;
-    private ProtegeJavaMapping javaMapping = new ProtegeJavaMapping();
-    private FactoryHelper delegate;
-    private CodeGenerationInference inference;
+//    private ProtegeJavaMapping javaMapping = new ProtegeJavaMapping();
+//    private FactoryHelper delegate;
+//    private CodeGenerationInference inference;
 
-    public MyFactory(OWLOntology ontology) {
+/*    public MyFactory(OWLOntology ontology) {
 	    this(ontology, new SimpleInference(ontology));
     }
-
-    public MyFactory(OWLOntology ontology, CodeGenerationInference inference) {
+*/
+    public MyFactory(OWLOntology ontology/*, CodeGenerationInference inference*/) {
         this.ontology = ontology;
-        this.inference = inference;
-        javaMapping.initialize(ontology, inference);
-        delegate = new FactoryHelper(ontology, inference);
-    }
-
-    public OWLOntology getOwlOntology() {
-        return ontology;
+//        this.inference = inference;
+//        javaMapping.initialize(ontology, inference);
+//        delegate = new FactoryHelper(ontology, inference);
     }
 
     public void saveOwlOntology() throws OWLOntologyStorageException {
         ontology.getOWLOntologyManager().saveOntology(ontology);
     }
 
-    public void flushOwlReasoner() {
-        delegate.flushOwlReasoner();
-    }
-
-    public boolean canAs(WrappedIndividual resource, Class<? extends WrappedIndividual> javaInterface) {
-    	return javaMapping.canAs(resource, javaInterface);
-    }
-
     public  <X extends WrappedIndividual> X as(WrappedIndividual resource, Class<? extends X> javaInterface) {
     	return javaMapping.as(resource, javaInterface);
     }
 
-    public Class<?> getJavaInterfaceFromOwlClass(OWLClass cls) {
-        return javaMapping.getJavaInterfaceFromOwlClass(cls);
-    }
-
-    public OWLClass getOwlClassFromJavaInterface(Class<?> javaInterface) {
-	    return javaMapping.getOwlClassFromJavaInterface(javaInterface);
-    }
-
-    public CodeGenerationInference getInference() {
-        return inference;
-    }
 
     /* ***************************************************
      * Class http://www.semanticweb.org/giovanni/ontologies/2014/10/untitled-ontology-55#DeployerComponent

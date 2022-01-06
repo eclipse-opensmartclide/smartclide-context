@@ -15,7 +15,6 @@ package de.atb.context.rdf.registry;
  */
 
 
-import org.protege.owl.codegeneration.WrappedIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -29,7 +28,7 @@ import java.util.Collection;
  * @version generated on Mon Oct 05 21:07:01 BST 2015 by Giovanni
  */
 
-public interface SW_Service_OntologyWrapper extends WrappedIndividual {
+public interface SW_Service_OntologyWrapper {
 
     /* ***************************************************
      * Property http://www.semanticweb.org/giovanni/ontologies/2014/10/untitled-ontology-55#hasSWService_Configuration
@@ -170,8 +169,6 @@ public interface SW_Service_OntologyWrapper extends WrappedIndividual {
      */
 
     OWLNamedIndividual getOwlIndividual();
-
-    OWLOntology getOwlOntology();
 
     void delete();
 
