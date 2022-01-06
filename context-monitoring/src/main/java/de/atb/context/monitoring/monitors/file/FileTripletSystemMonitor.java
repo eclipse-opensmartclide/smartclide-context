@@ -52,9 +52,6 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
     protected Map<String, Long> filesToDates = new HashMap<>();
     protected Triplet<File, File, File> filePair;
 
-    private final Logger logger = LoggerFactory
-        .getLogger(FileTripletSystemMonitor.class);
-
     public FileTripletSystemMonitor(final DataSource dataSource,
                                     final Interpreter interpreter,
                                     final Monitor monitor,
@@ -68,8 +65,6 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
                 "Given dataSource must be of type FilePairSystemDataSource!");
         }
 
-        this.logger.info("Initializing " + this.getClass().getSimpleName()
-                         + " for uri: " + dataSource.getUri());
         this.pathToMonitor = new File(this.dataSource.getUri());
     }
 

@@ -49,9 +49,15 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
     protected File pathToMonitor;
     protected Thread watchDaemon;
     protected Map<String, Long> filesToDates = new HashMap<>();
+    protected final Logger logger = LoggerFactory
+        .getLogger(FilePairSystemMonitor.class);
 
     public AbstractFileSystemMonitor(DataSource dataSource, Interpreter interpreter, Monitor monitor, Indexer indexer, AmIMonitoringConfiguration configuration) {
         super(dataSource, interpreter, monitor, indexer, configuration);
+
+        this.logger.info("Initializing " + this.getClass().getSimpleName()
+            + " for uri: " + dataSource.getUri());
+
         this.pathToMonitor = new File(this.dataSource.getUri())
             .getAbsoluteFile();
     }

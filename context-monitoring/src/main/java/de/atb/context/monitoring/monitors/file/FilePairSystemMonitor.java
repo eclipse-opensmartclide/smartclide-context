@@ -46,11 +46,7 @@ import org.slf4j.LoggerFactory;
 public class FilePairSystemMonitor extends AbstractFileSystemMonitor<Pair<File, File>> {
 
     protected File pathToMonitor;
-
     protected Pair<File, File> filePair;
-
-    private final Logger logger = LoggerFactory
-        .getLogger(FilePairSystemMonitor.class);
 
     public FilePairSystemMonitor(final DataSource dataSource,
                                  final Interpreter interpreter,
@@ -65,8 +61,6 @@ public class FilePairSystemMonitor extends AbstractFileSystemMonitor<Pair<File, 
                 "Given dataSource must be of type FilePairSystemDataSource!");
         }
 
-        this.logger.info("Initializing " + this.getClass().getSimpleName()
-                         + " for uri: " + dataSource.getUri());
         this.pathToMonitor = new File(this.dataSource.getUri());
     }
 

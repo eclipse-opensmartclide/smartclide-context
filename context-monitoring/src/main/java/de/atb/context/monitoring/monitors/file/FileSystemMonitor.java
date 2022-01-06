@@ -51,9 +51,6 @@ public class FileSystemMonitor extends AbstractFileSystemMonitor<File> {
             throw new IllegalArgumentException(
                 "Given dataSource must be of type FileSystemDataSource!");
         }
-
-        this.logger.info("Initializing " + this.getClass().getSimpleName()
-                         + " for uri: " + dataSource.getUri());
     }
 
     protected final void iterateFiles(final File directory) {
