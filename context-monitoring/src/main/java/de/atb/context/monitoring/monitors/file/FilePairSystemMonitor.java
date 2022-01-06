@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
  */
 public class FilePairSystemMonitor extends AbstractFileSystemMonitor<Pair<File, File>> {
 
-    protected File pathToMonitor;
     protected Pair<File, File> filePair;
 
     public FilePairSystemMonitor(final DataSource dataSource,
@@ -60,8 +59,6 @@ public class FilePairSystemMonitor extends AbstractFileSystemMonitor<Pair<File, 
             throw new IllegalArgumentException(
                 "Given dataSource must be of type FilePairSystemDataSource!");
         }
-
-        this.pathToMonitor = new File(this.dataSource.getUri());
     }
 
     protected final void iterateFiles(final File directory) {

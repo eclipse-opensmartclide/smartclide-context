@@ -47,8 +47,6 @@ import org.slf4j.LoggerFactory;
  */
 public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<File, File, File>> {
 
-    protected File pathToMonitor;
-
     protected Map<String, Long> filesToDates = new HashMap<>();
     protected Triplet<File, File, File> filePair;
 
@@ -64,8 +62,6 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
             throw new IllegalArgumentException(
                 "Given dataSource must be of type FilePairSystemDataSource!");
         }
-
-        this.pathToMonitor = new File(this.dataSource.getUri());
     }
 
     protected final void iterateFiles(final File directory) {
