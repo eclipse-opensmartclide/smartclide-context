@@ -43,7 +43,7 @@ import org.javatuples.Triplet;
  */
 public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<File, File, File>> {
 
-    protected Triplet<File, File, File> filePair;
+    protected Triplet<File, File, File> fileTriplet;
 
     public FileTripletSystemMonitor(final DataSource dataSource,
                                     final Interpreter interpreter,
@@ -123,15 +123,15 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
             File file = new File(fileName);
             this.logger.debug("Handling file " + fileName + "...");
             updateFilePair(file);
-            if ((this.filePair != null) && (this.filePair.getValue0() != null)
-                && (this.filePair.getValue1() != null)) {
+            if ((this.fileTriplet != null) && (this.fileTriplet.getValue0() != null)
+                && (this.fileTriplet.getValue1() != null)) {
                 IndexingParser<Triplet<File, File, File>> parser = getParser(setting);
                 IndexingAnalyser<IMonitoringDataModel<?, ?>, Triplet<File, File, File>> analyser = (IndexingAnalyser<IMonitoringDataModel<?, ?>, Triplet<File, File, File>>) parser
                     .getAnalyser();
 
-                parseAndAnalyse(this.filePair, parser, analyser);
+                parseAndAnalyse(this.fileTriplet, parser, analyser);
 
-                this.filePair = Triplet.with(null, null, null);
+                this.fileTriplet = Triplet.with(null, null, null);
             }
         } else {
             this.logger.debug("File " + fileName + " will be ignored!");
@@ -139,26 +139,26 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
     }
 
     protected final Triplet<File, File, File> updateFilePair(final File file) {
-        if (this.filePair == null) {
-            this.filePair = Triplet.with(null, null, null);
+        if (this.fileTriplet == null) {
+            this.fileTriplet = Triplet.with(null, null, null);
         }
         FileTripletSystemDataSource dataSource = this.dataSource
             .convertTo(FileTripletSystemDataSource.class);
-        if ((this.filePair.getValue0() == null)
+        if ((this.fileTriplet.getValue0() == null)
             && dataSource.getFirstExtension().equals(
             FileUtils.getExtension(file))) {
-            this.filePair.setAt0(file);
+            this.fileTriplet.setAt0(file);
         }
-        if ((this.filePair.getValue1() == null)
+        if ((this.fileTriplet.getValue1() == null)
             && dataSource.getSecondExtension().equals(
             FileUtils.getExtension(file))) {
-            this.filePair.setAt1(file);
+            this.fileTriplet.setAt1(file);
         }
-        if ((this.filePair.getValue2() == null)
+        if ((this.fileTriplet.getValue2() == null)
             && dataSource.getThirdExtension().equals(
             FileUtils.getExtension(file))) {
-            this.filePair.setAt2(file);
+            this.fileTriplet.setAt2(file);
         }
-        return this.filePair;
+        return this.fileTriplet;
     }
 }
