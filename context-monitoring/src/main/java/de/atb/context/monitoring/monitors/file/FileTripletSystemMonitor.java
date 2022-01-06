@@ -55,7 +55,7 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
             this.dataSource = dataSource;
         } else {
             throw new IllegalArgumentException(
-                "Given dataSource must be of type FilePairSystemDataSource!");
+                "Given dataSource must be of type FileTripletSystemDataSource!");
         }
     }
 
