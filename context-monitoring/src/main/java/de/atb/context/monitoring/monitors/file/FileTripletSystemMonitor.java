@@ -159,6 +159,5 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
             FileUtils.getExtension(file))) {
             this.fileTriplet.setAt2(file);
         }
-        return this.fileTriplet;
     }
 }
