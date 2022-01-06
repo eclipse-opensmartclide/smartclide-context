@@ -183,7 +183,7 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
             } else if (e.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
                 fileModified(file, time, setting);
             } else if (e.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
-                fileDeleted(file, time, setting);
+                fileDeleted(file, time);
             } else {
                 this.logger.debug("Event " + e.kind() + " will be ignored");
             }
@@ -227,8 +227,7 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
         handleFile(file, time, setting);
     }
 
-    protected final void fileDeleted(final String file, final Long time,
-                                     final InterpreterConfiguration setting) {
+    protected final void fileDeleted(final String file, final Long time) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(file
                 + " deleted at "
