@@ -60,6 +60,9 @@ public class FileSystemMonitor extends AbstractFileSystemMonitor<File> {
         }
         File[] files = directory
             .listFiles(this.interpreter.getFilenameFilter());
+        if (files == null) {
+            return;
+        }
         for (File f : files) {
             if (!this.running) {
                 return;
