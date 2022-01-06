@@ -56,7 +56,7 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
                                     final Indexer indexer,
                                     final AmIMonitoringConfiguration configuration) {
         super(dataSource, interpreter, monitor, indexer, configuration);
-        if (dataSource.getType().equals(DataSourceType.FilePairSystem)) {
+        if (dataSource.getType().equals(DataSourceType.FileTripletSystem)) {
             this.dataSource = dataSource;
         } else {
             throw new IllegalArgumentException(
