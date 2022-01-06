@@ -237,7 +237,7 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
         this.filesToDates.remove(file);
     }
 
-    protected final boolean fileModified(final String file, final Long time,
+    protected final void fileModified(final String file, final Long time,
                                          final InterpreterConfiguration setting) {
         boolean modified = false;
         Long oldTime = this.filesToDates.get(file);
@@ -254,7 +254,6 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
         if (modified) {
             handleFile(file, time, setting);
         }
-        return modified;
     }
 
     /**
