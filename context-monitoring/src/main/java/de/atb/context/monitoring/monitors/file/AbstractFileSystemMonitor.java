@@ -125,39 +125,39 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
 
             @Override
             public void run() {
-                WatchService watchService = null;
                 try {
-                    watchService = FileSystems.getDefault().newWatchService();
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-                Path watchedPath = Paths.get(pathToMonitor.getAbsolutePath());
-                this.logger.debug("Started monitoring '" + watchedPath + "'");
-                WatchKey signalledKey;
-                try {
-                    watchedPath.register(watchService,
-                        StandardWatchEventKinds.ENTRY_CREATE,
-                        StandardWatchEventKinds.ENTRY_MODIFY,
-                        StandardWatchEventKinds.ENTRY_DELETE,
-                        StandardWatchEventKinds.OVERFLOW);
-                    while (true) {
-                        try {
-                            signalledKey = watchService.take();
-                            Long time = System.currentTimeMillis();
-                            handleWatchEvents(signalledKey.pollEvents(), time);
-                            signalledKey.reset();
-                        } catch (InterruptedException ix) {
-                            this.logger
-                                .info("Watch service was interrupted, closing...");
-                            this.logger.debug(ix.getMessage(), ix);
-                            watchService.close();
-                            Thread.currentThread().interrupt();
-                            break;
-                        } catch (ClosedWatchServiceException cwse) {
-                            this.logger
-                                .info("Watch service closed, terminating...");
-                            this.logger.debug(cwse.getMessage(), cwse);
-                            break;
+                    WatchService watchService;
+                        watchService = FileSystems.getDefault().newWatchService();
+
+                    Path watchedPath = Paths.get(pathToMonitor.getAbsolutePath());
+                    this.logger.debug("Started monitoring '" + watchedPath + "'");
+                    WatchKey signalledKey;
+
+                    if (watchService != null) {
+                        watchedPath.register(watchService,
+                            StandardWatchEventKinds.ENTRY_CREATE,
+                            StandardWatchEventKinds.ENTRY_MODIFY,
+                            StandardWatchEventKinds.ENTRY_DELETE,
+                            StandardWatchEventKinds.OVERFLOW);
+                        while (true) {
+                            try {
+                                signalledKey = watchService.take();
+                                Long time = System.currentTimeMillis();
+                                handleWatchEvents(signalledKey.pollEvents(), time);
+                                signalledKey.reset();
+                            } catch (InterruptedException ix) {
+                                this.logger
+                                    .info("Watch service was interrupted, closing...");
+                                this.logger.debug(ix.getMessage(), ix);
+                                watchService.close();
+                                Thread.currentThread().interrupt();
+                                break;
+                            } catch (ClosedWatchServiceException cwse) {
+                                this.logger
+                                    .info("Watch service closed, terminating...");
+                                this.logger.debug(cwse.getMessage(), cwse);
+                                break;
+                            }
                         }
                     }
                 } catch (IOException e) {
