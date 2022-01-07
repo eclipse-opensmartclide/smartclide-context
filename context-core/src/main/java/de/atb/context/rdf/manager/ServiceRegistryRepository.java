@@ -148,12 +148,12 @@ public final class ServiceRegistryRepository implements
 
                 for (ServiceInfo configuration : deployer.getServices()
                         .getConfig()) {
-                    SW_Service_OntologyWrapper serviceWrapper = factory
+/*                    SW_Service_OntologyWrapper serviceWrapper = factory
                             .createSWServiceOntologyWrapper(configuration
                                     .getLocation()
                                     + "//"
                                     + configuration.getName());
-                    SW_Service_Configuration_OntologyWrapper serviceConfig = factory
+*/                    SW_Service_Configuration_OntologyWrapper serviceConfig = factory
                             .createSWServiceConfigurationOntologyWrapper(configuration
                                     .getLocation()
                                     + "//"
@@ -165,7 +165,7 @@ public final class ServiceRegistryRepository implements
                     serviceConfig.addProxy(configuration.getProxy());
                     serviceConfig.addServer(configuration.getServer());
                     serviceConfig.addType(configuration.getType());
-                    serviceWrapper
+/*                    serviceWrapper
                             .addHasSWServiceConfiguration(serviceConfig);
                     serviceWrapper
                             .addHasSWServiceDeployer(deployerWrapper);
@@ -174,7 +174,7 @@ public final class ServiceRegistryRepository implements
                             .addHasConfigurationSWService(serviceWrapper);
                     deployerWrapper
                             .addHasDeployerSWServices(serviceWrapper);
-                }
+*/                }
                 factory.saveOwlOntology();
                 return true;
             } catch (OWLOntologyStorageException ex) {
@@ -206,18 +206,18 @@ public final class ServiceRegistryRepository implements
 
                 for (ServiceInfo configuration : deployer.getServices()
                         .getConfig()) {
-                    SW_Service_OntologyWrapper serviceWrapper = factory
+/*                    SW_Service_OntologyWrapper serviceWrapper = factory
                             .getSWServiceOntologyWrapper(configuration
                                     .getLocation()
                                     + "//"
-                                    + configuration.getName());
+                                    + configuration.getName());*/
                     SW_Service_Configuration_OntologyWrapper serviceConfig = factory
                             .getSWServiceConfigurationOntologyWrapper(configuration
                                     .getLocation()
                                     + "//"
                                     + configuration.getName()
                                     + CONFIGURATION);
-                    serviceWrapper.delete();
+//                    serviceWrapper.delete();
                     serviceConfig.delete();
                 }
 
@@ -420,7 +420,7 @@ public final class ServiceRegistryRepository implements
                 } else {
                     service.removeStatus(StatusVocabulary.BUSY.getStatusName());
                 }
-                service.addStatus(status.getStatusName());
+//                service.addStatus(status.getStatusName());
             }
             factory.saveOwlOntology();
             updated = true;
@@ -486,7 +486,7 @@ public final class ServiceRegistryRepository implements
                         } else {
                             wrapper.removeStatus(StatusVocabulary.BUSY.getStatusName());
                         }
-                        wrapper.addStatus(status.getStatusName());
+//                        wrapper.addStatus(status.getStatusName());
                         updated = true;
                         factory.saveOwlOntology();
                         break;
@@ -534,7 +534,7 @@ public final class ServiceRegistryRepository implements
                         } else {
                             wrapper.removeStatus(StatusVocabulary.BUSY.getStatusName());
                         }
-                        wrapper.addStatus(status.getStatusName());
+//                        wrapper.addStatus(status.getStatusName());
                         updated = true;
                         factory.saveOwlOntology();
                         break;

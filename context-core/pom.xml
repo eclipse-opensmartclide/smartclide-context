@@ -130,21 +130,6 @@
             <artifactId>owlapi-distribution</artifactId>
             <version>5.1.19</version>
         </dependency>
-        <dependency>
-            <groupId>edu.stanford.protege</groupId>
-            <artifactId>code-generation</artifactId>
-            <version>2.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.testng</groupId>
-                    <artifactId>testng</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <!-- END_Ontology Handlers ! -->
 
         <!-- JSON Support ! -->
