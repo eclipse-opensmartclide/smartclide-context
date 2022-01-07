@@ -34,7 +34,6 @@ import de.atb.context.context.util.OntologyNamespace;
 import de.atb.context.persistence.processors.IPersistencePostProcessor;
 import de.atb.context.persistence.processors.IPersistencePreProcessor;
 import de.atb.context.persistence.processors.IPersistenceProcessor;
-import org.mindswap.pellet.jena.PelletReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,7 +154,7 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
                     .createOntologyModel(OntModelSpec.OWL_DL_MEM);
             if (useReasoner) {
                 ontModel = ModelFactory
-                        .createOntologyModel(PelletReasonerFactory.THE_SPEC);
+                        .createOntologyModel(OntModelSpec.OWL_MEM);
                 ontModel.prepare();
             }
             toReturn = (T) ontModel;

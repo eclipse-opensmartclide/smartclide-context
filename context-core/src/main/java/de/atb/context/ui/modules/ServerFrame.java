@@ -22,21 +22,23 @@ import com.jgoodies.forms.layout.FormLayout;
 import de.atb.context.ui.modules.table.ServicesTableCellRender;
 import de.atb.context.ui.modules.table.ServicesTableModel;
 import de.atb.context.ui.util.Icon;
-import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.CompoundHighlighter;
-import org.jdesktop.swingx.decorator.FontHighlighter;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.slf4j.LoggerFactory;
 import de.atb.context.infrastructure.Node;
 import de.atb.context.infrastructure.Nodes;
 import de.atb.context.infrastructure.ServiceInfo;
 import de.atb.context.modules.Server;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -57,7 +59,7 @@ public final class ServerFrame extends JFrame implements ActionListener {
 	private Server server = null;
 
 	private JFrame window;
-	private JXTable servicesTable;
+	private JTable servicesTable;
 	private JButton btnExit;
 	private JButton btnUpdate;
 
@@ -105,8 +107,8 @@ public final class ServerFrame extends JFrame implements ActionListener {
 			}
 		}
 		ServicesTableModel model = new ServicesTableModel(serviceConfigs);
-		servicesTable = new JXTable(model);
-		servicesTable.setShowGrid(false, false);
+		servicesTable = new JTable(model);
+		servicesTable.setShowGrid(false);
 		servicesTable.setRowSelectionAllowed(true);
 		servicesTable.setColumnSelectionAllowed(false);
 		servicesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -116,13 +118,6 @@ public final class ServerFrame extends JFrame implements ActionListener {
 		JScrollPane servicesTableContainer = new JScrollPane(servicesTable);
 		builder.addSeparator("<html><b>Services:</b></html>", CC.xyw(1, 1, 4));
 		builder.add(servicesTableContainer, CC.xyw(2, 3, 6, CC.FILL, CC.FILL));
-
-		FontHighlighter fh = new FontHighlighter(HighlightPredicate.IS_FOLDER,
-				servicesTable.getFont().deriveFont(Font.BOLD));
-		FontHighlighter fh2 = new FontHighlighter(HighlightPredicate.IS_LEAF,
-				servicesTable.getFont().deriveFont(Font.PLAIN));
-		servicesTable.setHighlighters(new CompoundHighlighter(
-				HighlighterFactory.createAlternateStriping(), fh, fh2));
 
 		Border border = new EmptyBorder(5, 5, 5, 5);
 

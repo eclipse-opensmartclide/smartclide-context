@@ -29,7 +29,6 @@ import com.hp.hpl.jena.sdb.store.LayoutType;
 import com.hp.hpl.jena.sdb.util.StoreUtils;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.IApplicationScenarioProvider;
-import org.mindswap.pellet.jena.PelletReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +82,7 @@ extends Repository<T> {
 			OntModel ontModel;
 			if (useReasoner) {
 				ontModel = ModelFactory.createOntologyModel(
-						PelletReasonerFactory.THE_SPEC, baseModel);
+                    OntModelSpec.OWL_MEM, baseModel);
 				ontModel.prepare();
 			} else {
 				ontModel = baseModel;

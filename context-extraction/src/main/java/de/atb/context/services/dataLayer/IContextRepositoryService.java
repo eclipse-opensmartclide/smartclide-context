@@ -16,7 +16,6 @@ package de.atb.context.services.dataLayer;
 
 
 import de.atb.context.services.interfaces.IRepositoryService;
-import de.atb.context.services.interfaces.IRepositoryService;
 
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;

@@ -8,7 +8,10 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 import org.apache.cxf.endpoint.Server;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -16,8 +16,6 @@ package de.atb.context.monitoring.config.models.datasources;
 
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * WebServiceDataSourceOptions

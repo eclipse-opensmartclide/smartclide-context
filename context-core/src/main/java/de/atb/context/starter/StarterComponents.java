@@ -17,7 +17,8 @@ package de.atb.context.starter;
 
 import de.atb.context.ui.starter.Starter;
 
-import javax.swing.*;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;

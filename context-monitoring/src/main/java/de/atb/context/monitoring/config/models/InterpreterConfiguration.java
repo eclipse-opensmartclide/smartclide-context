@@ -164,21 +164,6 @@ public class InterpreterConfiguration {
         return this.createAnalyser(ds, indexer, document, amiConfiguration);
     }
 
-    public final FileParser createFileParser(final DataSource ds,
-                                             final Indexer indexer, final AmIMonitoringConfiguration amiCOnfiguration) {
-        return this.createParser(ds, indexer, amiCOnfiguration);
-    }
-
-    public final WebServiceParser createWebServiceParser(final DataSource ds,
-                                                         final Indexer indexer, final AmIMonitoringConfiguration amiCOnfiguration) {
-        return this.createParser(ds, indexer, amiCOnfiguration);
-    }
-
-    public final DatabaseParser createDatabaseParser(final DataSource ds,
-                                                     final Indexer indexer, final AmIMonitoringConfiguration amiCOnfiguration) {
-        return this.createParser(ds, indexer, amiCOnfiguration);
-    }
-
     @SuppressWarnings("unchecked")
     public final <T extends IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, ?>> T createAnalyser(
         final DataSource ds, final Indexer indexer,

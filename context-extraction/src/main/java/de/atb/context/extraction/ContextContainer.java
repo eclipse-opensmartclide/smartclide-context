@@ -15,10 +15,24 @@ package de.atb.context.extraction;
  */
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
-import com.hp.hpl.jena.ontology.*;
+import com.hp.hpl.jena.ontology.DatatypeProperty;
+import com.hp.hpl.jena.ontology.Individual;
+import com.hp.hpl.jena.ontology.ObjectProperty;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntModelSpec;
+import com.hp.hpl.jena.ontology.OntProperty;
+import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.ontology.impl.OntModelImpl;
-import com.hp.hpl.jena.query.*;
-import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.ResIterator;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.UniqueExtendedIterator;
 import de.atb.context.extraction.util.IOntPropertyProvider;
@@ -33,7 +47,6 @@ import de.atb.context.context.util.OntologyNamespace;
 import de.atb.context.persistence.ModelOutputLanguage;
 import lombok.Getter;
 import lombok.Setter;
-import org.mindswap.pellet.jena.PelletReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +55,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.UUID;
 
 /**
  * Context
@@ -66,11 +83,11 @@ public class ContextContainer extends OntModelImpl implements
     protected Date capturedAt;
 
     public ContextContainer() {
-        super(PelletReasonerFactory.THE_SPEC);
+        super(OntModelSpec.OWL_MEM);
     }
 
     public ContextContainer(boolean useReasoner) {
-        super(useReasoner ? PelletReasonerFactory.THE_SPEC
+        super(useReasoner ? OntModelSpec.OWL_MEM
                 : OntModelSpec.OWL_DL_MEM);
     }
 
@@ -79,7 +96,7 @@ public class ContextContainer extends OntModelImpl implements
     }
 
     public ContextContainer(OntModel base, boolean useReasoner) {
-        super(useReasoner ? PelletReasonerFactory.THE_SPEC
+        super(useReasoner ? OntModelSpec.OWL_MEM
                 : OntModelSpec.OWL_DL_MEM, base);
     }
 
@@ -96,14 +113,14 @@ public class ContextContainer extends OntModelImpl implements
 
     public ContextContainer(ApplicationScenario scenario,
                             boolean useReasoner) {
-        super(useReasoner ? PelletReasonerFactory.THE_SPEC
+        super(useReasoner ? OntModelSpec.OWL_MEM
                 : OntModelSpec.OWL_DL_MEM);
         applicationScenario = scenario;
     }
 
     public ContextContainer(ApplicationScenario scenario,
                             OntModel base, boolean useReasoner) {
-        super(useReasoner ? PelletReasonerFactory.THE_SPEC
+        super(useReasoner ? OntModelSpec.OWL_MEM
                 : OntModelSpec.OWL_DL_MEM, base);
         applicationScenario = scenario;
     }
