@@ -12,9 +12,3 @@ pom.xml.versionsBackup
 .classpath
 .factorypath
 
-#lucene
-/monitoring
-/context-core/monitoring/
-/context-extraction/monitoring/
-/context-monitoring/monitoring/
-/smartclide-monitoring/monitoring/

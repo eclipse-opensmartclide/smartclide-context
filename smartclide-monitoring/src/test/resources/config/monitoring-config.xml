@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://www.atb-bremen.de monitoring-config.xsd">
 
     <indexes>
-        <index id="index-git" location="target/indexes/git"/>
+	    <index id="index-git" location="target/test-classes/data/indexes/git"/>
     </indexes>
 
     <datasources>
