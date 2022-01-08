@@ -29,10 +29,6 @@ import de.atb.context.infrastructure.ConnectedServices;
 import de.atb.context.infrastructure.Node;
 import de.atb.context.infrastructure.ServiceInfo;
 import de.atb.context.modules.broker.status.ontology.StatusVocabulary;
-import de.atb.context.rdf.registry.Deployer_OntologyWrapper;
-import de.atb.context.rdf.registry.MyFactory;
-import de.atb.context.rdf.registry.SW_Service_Configuration_OntologyWrapper;
-import de.atb.context.rdf.registry.SW_Service_OntologyWrapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +36,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * @author Giovanni
@@ -57,9 +52,7 @@ public final class ServiceRegistryRepository implements
             .getProperty("user.home")
             + File.separator
             + ".context";
-    public static final String CONFIGURATION = "//Configuration";
 
-    private MyFactory factory;
     private boolean initialized = false;
 
     public ServiceRegistryRepository() {
@@ -100,9 +93,7 @@ public final class ServiceRegistryRepository implements
                 File templateOntoFile = new File(templateOntology);
                 File workingOntoFile = new File(workingOntology);
                 manager.saveOntology(manager.loadOntologyFromOntologyDocument(templateOntoFile), IRI.create(workingOntoFile));
-                manager = OWLManager.createOWLOntologyManager();
-                //Load the working copy
-                factory = new MyFactory(manager.loadOntologyFromOntologyDocument(workingOntoFile));
+                OWLManager.createOWLOntologyManager();
                 initialized = true;
             } else {
                 logger.info("Problem in creating the file paths");
@@ -118,175 +109,28 @@ public final class ServiceRegistryRepository implements
     @Override
     public boolean insert(final Node node) {
         ConnectedDeployer deployer = node.getDeployer();
-        if (initialized && (deployer != null && deployer.getConfig() != null
-                && deployer.getServices().getConfig() != null
-                && !deployer.getServices().getConfig().isEmpty())) {
-            try {
-                Deployer_OntologyWrapper deployerWrapper = factory
-                        .createDeployerOntologyWrapper(deployer
-                                .getConfig().getLocation()
-                                + "//"
-                                + deployer.getConfig().getName());
-                SW_Service_Configuration_OntologyWrapper deployerConfig = factory
-                        .createSWServiceConfigurationOntologyWrapper(deployer
-                                .getConfig().getLocation()
-                                + "//"
-                                + deployer.getConfig().getName()
-                                + CONFIGURATION);
-                deployerConfig.addHost(deployer.getConfig().getHost());
-                deployerConfig.addIdName(deployer.getConfig().getId());
-                deployerConfig.addLocation(deployer.getConfig()
-                        .getLocation());
-                deployerConfig.addProxy(deployer.getConfig().getProxy());
-                deployerConfig.addServer(deployer.getConfig().getServer());
-                deployerConfig.addType(deployer.getConfig().getType());
-                deployerWrapper.addStatus(deployer.getConfig().getStatus());
-                deployerWrapper
-                        .addHasSWServiceConfiguration(deployerConfig);
-                deployerConfig
-                        .addHasConfigurationSWService(deployerWrapper);
-
-                for (ServiceInfo configuration : deployer.getServices()
-                        .getConfig()) {
-/*                    SW_Service_OntologyWrapper serviceWrapper = factory
-                            .createSWServiceOntologyWrapper(configuration
-                                    .getLocation()
-                                    + "//"
-                                    + configuration.getName());
-*/                    SW_Service_Configuration_OntologyWrapper serviceConfig = factory
-                            .createSWServiceConfigurationOntologyWrapper(configuration
-                                    .getLocation()
-                                    + "//"
-                                    + configuration.getName()
-                                    + CONFIGURATION);
-                    serviceConfig.addHost(configuration.getHost());
-                    serviceConfig.addIdName(configuration.getId());
-                    serviceConfig.addLocation(configuration.getLocation());
-                    serviceConfig.addProxy(configuration.getProxy());
-                    serviceConfig.addServer(configuration.getServer());
-                    serviceConfig.addType(configuration.getType());
-/*                    serviceWrapper
-                            .addHasSWServiceConfiguration(serviceConfig);
-                    serviceWrapper
-                            .addHasSWServiceDeployer(deployerWrapper);
-                    serviceWrapper.addStatus(configuration.getStatus());
-                    serviceConfig
-                            .addHasConfigurationSWService(serviceWrapper);
-                    deployerWrapper
-                            .addHasDeployerSWServices(serviceWrapper);
-*/                }
-                factory.saveOwlOntology();
-                return true;
-            } catch (OWLOntologyStorageException ex) {
-                logger.error(ex.getMessage());
-            }
-        }
-        return false;
+        return initialized && (deployer != null && deployer.getConfig() != null
+            && deployer.getServices().getConfig() != null
+            && !deployer.getServices().getConfig().isEmpty());
     }
 
     @Override
     public boolean delete(final Node node) {
         ConnectedDeployer deployer = node.getDeployer();
-        if (initialized && (deployer != null && deployer.getConfig() != null
-                && !deployer.getServices().getConfig().isEmpty())) {
-            try {
-                Deployer_OntologyWrapper deployerWrapper = factory
-                        .getDeployerOntologyWrapper(deployer.getConfig()
-                                .getLocation()
-                                + "//"
-                                + deployer.getConfig().getName());
-                deployerWrapper.delete();
-                SW_Service_Configuration_OntologyWrapper deployerConfig = factory
-                        .getSWServiceConfigurationOntologyWrapper(deployer
-                                .getConfig().getLocation()
-                                + "//"
-                                + deployer.getConfig().getName()
-                                + CONFIGURATION);
-                deployerConfig.delete();
-
-                for (ServiceInfo configuration : deployer.getServices()
-                        .getConfig()) {
-/*                    SW_Service_OntologyWrapper serviceWrapper = factory
-                            .getSWServiceOntologyWrapper(configuration
-                                    .getLocation()
-                                    + "//"
-                                    + configuration.getName());*/
-                    SW_Service_Configuration_OntologyWrapper serviceConfig = factory
-                            .getSWServiceConfigurationOntologyWrapper(configuration
-                                    .getLocation()
-                                    + "//"
-                                    + configuration.getName()
-                                    + CONFIGURATION);
-//                    serviceWrapper.delete();
-                    serviceConfig.delete();
-                }
-
-                factory.saveOwlOntology();
-                return true;
-            } catch (OWLOntologyStorageException ex) {
-                java.util.logging.Logger.getLogger(ServiceRegistryRepository.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return false;
+        return initialized && (deployer != null && deployer.getConfig() != null
+            && !deployer.getServices().getConfig().isEmpty());
     }
 
     @Override
     public Node selectForId(final String id) {
         if (initialized) {
-            Deployer_OntologyWrapper deployerWrapper = factory
-                    .getDeployerOntologyWrapper(id);
             ConnectedDeployer connectedDeployer = new ConnectedDeployer();
-            SW_Service_Configuration_OntologyWrapper deployerConfigWrapper = factory
-                    .getSWServiceConfigurationOntologyWrapper(id
-                            + CONFIGURATION);
             // TODO: there is a lot of duplicated code `serviceInfo.set...` in this class
             // this should be refactored into a separate method
             ServiceInfo deployerConfig = new ServiceInfo();
-            deployerConfig.setId((new ArrayList<String>(deployerConfigWrapper
-                    .getIdName())).get(0));
-            deployerConfig.setName((new ArrayList<String>(deployerConfigWrapper
-                    .getName())).get(0));
-            deployerConfig.setLocation((new ArrayList<String>(
-                    deployerConfigWrapper.getLocation())).get(0));
-            deployerConfig.setHost((new ArrayList<String>(deployerConfigWrapper
-                    .getHost())).get(0));
-            deployerConfig.setProxy((new ArrayList<String>(
-                    deployerConfigWrapper.getProxy())).get(0));
-            deployerConfig.setServer((new ArrayList<String>(
-                    deployerConfigWrapper.getServer())).get(0));
-            deployerConfig.setStatus((new ArrayList<String>(deployerWrapper
-                    .getStatus())).get(0));
-            deployerConfig.setType((new ArrayList<Object>(deployerConfigWrapper
-                    .getType())).get(0).toString());
             connectedDeployer.setConfig(deployerConfig);
             ConnectedServices connectedServices = new ConnectedServices();
             List<ServiceInfo> servicesConfigurations = new ArrayList<>();
-            List<SW_Service_OntologyWrapper> connectedServicesWrapper = new ArrayList<>(
-                    deployerWrapper.getHasDeployerSWServices());
-            for (SW_Service_OntologyWrapper connectedServiceWrapper : connectedServicesWrapper) {
-                SW_Service_Configuration_OntologyWrapper serviceConfigWrapper = factory
-                        .getSWServiceConfigurationOntologyWrapper(connectedServiceWrapper
-                                .getIdName() + CONFIGURATION);
-                ServiceInfo serviceConfig = new ServiceInfo();
-                serviceConfig.setId((new ArrayList<String>(serviceConfigWrapper
-                        .getIdName())).get(0));
-                serviceConfig.setName((new ArrayList<String>(
-                        serviceConfigWrapper.getName())).get(0));
-                serviceConfig.setLocation((new ArrayList<String>(
-                        serviceConfigWrapper.getLocation())).get(0));
-                serviceConfig.setHost((new ArrayList<String>(
-                        serviceConfigWrapper.getHost())).get(0));
-                serviceConfig.setProxy((new ArrayList<String>(
-                        serviceConfigWrapper.getProxy())).get(0));
-                serviceConfig.setServer((new ArrayList<String>(
-                        serviceConfigWrapper.getServer())).get(0));
-                serviceConfig
-                        .setStatus((new ArrayList<String>(
-                                connectedServiceWrapper.getStatus())).get(0));
-                serviceConfig.setType((new ArrayList<Object>(
-                        serviceConfigWrapper.getType())).get(0).toString());
-                servicesConfigurations.add(serviceConfig);
-            }
             connectedServices.setConfig(servicesConfigurations);
             connectedServices.setDeployer(deployerConfig);
             connectedDeployer.setServices(connectedServices);
@@ -299,33 +143,8 @@ public final class ServiceRegistryRepository implements
     public List<ServiceInfo> selectForServiceType(final String typeID) {
         List<ServiceInfo> result = new ArrayList<>();
         if (initialized) {
-            List<SW_Service_Configuration_OntologyWrapper> lswServiceOntologyWrapper = new ArrayList<>(
-                    factory.getAllSWServiceConfigurationOntologyWrapperInstances());
-            for (SW_Service_Configuration_OntologyWrapper element : lswServiceOntologyWrapper) {
-                if (new ArrayList<Object>(element.getType()).get(0).toString()
-                        .equals(typeID)) {
-                    ServiceInfo info = new ServiceInfo();
-                    info.setId(element.getOwlIndividual()
-                            .getIRI().toString());
-                    info.setHost(new ArrayList<String>(element.getHost())
-                            .get(0));
-                    info.setLocation(new ArrayList<String>(element
-                            .getLocation()).get(0));
-                    info.setName(new ArrayList<String>(element.getIdName())
-                            .get(0));
-                    info.setProxy(new ArrayList<String>(element.getProxy())
-                            .get(0));
-                    info.setServer(new ArrayList<String>(element.getServer())
-                            .get(0));
-                    info.setType(new ArrayList<Object>(element.getType())
-                            .get(0).toString());
-                    SW_Service_OntologyWrapper wrapper = new ArrayList<SW_Service_OntologyWrapper>(
-                            element.getHasConfigurationSWService()).get(0);
-                    info.setStatus(new ArrayList<String>(wrapper.getStatus())
-                            .get(0));
-                    result.add(info);
-                }
-            }
+            ServiceInfo info = new ServiceInfo();
+            result.add(info);
         }
         return result;
     }
@@ -333,74 +152,18 @@ public final class ServiceRegistryRepository implements
     @Override
     public List<Node> selectAllConnectedDeployers() {
         if (initialized) {
-            List<Deployer_OntologyWrapper> deployersWrapper = new ArrayList<>(
-                    factory.getAllDeployerOntologyWrapperInstances());
             List<Node> nodes = new ArrayList<>();
-            for (Deployer_OntologyWrapper deployerWrapper : deployersWrapper) {
-                ConnectedDeployer connectedDeployer = new ConnectedDeployer();
-                logger.info(deployerWrapper.getOwlIndividual().getIRI()
-                        .toString()
-                        + CONFIGURATION);
-                SW_Service_Configuration_OntologyWrapper deployerConfigWrapper = factory
-                        .getSWServiceConfigurationOntologyWrapper(deployerWrapper
-                                .getOwlIndividual().getIRI().toString()
-                                + CONFIGURATION);
-                ServiceInfo deployerConfig = new ServiceInfo();
-                deployerConfig.setId(deployerWrapper.getOwlIndividual()
-                        .getIRI().toString()
-                        + CONFIGURATION);
-                deployerConfig.setName((new ArrayList<String>(
-                        deployerConfigWrapper.getIdName())).get(0));
-                deployerConfig
-                        .setLocation((new ArrayList<String>(
-                                deployerConfigWrapper.getLocation())).get(0));
-                deployerConfig.setHost((new ArrayList<String>(
-                        deployerConfigWrapper.getHost())).get(0));
-                deployerConfig.setProxy((new ArrayList<String>(
-                        deployerConfigWrapper.getProxy())).get(0));
-                deployerConfig.setServer((new ArrayList<String>(
-                        deployerConfigWrapper.getServer())).get(0));
-                deployerConfig.setStatus((new ArrayList<String>(deployerWrapper
-                        .getStatus())).get(0));
-                deployerConfig.setType((new ArrayList<Object>(
-                        deployerConfigWrapper.getType())).get(0).toString());
-                connectedDeployer.setConfig(deployerConfig);
-                ConnectedServices connectedServices = new ConnectedServices();
-                List<ServiceInfo> servicesConfigurations = new ArrayList<>();
-                List<SW_Service_OntologyWrapper> connectedServicesWrapper = new ArrayList<>(
-                        deployerWrapper.getHasDeployerSWServices());
-                for (SW_Service_OntologyWrapper connectedServiceWrapper : connectedServicesWrapper) {
-                    SW_Service_Configuration_OntologyWrapper serviceConfigWrapper = factory
-                            .getSWServiceConfigurationOntologyWrapper(connectedServiceWrapper
-                                    .getOwlIndividual().getIRI().toString()
-                                    + CONFIGURATION);
-                    ServiceInfo serviceConfig = new ServiceInfo();
-                    serviceConfig.setId(connectedServiceWrapper
-                            .getOwlIndividual().getIRI().toString()
-                            + CONFIGURATION);
-                    serviceConfig
-                            .setName((new ArrayList<String>(
-                                    serviceConfigWrapper.getIdName()).get(0)));
-                    serviceConfig.setLocation((new ArrayList<String>(
-                            serviceConfigWrapper.getLocation())).get(0));
-                    serviceConfig.setHost((new ArrayList<String>(
-                            serviceConfigWrapper.getHost())).get(0));
-                    serviceConfig
-                            .setProxy((new ArrayList<String>(
-                                    serviceConfigWrapper.getProxy())).get(0));
-                    serviceConfig.setServer((new ArrayList<String>(
-                            serviceConfigWrapper.getServer())).get(0));
-                    serviceConfig.setStatus((new ArrayList<String>(
-                            connectedServiceWrapper.getStatus())).get(0));
-                    serviceConfig.setType((new ArrayList<Object>(
-                            serviceConfigWrapper.getType())).get(0).toString());
-                    servicesConfigurations.add(serviceConfig);
-                }
-                connectedServices.setConfig(servicesConfigurations);
-                connectedServices.setDeployer(deployerConfig);
-                connectedDeployer.setServices(connectedServices);
-                nodes.add(new Node(connectedDeployer));
-            }
+            ConnectedDeployer connectedDeployer = new ConnectedDeployer();
+            ServiceInfo deployerConfig = new ServiceInfo();
+            connectedDeployer.setConfig(deployerConfig);
+            ConnectedServices connectedServices = new ConnectedServices();
+            List<ServiceInfo> servicesConfigurations = new ArrayList<>();
+            ServiceInfo serviceConfig = new ServiceInfo();
+            servicesConfigurations.add(serviceConfig);
+            connectedServices.setConfig(servicesConfigurations);
+            connectedServices.setDeployer(deployerConfig);
+            connectedDeployer.setServices(connectedServices);
+            nodes.add(new Node(connectedDeployer));
 
             return nodes;
         }
@@ -409,94 +172,22 @@ public final class ServiceRegistryRepository implements
 
     @Override
     public boolean updateStatus(final List<String> idList, final StatusVocabulary status) {
-        boolean updated = false;
-        try {
-            for (String id : idList) {
-                SW_Service_OntologyWrapper service = factory
-                        .getSWServiceOntologyWrapper(id);
-                if (status.getStatusName().equals(
-                        StatusVocabulary.BUSY.getStatusName())) {
-                    service.removeStatus(StatusVocabulary.FREE.getStatusName());
-                } else {
-                    service.removeStatus(StatusVocabulary.BUSY.getStatusName());
-                }
-//                service.addStatus(status.getStatusName());
-            }
-            factory.saveOwlOntology();
-            updated = true;
-        } catch (OWLOntologyStorageException ex) {
-            logger.error(ex.getMessage());
-        }
-        return updated;
+        return initialized;
     }
 
     @Override
     public List<ServiceInfo> selectForFreeServiceByType(String typeID) {
         List<ServiceInfo> result = new ArrayList<>();
         if (initialized) {
-            List<SW_Service_Configuration_OntologyWrapper> lswServiceOntologyWrapper = new ArrayList<>(
-                    factory.getAllSWServiceConfigurationOntologyWrapperInstances());
-            for (SW_Service_Configuration_OntologyWrapper element : lswServiceOntologyWrapper) {
-                if (new ArrayList<Object>(element.getType()).get(0).toString()
-                        .equals(typeID)) {
-                    SW_Service_OntologyWrapper wrapper = new ArrayList<SW_Service_OntologyWrapper>(
-                            element.getHasConfigurationSWService()).get(0);
-                    if (new ArrayList<String>(wrapper.getStatus())
-                            .get(0).equals(StatusVocabulary.FREE.getStatusName())) {
-                        ServiceInfo info = new ServiceInfo();
-                        info.setId(element.getOwlIndividual()
-                                .getIRI().toString());
-                        info.setHost(new ArrayList<String>(element.getHost())
-                                .get(0));
-                        info.setLocation(new ArrayList<String>(element
-                                .getLocation()).get(0));
-                        info.setName(new ArrayList<String>(element.getIdName())
-                                .get(0));
-                        info.setProxy(new ArrayList<String>(element.getProxy())
-                                .get(0));
-                        info.setServer(new ArrayList<String>(element.getServer())
-                                .get(0));
-                        info.setType(new ArrayList<Object>(element.getType())
-                                .get(0).toString());
-                        info.setStatus(new ArrayList<String>(wrapper.getStatus())
-                                .get(0));
-                        result.add(info);
-                    }
-                }
-            }
+            ServiceInfo info = new ServiceInfo();
+            result.add(info);
         }
         return result;
     }
 
     @Override
     public boolean updateSingleStatusById(String id, StatusVocabulary status) {
-        boolean updated = false;
-        if (initialized) {
-            List<SW_Service_Configuration_OntologyWrapper> lswServiceOntologyWrapper = new ArrayList<>(
-                    factory.getAllSWServiceConfigurationOntologyWrapperInstances());
-            for (SW_Service_Configuration_OntologyWrapper element : lswServiceOntologyWrapper) {
-                if (element.getOwlIndividual().getIRI().toString().equals(id)) {
-                    try {
-                        SW_Service_OntologyWrapper wrapper = new ArrayList<SW_Service_OntologyWrapper>(
-                                element.getHasConfigurationSWService()).get(0);
-
-                        if (status.getStatusName().equals(
-                                StatusVocabulary.BUSY.getStatusName())) {
-                            wrapper.removeStatus(StatusVocabulary.FREE.getStatusName());
-                        } else {
-                            wrapper.removeStatus(StatusVocabulary.BUSY.getStatusName());
-                        }
-//                        wrapper.addStatus(status.getStatusName());
-                        updated = true;
-                        factory.saveOwlOntology();
-                        break;
-                    } catch (OWLOntologyStorageException ex) {
-                        java.util.logging.Logger.getLogger(ServiceRegistryRepository.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        }
-        return updated;
+        return initialized;
     }
 
     @Override
@@ -517,35 +208,6 @@ public final class ServiceRegistryRepository implements
 
     @Override
     public boolean updateSingleStatusByLocation(String location, StatusVocabulary status) {
-        boolean updated = false;
-        if (initialized) {
-            List<SW_Service_Configuration_OntologyWrapper> lswServiceOntologyWrapper = new ArrayList<>(
-                    factory.getAllSWServiceConfigurationOntologyWrapperInstances());
-            for (SW_Service_Configuration_OntologyWrapper element : lswServiceOntologyWrapper) {
-                if (new ArrayList<Object>(element.getLocation()).get(0).toString()
-                        .equals(location)) {
-                    try {
-                        SW_Service_OntologyWrapper wrapper = new ArrayList<SW_Service_OntologyWrapper>(
-                                element.getHasConfigurationSWService()).get(0);
-
-                        if (status.getStatusName().equals(
-                                StatusVocabulary.BUSY.getStatusName())) {
-                            wrapper.removeStatus(StatusVocabulary.FREE.getStatusName());
-                        } else {
-                            wrapper.removeStatus(StatusVocabulary.BUSY.getStatusName());
-                        }
-//                        wrapper.addStatus(status.getStatusName());
-                        updated = true;
-                        factory.saveOwlOntology();
-                        break;
-                    } catch (OWLOntologyStorageException ex) {
-                        java.util.logging.Logger.getLogger(ServiceRegistryRepository.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        }
-        return updated;
+        return initialized;
     }
-
-
 }
