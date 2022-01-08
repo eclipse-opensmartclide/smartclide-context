@@ -125,43 +125,44 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
 
             @Override
             public void run() {
-                WatchService watchService = null;
                 try {
-                    watchService = FileSystems.getDefault().newWatchService();
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-                Path watchedPath = Paths.get(pathToMonitor.getAbsolutePath());
-                this.logger.debug("Started monitoring '" + watchedPath + "'");
-                WatchKey signalledKey;
-                try {
-                    watchedPath.register(watchService,
-                        StandardWatchEventKinds.ENTRY_CREATE,
-                        StandardWatchEventKinds.ENTRY_MODIFY,
-                        StandardWatchEventKinds.ENTRY_DELETE,
-                        StandardWatchEventKinds.OVERFLOW);
-                    while (true) {
-                        try {
-                            signalledKey = watchService.take();
-                            Long time = System.currentTimeMillis();
-                            handleWatchEvents(signalledKey.pollEvents(), time);
-                            signalledKey.reset();
-                        } catch (InterruptedException ix) {
-                            this.logger
-                                .info("Watch service was interrupted, closing...");
-                            this.logger.debug(ix.getMessage(), ix);
-                            watchService.close();
-                            Thread.currentThread().interrupt();
-                            break;
-                        } catch (ClosedWatchServiceException cwse) {
-                            this.logger
-                                .info("Watch service closed, terminating...");
-                            this.logger.debug(cwse.getMessage(), cwse);
-                            break;
+                    WatchService watchService;
+                        watchService = FileSystems.getDefault().newWatchService();
+
+                    Path watchedPath = Paths.get(pathToMonitor.getAbsolutePath());
+                    this.logger.debug("Started monitoring '" + watchedPath + "'");
+                    WatchKey signalledKey;
+
+                    if (watchService != null) {
+                        watchedPath.register(watchService,
+                            StandardWatchEventKinds.ENTRY_CREATE,
+                            StandardWatchEventKinds.ENTRY_MODIFY,
+                            StandardWatchEventKinds.ENTRY_DELETE,
+                            StandardWatchEventKinds.OVERFLOW);
+                        while (true) {
+                            try {
+                                signalledKey = watchService.take();
+                                Long time = System.currentTimeMillis();
+                                handleWatchEvents(signalledKey.pollEvents(), time);
+                                signalledKey.reset();
+                            } catch (InterruptedException ix) {
+                                this.logger
+                                    .info("Watch service was interrupted, closing...");
+                                this.logger.debug(ix.getMessage(), ix);
+                                watchService.close();
+                                Thread.currentThread().interrupt();
+                                break;
+                            } catch (ClosedWatchServiceException cwse) {
+                                this.logger
+                                    .info("Watch service closed, terminating...");
+                                this.logger.debug(cwse.getMessage(), cwse);
+                                break;
+                            }
                         }
                     }
                 } catch (IOException e) {
                     this.logger.error(e.getMessage(), e);
+                    shutdown();
                 }
             }
         }, "File watch service Thread");
@@ -172,7 +173,6 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
                                            final Long time) {
         String watchedPath = String.valueOf(Paths.get(this.pathToMonitor
             .getAbsolutePath()));
-        String from = null;
         for (WatchEvent<?> e : events) {
             Path context = (Path) e.context();
             String file = watchedPath + java.io.File.separator
@@ -184,7 +184,7 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
             } else if (e.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
                 fileModified(file, time, setting);
             } else if (e.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
-                fileDeleted(file, time, setting);
+                fileDeleted(file, time);
             } else {
                 this.logger.debug("Event " + e.kind() + " will be ignored");
             }
@@ -228,8 +228,7 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
         handleFile(file, time, setting);
     }
 
-    protected final void fileDeleted(final String file, final Long time,
-                                     final InterpreterConfiguration setting) {
+    protected final void fileDeleted(final String file, final Long time) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(file
                 + " deleted at "
@@ -239,7 +238,7 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
         this.filesToDates.remove(file);
     }
 
-    protected final boolean fileModified(final String file, final Long time,
+    protected final void fileModified(final String file, final Long time,
                                          final InterpreterConfiguration setting) {
         boolean modified = false;
         Long oldTime = this.filesToDates.get(file);
@@ -256,7 +255,6 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
         if (modified) {
             handleFile(file, time, setting);
         }
-        return modified;
     }
 
     /**

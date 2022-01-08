@@ -127,7 +127,7 @@ public class FilePairSystemMonitor extends AbstractFileSystemMonitor<Pair<File, 
         }
     }
 
-    protected final Pair<File, File> updateFilePair(final File file) {
+    protected final void updateFilePair(final File file) {
         if (this.filePair == null) {
             this.filePair = Pair.with(null, null);
         }
@@ -143,6 +143,5 @@ public class FilePairSystemMonitor extends AbstractFileSystemMonitor<Pair<File, 
             FileUtils.getExtension(file))) {
             this.filePair = this.filePair.setAt1(file);
         }
-        return this.filePair;
     }
 }

@@ -55,7 +55,7 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
             this.dataSource = dataSource;
         } else {
             throw new IllegalArgumentException(
-                "Given dataSource must be of type FilePairSystemDataSource!");
+                "Given dataSource must be of type FileTripletSystemDataSource!");
         }
     }
 
@@ -122,7 +122,7 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
         if (setting != null) {
             File file = new File(fileName);
             this.logger.debug("Handling file " + fileName + "...");
-            updateFilePair(file);
+            updateFileTriplet(file);
             if ((this.fileTriplet != null) && (this.fileTriplet.getValue0() != null)
                 && (this.fileTriplet.getValue1() != null)) {
                 IndexingParser<Triplet<File, File, File>> parser = getParser(setting);
@@ -138,7 +138,7 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
         }
     }
 
-    protected final Triplet<File, File, File> updateFilePair(final File file) {
+    protected final void updateFileTriplet(final File file) {
         if (this.fileTriplet == null) {
             this.fileTriplet = Triplet.with(null, null, null);
         }
@@ -159,6 +159,5 @@ public class FileTripletSystemMonitor extends AbstractFileSystemMonitor<Triplet<
             FileUtils.getExtension(file))) {
             this.fileTriplet.setAt2(file);
         }
-        return this.fileTriplet;
     }
 }
