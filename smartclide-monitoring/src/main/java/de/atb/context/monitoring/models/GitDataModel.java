@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 import de.atb.context.common.Version;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
@@ -29,9 +29,9 @@ import de.atb.context.persistence.ModelOutputLanguage;
 import lombok.Getter;
 import lombok.Setter;
 import org.simpleframework.xml.Root;
-import thewebsemantic.Id;
-import thewebsemantic.Namespace;
-import thewebsemantic.RdfType;
+import de.atb.context.rdf.Id;
+import de.atb.context.rdf.Namespace;
+import de.atb.context.rdf.RdfType;
 
 @RdfType("GitDataModel")
 @Namespace(BusinessCase.NS_DUMMY_URL)

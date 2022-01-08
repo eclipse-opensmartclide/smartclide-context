@@ -14,10 +14,10 @@ package de.atb.context.common.util;
  * #L%
  */
 
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import thewebsemantic.Namespace;
-import thewebsemantic.RdfType;
+import org.apache.jena.rdf.model.ResourceFactory;
+import de.atb.context.rdf.Namespace;
+import de.atb.context.rdf.RdfType;
+import org.apache.jena.rdf.model.Property;
 
 /**
  * SPARQLHelper

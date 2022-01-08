@@ -15,21 +15,21 @@ package de.atb.context.persistence.context;
  */
 
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.query.DataSource;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryException;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.sdb.SDBFactory;
-import com.hp.hpl.jena.sdb.Store;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryException;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.sdb.SDBFactory;
+import org.apache.jena.sdb.Store;
 import de.atb.context.common.util.IApplicationScenarioProvider;
 import de.atb.context.extraction.ContextContainer;
 import de.atb.context.extraction.util.base.BaseDatatypeProperties;
@@ -87,7 +87,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 	}
 
 	private synchronized void persistReasonableContext(ContextContainer context) {
-		DataSource ds = getDataSource(context.getBusinessCase());
+		Dataset ds = getDataSource(context.getBusinessCase());
 		Model model = ds.getDefaultModel();
 		model.add(context);
 	}
@@ -305,7 +305,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 			throw new IllegalArgumentException("Query may not be empty!");
 		}
 		String finalQuery = prepareSparqlQuery(businessCase, query);
-		DataSource dataset = getDataSource(businessCase);
+        Dataset dataset = getDataSource(businessCase);
 		Model model = dataset.getDefaultModel();
 		OntModel ontModel = null;
 		if (useReasoner) {
@@ -340,7 +340,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 			throw new IllegalArgumentException("Query may not be empty!");
 		}
 		String finalQuery = prepareSparqlQuery(businessCase, query);
-		DataSource dataset = getDataSource(businessCase);
+        Dataset dataset = getDataSource(businessCase);
 		Model model = dataset.getDefaultModel();
 		OntModel ontModel = null;
 		if (useReasoner) {
@@ -375,7 +375,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 			throw new IllegalArgumentException("Query may not be empty!");
 		}
 		String finalQuery = prepareSparqlQuery(businessCase, query);
-		DataSource dataset = getDataSource(businessCase);
+        Dataset dataset = getDataSource(businessCase);
 		Model model = dataset.getDefaultModel();
 		OntModel ontModel = null;
 		if (useReasoner) {
@@ -410,7 +410,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 			throw new IllegalArgumentException("Query may not be empty!");
 		}
 		String finalQuery = prepareSparqlQuery(businessCase, query);
-		DataSource dataset = getDataSource(businessCase);
+        Dataset dataset = getDataSource(businessCase);
 		Model model = dataset.getDefaultModel();
 		OntModel ontModel = null;
 		if (useReasoner) {
@@ -446,7 +446,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 	 */
 	@Override
 	public synchronized Model getDefaultModel(BusinessCase businessCase) {
-		DataSource dataset = getDataSource(businessCase);
+        Dataset dataset = getDataSource(businessCase);
 		return dataset.getDefaultModel();
 	}
 
@@ -584,7 +584,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
 	protected synchronized List<String> getLastIds(String finalQuery, BusinessCase bc) throws QueryException {
 		List<String> ids = new ArrayList<>();
-		DataSource ds = getDataSource(bc);
+        Dataset ds = getDataSource(bc);
 		ResultSet set = executeSelectSparqlQuery(finalQuery, ds.getDefaultModel());
 		while (set.hasNext()) {
 			QuerySolution solution = set.nextSolution();

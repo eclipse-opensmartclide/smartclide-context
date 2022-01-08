@@ -14,19 +14,18 @@ package de.atb.context.persistence.common;
  * #L%
  */
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.query.DataSource;
-import com.hp.hpl.jena.query.DatasetFactory;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.sdb.SDBFactory;
-import com.hp.hpl.jena.sdb.Store;
-import com.hp.hpl.jena.sdb.StoreDesc;
-import com.hp.hpl.jena.sdb.sql.SDBConnection;
-import com.hp.hpl.jena.sdb.store.DatabaseType;
-import com.hp.hpl.jena.sdb.store.LayoutType;
-import com.hp.hpl.jena.sdb.util.StoreUtils;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.sdb.SDBFactory;
+import org.apache.jena.sdb.Store;
+import org.apache.jena.sdb.StoreDesc;
+import org.apache.jena.sdb.sql.SDBConnection;
+import org.apache.jena.sdb.store.DatabaseType;
+import org.apache.jena.sdb.store.LayoutType;
+import org.apache.jena.sdb.util.StoreUtils;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.IApplicationScenarioProvider;
 import org.slf4j.Logger;
@@ -52,7 +51,7 @@ extends Repository<T> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(RepositorySDB.class);
 
-	private final Map<BusinessCase, DataSource> dataSources = new HashMap<>();
+	private final Map<BusinessCase, Dataset> dataSources = new HashMap<>();
 	private final Map<BusinessCase, Store> stores = new HashMap<>();
 
 	protected RepositorySDB(final String baseLocation) {
@@ -72,7 +71,7 @@ extends Repository<T> {
 					+ "' does not exist and cannot be created.");
 		}
 
-		final DataSource ds = getDataSource(bc);
+		final Dataset ds = getDataSource(bc);
 		T toReturn;
 		final Model tdbModel = ds.getDefaultModel();
 		if ((clazz == OntModel.class)
@@ -93,16 +92,15 @@ extends Repository<T> {
 			toReturn = (T) tdbModel;
 		} else {
 			throw new IllegalArgumentException(
-					"Clazz must be one of com.hp.hpl.jena.ontology.OntModel or com.hp.hpl.jena.rdf.Model!");
+					"Clazz must be one of org.apache.jena.ontology.OntModel or org.apache.jena.rdf.Model!");
 		}
 		return toReturn;
 	}
 
-	private synchronized DataSource initializeDataSource(final BusinessCase bc) {
+	private synchronized Dataset initializeDataSource(final BusinessCase bc) {
 		RepositorySDB.logger.debug("Initializing DataSource for BC '{}'", bc);
 		final Store store = setupStoreForBC(bc);
-		final DataSource set = DatasetFactory.create(SDBFactory
-				.connectDataset(store));
+		final Dataset set = SDBFactory.connectDataset(store);
 		dataSources.put(bc, set);
 		return set;
 	}
@@ -127,8 +125,8 @@ extends Repository<T> {
 	}
 
 	@Override
-	public final synchronized DataSource getDataSource(final BusinessCase bc) {
-		DataSource ds = dataSources.get(bc);
+	public final synchronized Dataset getDataSource(final BusinessCase bc) {
+        Dataset ds = dataSources.get(bc);
 		if (ds == null) {
 			ds = initializeDataSource(bc);
 		}
@@ -183,7 +181,7 @@ extends Repository<T> {
 		if (bc == null) {
 			RepositorySDB.logger
 					.debug("Clearing Repository DB Cache for all BCs");
-			for (final DataSource set : dataSources.values()) {
+			for (final Dataset set : dataSources.values()) {
 				if (set.getDefaultModel() != null) {
 					set.getDefaultModel().close();
 				}
@@ -204,7 +202,7 @@ extends Repository<T> {
 			stores.clear();
 		} else {
 			RepositorySDB.logger.debug("Clearing Repository DB Cache for BC '{}'", bc);
-			final DataSource set = dataSources.remove(bc);
+			final Dataset set = dataSources.remove(bc);
 			if (set != null) {
 				if (set.getDefaultModel() != null) {
 					set.getDefaultModel().close();

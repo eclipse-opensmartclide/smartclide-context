@@ -17,7 +17,7 @@ package de.atb.context.persistence.monitoring;
 
 import java.util.List;
 
-import com.hp.hpl.jena.query.ResultSet;
+import org.apache.jena.query.ResultSet;
 
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.common.util.ApplicationScenario;

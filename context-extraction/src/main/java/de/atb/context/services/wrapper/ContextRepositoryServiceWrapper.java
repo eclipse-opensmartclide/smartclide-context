@@ -15,9 +15,10 @@ package de.atb.context.services.wrapper;
  */
 
 
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFactory;
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.commons.io.IOUtils;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFactory;
+import org.apache.jena.rdf.model.Model;
 import de.atb.context.extraction.ContextContainer;
 import de.atb.context.extraction.ContextContainerWrapper;
 import de.atb.context.services.IContextRepositoryService;
@@ -28,6 +29,7 @@ import de.atb.context.persistence.ModelOutputLanguage;
 import de.atb.context.services.faults.ContextFault;
 import de.atb.context.services.wrapper.RepositoryServiceWrapper;
 
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -95,7 +97,7 @@ public class ContextRepositoryServiceWrapper extends RepositoryServiceWrapper<IC
 
 	public final synchronized ResultSet executeSparqlSelectQuery(final BusinessCase businessCase, final String query) throws ContextFault {
 		String resultSetXmlString = service.executeSparqlSelectQuery(businessCase, query);
-		return ResultSetFactory.fromXML(resultSetXmlString);
+		return ResultSetFactory.fromXML(IOUtils.toInputStream(resultSetXmlString, Charset.defaultCharset()));
 	}
 
 	public final synchronized Model executeSparqlDescribeQuery(final BusinessCase businessCase, final String query) throws ContextFault {
@@ -116,7 +118,7 @@ public class ContextRepositoryServiceWrapper extends RepositoryServiceWrapper<IC
 	public final synchronized ResultSet executeSparqlSelectQuery(final BusinessCase businessCase, final String query, final boolean useReasoner)
 			throws ContextFault {
 		String resultSetXmlString = service.executeSparqlSelectQuery(businessCase, query, useReasoner);
-		return ResultSetFactory.fromXML(resultSetXmlString);
+		return ResultSetFactory.fromXML(IOUtils.toInputStream(resultSetXmlString, Charset.defaultCharset()));
 	}
 
 	public final synchronized Model executeSparqlDescribeQuery(final BusinessCase businessCase, final String query, final boolean useReasoner)

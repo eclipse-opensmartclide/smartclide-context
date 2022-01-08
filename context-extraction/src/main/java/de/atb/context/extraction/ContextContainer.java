@@ -14,27 +14,6 @@ package de.atb.context.extraction;
  * #L%
  */
 
-import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.Individual;
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.ontology.impl.OntModelImpl;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.util.iterator.UniqueExtendedIterator;
 import de.atb.context.extraction.util.IOntPropertyProvider;
 import de.atb.context.extraction.util.base.BaseDatatypeProperties;
 import de.atb.context.extraction.util.base.BaseObjectProperties;
@@ -42,11 +21,27 @@ import de.atb.context.extraction.util.base.BaseOntologyClasses;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.IApplicationScenarioProvider;
-import de.atb.context.context.util.IOntologyResource;
 import de.atb.context.context.util.OntologyNamespace;
 import de.atb.context.persistence.ModelOutputLanguage;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.ontology.DatatypeProperty;
+import org.apache.jena.ontology.ObjectProperty;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.ontology.OntProperty;
+import org.apache.jena.ontology.impl.OntModelImpl;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.ResIterator;
+import org.apache.jena.rdf.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,7 +143,7 @@ public class ContextContainer extends OntModelImpl implements
         } else {
             model.read(OntologyNamespace.getInstance().getAbsoluteUri());
         }
-        add(model, true);
+        // TODO add(model, true);
     }
 
     public final BusinessCase getBusinessCase() {
@@ -182,14 +177,6 @@ public class ContextContainer extends OntModelImpl implements
 
     public static ContextContainer readFromFile(String filePath) {
         return ContextContainer.readFromFile(URI.create(filePath));
-    }
-
-    public final ExtendedIterator<Individual> listIndividuals(
-            IOntologyResource resource) {
-        String uri = resource.getURI();
-        OntResource ontRes = getOntResource(uri);
-        return UniqueExtendedIterator.create(findByTypeAs(ontRes,
-                Individual.class));
     }
 
     public final <T extends OntProperty> ResIterator listResourcesWithProperty(

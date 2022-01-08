@@ -17,8 +17,8 @@ package de.atb.context.monitoring.config.models.datasources;
 
 import java.io.FilenameFilter;
 
-import thewebsemantic.Namespace;
-import thewebsemantic.RdfType;
+import de.atb.context.rdf.Namespace;
+import de.atb.context.rdf.RdfType;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.DataSourceType;
 import de.atb.context.monitoring.parser.ExtensionFilenameFilter;
