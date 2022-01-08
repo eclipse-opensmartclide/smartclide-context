@@ -15,9 +15,9 @@ package de.atb.context.common.util;
  */
 
 import org.apache.jena.rdf.model.ResourceFactory;
-import de.atb.context.rdf.Namespace;
-import de.atb.context.rdf.RdfType;
 import org.apache.jena.rdf.model.Property;
+import thewebsemantic.Namespace;
+import thewebsemantic.RdfType;
 
 /**
  * SPARQLHelper

@@ -29,9 +29,9 @@ import de.atb.context.persistence.ModelOutputLanguage;
 import lombok.Getter;
 import lombok.Setter;
 import org.simpleframework.xml.Root;
-import de.atb.context.rdf.Id;
-import de.atb.context.rdf.Namespace;
-import de.atb.context.rdf.RdfType;
+import thewebsemantic.Namespace;
+import thewebsemantic.RdfType;
+import thewebsemantic.Id;
 
 @RdfType("GitDataModel")
 @Namespace(BusinessCase.NS_DUMMY_URL)

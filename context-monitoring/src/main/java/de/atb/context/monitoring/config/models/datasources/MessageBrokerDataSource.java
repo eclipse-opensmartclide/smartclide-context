@@ -21,8 +21,8 @@ import de.atb.context.common.authentication.Credentials;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.DataSourceType;
 import de.atb.context.monitoring.models.IMessageBroker;
-import de.atb.context.rdf.Namespace;
-import de.atb.context.rdf.RdfType;
+import thewebsemantic.Namespace;
+import thewebsemantic.RdfType;
 
 /**
  * MessageBrokerDataSource

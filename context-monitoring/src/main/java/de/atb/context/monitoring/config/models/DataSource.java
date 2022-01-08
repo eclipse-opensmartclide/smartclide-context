@@ -37,8 +37,8 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Transient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import de.atb.context.rdf.Namespace;
-import de.atb.context.rdf.RdfType;
+import thewebsemantic.Namespace;
+import thewebsemantic.RdfType;
 
 /**
  * DataSource

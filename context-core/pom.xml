@@ -66,7 +66,7 @@
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>
-            <version>4.3.2</version>
+            <version>3.17.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
@@ -79,7 +79,7 @@
             <version>3.17.0</version>
         </dependency>
         <dependency>
-            <groupId>com.github.schlotze</groupId>
+            <groupId>io.github.schlotze</groupId>
             <artifactId>jenabean</artifactId>
             <version>2.0.0</version>
         </dependency>

@@ -47,7 +47,6 @@ import java.util.Map;
  */
 public abstract class RepositorySDB<T extends IApplicationScenarioProvider>
 extends Repository<T> {
-
 	private static final Logger logger = LoggerFactory
 			.getLogger(RepositorySDB.class);
 
