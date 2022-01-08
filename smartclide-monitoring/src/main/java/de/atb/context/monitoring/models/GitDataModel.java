@@ -71,7 +71,7 @@ public class GitDataModel implements IMonitoringDataModel<GitDataModel, MessageB
 
     @Override
     public String toRdfString() {
-        return ModelOutputLanguage.DEFAULT.getModelAsString(this.toRdfModel());
+        return ModelOutputLanguage.RDFXML.getModelAsString(this.toRdfModel());
     }
 
     @Override
