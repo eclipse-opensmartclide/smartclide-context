@@ -15,6 +15,7 @@ package de.atb.context.services.wrapper;
  */
 
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -164,7 +165,7 @@ public class AmIMonitoringDataRepositoryServiceWrapper<Type extends IMonitoringD
     @Override
     public final synchronized ResultSet executeSparqlSelectQuery(final BusinessCase businessCase, final String query) throws ContextFault {
         String resultSetXmlString = this.service.executeSparqlSelectQuery(businessCase, query);
-        return ResultSetFactory.fromXML(IOUtils.toInputStream(resultSetXmlString));
+        return ResultSetFactory.fromXML(IOUtils.toInputStream(resultSetXmlString, StandardCharsets.UTF_8));
     }
 
     /**
