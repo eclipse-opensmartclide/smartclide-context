@@ -129,7 +129,7 @@ extends Repository<T> {
 	}
 
 	@Override
-	public final synchronized Dataset getDataSource(final BusinessCase bc) {
+	public final synchronized Dataset getDataSet(final BusinessCase bc) {
 		Dataset ds = datasets.get(bc);
 		if (ds == null) {
 			ds = initializeDataset(bc);

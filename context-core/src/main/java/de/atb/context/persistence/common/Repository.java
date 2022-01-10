@@ -170,7 +170,7 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
 
     protected abstract boolean reset(BusinessCase bc);
 
-    protected abstract Dataset getDataSource(BusinessCase bc);
+    protected abstract Dataset getDataSet(BusinessCase bc);
 
     @Override
     public final void triggerPreProcessors(

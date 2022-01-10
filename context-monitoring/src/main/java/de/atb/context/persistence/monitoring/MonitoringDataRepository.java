@@ -99,7 +99,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     }
 
     protected synchronized void persist(final Model monitoringData, final ApplicationScenario applicationScenario) {
-        Model model = getDataSource(applicationScenario.getBusinessCase()).getDefaultModel();
+        Model model = getDataSet(applicationScenario.getBusinessCase()).getDefaultModel();
         model.begin();
         model.add(monitoringData);
         model.commit();
@@ -136,7 +136,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         logger.debug(query);
 
         List<Type> result = new ArrayList<Type>();
-        Dataset set = getDataSource(businessCase);
+        Dataset set = getDataSet(businessCase);
         Lock lock = set.getLock();
         lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
@@ -190,7 +190,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
 
         String query = SPARQLHelper.appendDefaultPrefixes(selectQuery);
         logger.debug(query);
-        Dataset set = getDataSource(businessCase);
+        Dataset set = getDataSet(businessCase);
         Lock lock = set.getLock();
         lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
@@ -237,7 +237,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             SPARQLHelper.getRdfClassQualifier(clazz), SPARQLHelper.getRdfPropertyQualifier(clazz, "identifier"), identifier);
         String query = SPARQLHelper.appendDefaultPrefixes(selectQuery);
         logger.trace(query);
-        Dataset set = getDataSource(businessCase);
+        Dataset set = getDataSet(businessCase);
         Model model = set.getDefaultModel();
 
         Collection<? extends Type> result2 = Sparql.exec(model, clazz, query);
@@ -342,7 +342,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         logger.debug(query);
 
         List<String> ids = new ArrayList<String>();
-        Dataset set = getDataSource(businessCase);
+        Dataset set = getDataSet(businessCase);
         Lock lock = set.getLock();
         lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
@@ -418,7 +418,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         logger.debug(query);
 
         List<String> ids = new ArrayList<String>();
-        Dataset set = getDataSource(businessCase);
+        Dataset set = getDataSet(businessCase);
         Lock lock = set.getLock();
         lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
@@ -487,7 +487,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             ur.add(prepareSparqlQuery(businessCase, query));
         }
         try {
-            UpdateAction.execute(ur, getDataSource(businessCase));
+            UpdateAction.execute(ur, getDataSet(businessCase));
         } catch (RuntimeException qe) {
             logger.error(qe.getMessage(), qe);
             throw qe;
@@ -511,7 +511,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             throw new IllegalArgumentException("Query may not be empty!");
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
-        Dataset dataset = getDataSource(businessCase);
+        Dataset dataset = getDataSet(businessCase);
         Model model = dataset.getDefaultModel();
         OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
         QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);

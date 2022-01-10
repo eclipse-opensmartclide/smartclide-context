@@ -50,7 +50,7 @@ extends Repository<T> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(RepositorySDB.class);
 
-	private final Map<BusinessCase, Dataset> dataSources = new HashMap<>();
+	private final Map<BusinessCase, Dataset> dataSets = new HashMap<>();
 	private final Map<BusinessCase, Store> stores = new HashMap<>();
 
 	protected RepositorySDB(final String baseLocation) {
@@ -70,7 +70,7 @@ extends Repository<T> {
 					+ "' does not exist and cannot be created.");
 		}
 
-		final Dataset ds = getDataSource(bc);
+		final Dataset ds = getDataSet(bc);
 		T toReturn;
 		final Model tdbModel = ds.getDefaultModel();
 		if ((clazz == OntModel.class)
@@ -100,7 +100,7 @@ extends Repository<T> {
 		RepositorySDB.logger.debug("Initializing DataSource for BC '{}'", bc);
 		final Store store = setupStoreForBC(bc);
 		final Dataset set = SDBFactory.connectDataset(store);
-		dataSources.put(bc, set);
+		dataSets.put(bc, set);
 		return set;
 	}
 
@@ -124,8 +124,8 @@ extends Repository<T> {
 	}
 
 	@Override
-	public final synchronized Dataset getDataSource(final BusinessCase bc) {
-        Dataset ds = dataSources.get(bc);
+	public final synchronized Dataset getDataSet(final BusinessCase bc) {
+        Dataset ds = dataSets.get(bc);
 		if (ds == null) {
 			ds = initializeDataSource(bc);
 		}
@@ -180,7 +180,7 @@ extends Repository<T> {
 		if (bc == null) {
 			RepositorySDB.logger
 					.debug("Clearing Repository DB Cache for all BCs");
-			for (final Dataset set : dataSources.values()) {
+			for (final Dataset set : dataSets.values()) {
 				if (set.getDefaultModel() != null) {
 					set.getDefaultModel().close();
 				}
@@ -190,7 +190,7 @@ extends Repository<T> {
 				}
 				set.close();
 			}
-			dataSources.clear();
+			dataSets.clear();
 
 			for (final Store store : stores.values()) {
 				if (store.getConnection() != null) {
@@ -201,7 +201,7 @@ extends Repository<T> {
 			stores.clear();
 		} else {
 			RepositorySDB.logger.debug("Clearing Repository DB Cache for BC '{}'", bc);
-			final Dataset set = dataSources.remove(bc);
+			final Dataset set = dataSets.remove(bc);
 			if (set != null) {
 				if (set.getDefaultModel() != null) {
 					set.getDefaultModel().close();

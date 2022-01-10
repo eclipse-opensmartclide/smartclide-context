@@ -79,7 +79,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
     }
 
     private synchronized void persistReasonableContext(ContextContainer context) {
-        Dataset ds = getDataSource(context.getBusinessCase());
+        Dataset ds = getDataSet(context.getBusinessCase());
         Model model = ds.getDefaultModel();
         model.add(context);
     }
@@ -280,7 +280,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
             throw new IllegalArgumentException("Query may not be empty!");
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
-        Dataset dataset = getDataSource(businessCase);
+        Dataset dataset = getDataSet(businessCase);
         Model model = dataset.getDefaultModel();
         OntModel ontModel = null;
         if (useReasoner) {
@@ -315,7 +315,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
             throw new IllegalArgumentException("Query may not be empty!");
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
-        Dataset dataset = getDataSource(businessCase);
+        Dataset dataset = getDataSet(businessCase);
         Model model = dataset.getDefaultModel();
         OntModel ontModel = null;
         if (useReasoner) {
@@ -350,7 +350,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
             throw new IllegalArgumentException("Query may not be empty!");
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
-        Dataset dataset = getDataSource(businessCase);
+        Dataset dataset = getDataSet(businessCase);
         Model model = dataset.getDefaultModel();
         OntModel ontModel = null;
         if (useReasoner) {
@@ -385,7 +385,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
             throw new IllegalArgumentException("Query may not be empty!");
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
-        Dataset dataset = getDataSource(businessCase);
+        Dataset dataset = getDataSet(businessCase);
         Model model = dataset.getDefaultModel();
         OntModel ontModel = null;
         if (useReasoner) {
@@ -421,7 +421,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
      */
     @Override
     public synchronized Model getDefaultModel(BusinessCase businessCase) {
-        Dataset dataset = getDataSource(businessCase);
+        Dataset dataset = getDataSet(businessCase);
         return dataset.getDefaultModel();
     }
 
@@ -532,7 +532,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
 
     protected synchronized List<String> getLastIds(String finalQuery, BusinessCase bc) throws QueryException {
         List<String> ids = new ArrayList<>();
-        Dataset ds = getDataSource(bc);
+        Dataset ds = getDataSet(bc);
         ResultSet set = executeSelectSparqlQuery(finalQuery, ds.getDefaultModel());
         while (set.hasNext()) {
             QuerySolution solution = set.nextSolution();
