@@ -30,6 +30,7 @@ import de.atb.context.services.faults.ContextFault;
 import de.atb.context.services.wrapper.RepositoryServiceWrapper;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -97,7 +98,7 @@ public class ContextRepositoryServiceWrapper extends RepositoryServiceWrapper<IC
 
 	public final synchronized ResultSet executeSparqlSelectQuery(final BusinessCase businessCase, final String query) throws ContextFault {
 		String resultSetXmlString = service.executeSparqlSelectQuery(businessCase, query);
-		return ResultSetFactory.fromXML(IOUtils.toInputStream(resultSetXmlString, Charset.defaultCharset()));
+		return ResultSetFactory.fromXML(IOUtils.toInputStream(resultSetXmlString, StandardCharsets.UTF_8));
 	}
 
 	public final synchronized Model executeSparqlDescribeQuery(final BusinessCase businessCase, final String query) throws ContextFault {
@@ -118,7 +119,7 @@ public class ContextRepositoryServiceWrapper extends RepositoryServiceWrapper<IC
 	public final synchronized ResultSet executeSparqlSelectQuery(final BusinessCase businessCase, final String query, final boolean useReasoner)
 			throws ContextFault {
 		String resultSetXmlString = service.executeSparqlSelectQuery(businessCase, query, useReasoner);
-		return ResultSetFactory.fromXML(IOUtils.toInputStream(resultSetXmlString, Charset.defaultCharset()));
+		return ResultSetFactory.fromXML(IOUtils.toInputStream(resultSetXmlString, StandardCharsets.UTF_8));
 	}
 
 	public final synchronized Model executeSparqlDescribeQuery(final BusinessCase businessCase, final String query, final boolean useReasoner)

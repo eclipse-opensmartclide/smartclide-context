@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -76,13 +77,13 @@ public final class ServiceRegistryRepository implements
             String templateOntology = "";
             String workingOntology = "";
             if (streamTemplate != null) {
-                String templateFileString = IOUtils.toString(streamTemplate, Charset.defaultCharset());
+                String templateFileString = IOUtils.toString(streamTemplate, StandardCharsets.UTF_8);
                 if (FileUtils.ensureDirectoryExists(HOME_CONFIG_PATH + TEMPLATE_ONTOLOGY_PATH.replace("/", File.separator))) {
                     FileUtils.writeStringToFile(templateFileString, HOME_CONFIG_PATH + TEMPLATE_ONTOLOGY_PATH.replace("/", File.separator));
                     templateOntology = HOME_CONFIG_PATH + TEMPLATE_ONTOLOGY_PATH.replace("/", File.separator);
                     logger.info("filepath created by Jar internal configuration Template Ontology Registry Filepath: {}", templateOntology);
                     if (streamWorking != null) {
-                        String workingFileString = IOUtils.toString(streamWorking, Charset.defaultCharset());
+                        String workingFileString = IOUtils.toString(streamWorking, StandardCharsets.UTF_8);
 
                         FileUtils.writeStringToFile(workingFileString, HOME_CONFIG_PATH + WORKING_ONTOLOGY_PATH.replace("/", File.separator));
                         workingOntology = HOME_CONFIG_PATH + WORKING_ONTOLOGY_PATH.replace("/", File.separator);
