@@ -29,7 +29,6 @@ import de.atb.context.common.util.TimeFrame;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.persistence.monitoring.MonitoringDataRepository;
 import de.atb.context.services.faults.ContextFault;
-import de.atb.context.services.infrastructure.response.InvokeResponse;
 import de.atb.context.services.interfaces.Input;
 import de.atb.context.services.interfaces.Output;
 import de.atb.context.services.manager.ServiceManager;
@@ -372,11 +371,11 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
     }
 
     public final Future<?> invokeAAsync(final Input input,
-                                        final AsyncHandler<InvokeResponse> asyncHandler) {
+                                        final AsyncHandler<?> asyncHandler) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public final Response<InvokeResponse> invokeAAsync(final Input input) {
+    public final Response<?> invokeAAsync(final Input input) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

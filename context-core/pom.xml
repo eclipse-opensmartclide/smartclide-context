@@ -47,11 +47,6 @@
             <version>3.12.0</version>
         </dependency>
         <dependency>
-            <groupId>com.jgoodies</groupId>
-            <artifactId>jgoodies-forms</artifactId>
-            <version>1.9.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.javatuples</groupId>
             <artifactId>javatuples</artifactId>
             <version>1.2</version>
