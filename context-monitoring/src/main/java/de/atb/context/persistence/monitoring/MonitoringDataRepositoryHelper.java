@@ -15,8 +15,8 @@ package de.atb.context.persistence.monitoring;
  */
 
 
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.SPARQLHelper;

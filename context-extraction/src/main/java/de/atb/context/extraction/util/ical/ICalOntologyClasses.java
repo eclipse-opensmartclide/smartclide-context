@@ -15,8 +15,8 @@ package de.atb.context.extraction.util.ical;
  */
 
 
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.rdf.model.Resource;
+import org.apache.jena.ontology.ObjectProperty;
+import org.apache.jena.rdf.model.Resource;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.extraction.ContextContainer;
 import de.atb.context.extraction.util.base.BaseObjectProperties;

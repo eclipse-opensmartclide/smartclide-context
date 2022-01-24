@@ -14,8 +14,8 @@ package de.atb.context.common.util;
  * #L%
  */
 
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Property;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 

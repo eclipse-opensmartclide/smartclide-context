@@ -17,7 +17,7 @@ package de.atb.context.monitoring;
 
 import java.io.Serializable;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 
 import de.atb.context.common.util.IApplicationScenarioProvider;
 

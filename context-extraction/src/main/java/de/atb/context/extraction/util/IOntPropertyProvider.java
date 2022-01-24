@@ -14,8 +14,8 @@ package de.atb.context.extraction.util;
  * #L%
  */
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntProperty;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntProperty;
 
 /**
  * IOntPropertyProvider

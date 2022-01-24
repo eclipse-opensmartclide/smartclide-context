@@ -20,24 +20,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.query.DataSource;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryException;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.shared.Lock;
-import com.hp.hpl.jena.update.UpdateAction;
-import com.hp.hpl.jena.update.UpdateFactory;
-import com.hp.hpl.jena.update.UpdateRequest;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryException;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.shared.Lock;
+import org.apache.jena.update.UpdateAction;
+import org.apache.jena.update.UpdateFactory;
+import org.apache.jena.update.UpdateRequest;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.SPARQLHelper;
@@ -100,7 +99,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     }
 
     protected synchronized void persist(final Model monitoringData, final ApplicationScenario applicationScenario) {
-        Model model = getDataSource(applicationScenario.getBusinessCase()).getDefaultModel();
+        Model model = getDataSet(applicationScenario.getBusinessCase()).getDefaultModel();
         model.begin();
         model.add(monitoringData);
         model.commit();
@@ -137,7 +136,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         logger.debug(query);
 
         List<Type> result = new ArrayList<Type>();
-        Dataset set = getDataSource(businessCase);
+        Dataset set = getDataSet(businessCase);
         Lock lock = set.getLock();
         lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
@@ -191,7 +190,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
 
         String query = SPARQLHelper.appendDefaultPrefixes(selectQuery);
         logger.debug(query);
-        Dataset set = getDataSource(businessCase);
+        Dataset set = getDataSet(businessCase);
         Lock lock = set.getLock();
         lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
@@ -238,7 +237,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             SPARQLHelper.getRdfClassQualifier(clazz), SPARQLHelper.getRdfPropertyQualifier(clazz, "identifier"), identifier);
         String query = SPARQLHelper.appendDefaultPrefixes(selectQuery);
         logger.trace(query);
-        Dataset set = getDataSource(businessCase);
+        Dataset set = getDataSet(businessCase);
         Model model = set.getDefaultModel();
 
         Collection<? extends Type> result2 = Sparql.exec(model, clazz, query);
@@ -343,7 +342,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         logger.debug(query);
 
         List<String> ids = new ArrayList<String>();
-        Dataset set = getDataSource(businessCase);
+        Dataset set = getDataSet(businessCase);
         Lock lock = set.getLock();
         lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
@@ -419,7 +418,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         logger.debug(query);
 
         List<String> ids = new ArrayList<String>();
-        Dataset set = getDataSource(businessCase);
+        Dataset set = getDataSet(businessCase);
         Lock lock = set.getLock();
         lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
@@ -488,7 +487,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             ur.add(prepareSparqlQuery(businessCase, query));
         }
         try {
-            UpdateAction.execute(ur, getDataSource(businessCase));
+            UpdateAction.execute(ur, getDataSet(businessCase));
         } catch (RuntimeException qe) {
             logger.error(qe.getMessage(), qe);
             throw qe;
@@ -512,7 +511,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             throw new IllegalArgumentException("Query may not be empty!");
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
-        DataSource dataset = getDataSource(businessCase);
+        Dataset dataset = getDataSet(businessCase);
         Model model = dataset.getDefaultModel();
         OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
         QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);

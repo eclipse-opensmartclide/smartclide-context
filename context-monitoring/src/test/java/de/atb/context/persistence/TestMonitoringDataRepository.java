@@ -1,8 +1,8 @@
 package de.atb.context.persistence;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.StmtIterator;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.TimeFrame;

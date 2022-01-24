@@ -15,8 +15,8 @@ package de.atb.context.extraction.util.time;
  */
 
 
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.OntModel;
+import org.apache.jena.ontology.DatatypeProperty;
+import org.apache.jena.ontology.OntModel;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.extraction.util.IOntPropertyProvider;
 import de.atb.context.context.util.IOntologyResource;
@@ -144,7 +144,7 @@ public enum TimeDatatypeProperties implements IOntologyResource, IOntPropertyPro
 	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.extraction.util.IOntPropertyProvider#getProperty(com.hp.hpl.jena.ontology.OntModel)
+	 * @see de.atb.context.extraction.util.IOntPropertyProvider#getProperty(org.apache.jena.ontology.OntModel)
 	 */
 	@Override
 	public DatatypeProperty getProperty(final OntModel model) {

@@ -15,8 +15,8 @@ package de.atb.context.extraction.util.ical;
  */
 
 
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntModel;
+import org.apache.jena.ontology.ObjectProperty;
+import org.apache.jena.ontology.OntModel;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.extraction.util.IOntPropertyProvider;
 import de.atb.context.context.util.IOntologyResource;
@@ -147,7 +147,7 @@ public enum ICalObjectProperties implements IOntologyResource, IOntPropertyProvi
 	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.extraction.util.IOntPropertyProvider#getProperty(com.hp.hpl.jena.ontology.OntModel)
+	 * @see de.atb.context.extraction.util.IOntPropertyProvider#getProperty(org.apache.jena.ontology.OntModel)
 	 */
 	@Override
 	public ObjectProperty getProperty(final OntModel model) {

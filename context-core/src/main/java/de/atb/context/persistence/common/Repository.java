@@ -21,11 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import de.atb.context.common.ContextPathUtils;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
@@ -163,14 +163,14 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
             toReturn = (T) ModelFactory.createDefaultModel();
         } else {
             throw new IllegalArgumentException(
-                    "Clazz must be one of com.hp.hpl.jena.ontology.OntModel or com.hp.hpl.jena.rdf.Model!");
+                    "Clazz must be one of org.apache.jena.ontology.OntModel or org.apache.jena.rdf.Model!");
         }
         return toReturn;
     }
 
     protected abstract boolean reset(BusinessCase bc);
 
-    protected abstract Dataset getDataSource(BusinessCase bc);
+    protected abstract Dataset getDataSet(BusinessCase bc);
 
     @Override
     public final void triggerPreProcessors(

@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 import thewebsemantic.Bean2RDF;
 import thewebsemantic.RDF2Bean;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 
 /**
  * RdfHelper
