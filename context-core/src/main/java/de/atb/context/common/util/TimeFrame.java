@@ -14,7 +14,7 @@ package de.atb.context.common.util;
  * #L%
  */
 
-import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
 
 import java.util.Calendar;
 import java.util.Date;

@@ -1,6 +1,6 @@
 package de.atb.context.monitoring.models;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 import de.atb.context.common.Version;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
@@ -61,7 +61,7 @@ public class DummyMonitoringDataModel implements IMonitoringDataModel<DummyMonit
 	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.monitoring.IMonitoringData#fromRdfModel(com.hp.hpl.jena.rdf.model.Model)
+	 * @see de.atb.context.monitoring.IMonitoringData#fromRdfModel(org.apache.jena.rdf.model.Model)
 	 */
 	@Override
 	public final DummyMonitoringDataModel fromRdfModel(final Model model) {

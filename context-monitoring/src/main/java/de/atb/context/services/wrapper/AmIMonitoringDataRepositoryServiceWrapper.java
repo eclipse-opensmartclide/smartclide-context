@@ -15,11 +15,13 @@ package de.atb.context.services.wrapper;
  */
 
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFactory;
+import org.apache.commons.io.IOUtils;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFactory;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.TimeFrame;
@@ -163,7 +165,7 @@ public class AmIMonitoringDataRepositoryServiceWrapper<Type extends IMonitoringD
     @Override
     public final synchronized ResultSet executeSparqlSelectQuery(final BusinessCase businessCase, final String query) throws ContextFault {
         String resultSetXmlString = this.service.executeSparqlSelectQuery(businessCase, query);
-        return ResultSetFactory.fromXML(resultSetXmlString);
+        return ResultSetFactory.fromXML(IOUtils.toInputStream(resultSetXmlString, StandardCharsets.UTF_8));
     }
 
     /**
