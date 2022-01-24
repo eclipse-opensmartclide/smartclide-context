@@ -358,10 +358,6 @@ public class ServiceManager {
             try {
                 Constructor<?> constructor = serviceClass.getConstructor();
                 T instance = (T) constructor.newInstance();
-//                if (instance instanceof ServiceRegistryService) {
-//                    ServiceRegistryService server = (ServiceRegistryService) instance;
-//                    ServiceManager.server = server.getServerInstance();
-//                }
                 return instance;
             } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 throw new RuntimeException(String.format(
