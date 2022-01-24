@@ -143,7 +143,7 @@ public class ContextContainer extends OntModelImpl implements
         } else {
             model.read(OntologyNamespace.getInstance().getAbsoluteUri());
         }
-        // TODO add(model, true);
+        add(model);
     }
 
     public final BusinessCase getBusinessCase() {
