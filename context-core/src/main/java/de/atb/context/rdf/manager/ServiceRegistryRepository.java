@@ -48,10 +48,7 @@ public final class ServiceRegistryRepository implements
 
     private static final String TEMPLATE_ONTOLOGY_PATH = "/resources/rdfs/SoftwareServiceOntology_v0.7.owl";
     private static final String WORKING_ONTOLOGY_PATH = "/resources/rdfs/SoftwareServiceOntology_v0.7_working.owl";
-    protected static final String HOME_CONFIG_PATH = System
-            .getProperty("user.home")
-            + File.separator
-            + ".context";
+    private static final String HOME_CONFIG_PATH = System.getProperty("user.home") + File.separator + ".context";
 
     private boolean initialized = false;
 
