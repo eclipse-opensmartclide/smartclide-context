@@ -27,10 +27,8 @@ import java.util.List;
 import javax.jws.WebService;
 import javax.xml.ws.BindingProvider;
 
-import de.atb.context.modules.Deployer;
 import de.atb.context.services.SWServiceContainer;
 import de.atb.context.services.config.models.SWService;
-import de.atb.context.services.infrastructure.ServiceRegistryService;
 import de.atb.context.services.interfaces.IPrimitiveService;
 import lombok.Getter;
 import org.apache.cxf.endpoint.Client;
@@ -68,10 +66,6 @@ public class ServiceManager {
 
     @Getter
     private static final List<SWServiceContainer> LSWServiceContainer = new ArrayList<>();
-    @Getter
-    private static Deployer deployer;
-    @Getter
-    private static de.atb.context.modules.Server server;
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceManager.class);
 
@@ -364,10 +358,6 @@ public class ServiceManager {
             try {
                 Constructor<?> constructor = serviceClass.getConstructor();
                 T instance = (T) constructor.newInstance();
-                if (instance instanceof ServiceRegistryService) {
-                    ServiceRegistryService server = (ServiceRegistryService) instance;
-                    ServiceManager.server = server.getServerInstance();
-                }
                 return instance;
             } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 throw new RuntimeException(String.format(
