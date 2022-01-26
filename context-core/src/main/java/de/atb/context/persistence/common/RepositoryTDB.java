@@ -15,6 +15,7 @@ package de.atb.context.persistence.common;
  */
 
 import org.apache.jena.query.Dataset;
+import org.apache.jena.query.ReadWrite;
 import org.apache.jena.tdb.TDB;
 import org.apache.jena.tdb.TDBFactory;
 import de.atb.context.common.util.BusinessCase;
@@ -46,20 +47,20 @@ extends Repository<T> {
 		super(baseLocation);
 	}
 
-	protected final synchronized boolean clearBaseDirectory() { // TODO this should maybe replace by a call to DRM API
+	protected final synchronized boolean clearBaseDirectory() {
 		for (final BusinessCase bc : BusinessCase.values()) {
 			clearBusinessCaseDirectory(bc);
 		}
 		return RepositoryTDB.clearDirectory(new File(basicLocation));
 	}
 
-	protected final synchronized boolean clearBusinessCaseDirectory( // TODO this should maybe replace by a call to DRM API
+	protected final synchronized boolean clearBusinessCaseDirectory(
 			final BusinessCase businessCase) {
 		return RepositoryTDB.clearDirectory(new File(
 				getLocationForBusinessCase(businessCase)));
 	}
 
-	protected static synchronized boolean clearDirectory(final File dir) { // TODO this should maybe replace by a call to DRM API
+	protected static synchronized boolean clearDirectory(final File dir) {
 		if (dir.isDirectory()) {
 			boolean oneFailed = false;
 			for (final String file : dir.list()) {
@@ -94,11 +95,14 @@ extends Repository<T> {
 	@Override
 	protected final void shuttingDown() {
 		for (final Dataset set : datasets.values()) {
+            set.begin(ReadWrite.WRITE);
 			TDB.sync(set);
 			if (set.getDefaultModel() != null) {
 				TDB.sync(set.getDefaultModel());
 				set.getDefaultModel().close();
 			}
+            set.commit();
+            set.end();
 			set.close();
 		}
 		datasets.clear();
@@ -113,6 +117,7 @@ extends Repository<T> {
 	public final boolean reset(final BusinessCase bc) {
 		final Dataset set = this.datasets.remove(bc);
 		if (set != null) {
+            set.begin(ReadWrite.WRITE);
 			TDB.sync(set);
 			if (set.getDefaultModel() != null) {
 				TDB.sync(set.getDefaultModel());
@@ -121,6 +126,8 @@ extends Repository<T> {
 				set.getDefaultModel().close();
 				set.asDatasetGraph().close();
 			}
+            set.commit();
+            set.end();
 			set.close();
 			TDB.closedown();
 		}

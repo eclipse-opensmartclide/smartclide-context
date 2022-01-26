@@ -23,7 +23,7 @@ import de.atb.context.context.util.OntologyNamespace;
 import de.atb.context.extraction.ContextContainer;
 import de.atb.context.extraction.util.base.BaseDatatypeProperties;
 import de.atb.context.extraction.util.base.BaseOntologyClasses;
-import de.atb.context.persistence.common.RepositorySDB;
+import de.atb.context.persistence.common.RepositoryTDB;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.jena.ontology.OntModel;
@@ -32,8 +32,7 @@ import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.sdb.SDBFactory;
-import org.apache.jena.sdb.Store;
+import org.apache.jena.tdb.TDBFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +51,7 @@ import java.util.List;
  */
 @Setter
 @Getter
-public final class ContextRepository extends RepositorySDB<ContextContainer> implements IContextRepository {
+public final class ContextRepository extends RepositoryTDB<ContextContainer> implements IContextRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ContextRepository.class);
     private static final String internalBaseUri = "contexts";
@@ -71,11 +70,12 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
     }
 
     private synchronized void persistNamedContext(ContextContainer context) {
-        Store store = getStore(context.getBusinessCase());
-        Model named = SDBFactory.connectNamedModel(store, context.getIdentifier());
+// FIXME to fix
+/*        Store store = getStore(context.getBusinessCase());
+        Model named = TDBFactory.connectNamedModel(store, context.getIdentifier());
         named.removeAll();
         named.add(context);
-        named.close();
+        named.close();*/
     }
 
     private synchronized void persistReasonableContext(ContextContainer context) {
@@ -187,10 +187,11 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
-        Store store = getStore(businessCase);
-        Model model = SDBFactory.connectNamedModel(store, contextId);
+// FIXME
+/*        Store store = getStore(businessCase);
+        Model model = TDBFactory.connectNamedModel(store, contextId);*/
         OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
-        ontModel.add(model);
+//        ontModel.add(model);
 
         ContextContainer context = new ContextContainer(ontModel);
         context.addDefaultNamespaces();

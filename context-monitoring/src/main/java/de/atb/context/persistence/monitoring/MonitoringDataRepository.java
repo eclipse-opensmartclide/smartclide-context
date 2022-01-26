@@ -22,14 +22,7 @@ import java.util.List;
 
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
-import org.apache.jena.query.Dataset;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryException;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QueryFactory;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
@@ -44,7 +37,7 @@ import de.atb.context.common.util.TimeFrame;
 import de.atb.context.context.util.OntologyNamespace;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.rdf.RdfHelper;
-import de.atb.context.persistence.common.RepositorySDB;
+import de.atb.context.persistence.common.RepositoryTDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import thewebsemantic.RDF2Bean;
@@ -57,7 +50,7 @@ import thewebsemantic.Sparql;
  * @author scholze
  * @version $LastChangedRevision: 143 $
  */
-public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?, ?>> extends RepositorySDB<Type> implements
+public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?, ?>> extends RepositoryTDB<Type> implements
     IMonitoringDataRepository<Type> {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitoringDataRepository.class);
@@ -280,33 +273,6 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             }
         }
 
-        // if ((applicationScenario == ApplicationScenario.TANK_REFILLING) &&
-        // identifier.equals(ApplicationScenario.MONITORING_ID_TANK_REFILLING)) {
-        // return getStaticMonitoringData(applicationScenario, clazz, folder +
-        // identifier + ".rdf");
-        // } else if ((applicationScenario ==
-        // ApplicationScenario.VALVE_SYNCHRONISATION)
-        // &&
-        // identifier.equals(ApplicationScenario.MONITORING_ID_VALVE_SYNCHRONISATION))
-        // {
-        // return getStaticMonitoringData(applicationScenario, clazz, folder +
-        // identifier + ".rdf");
-        // } else if ((applicationScenario ==
-        // ApplicationScenario.IdleTimeDetection)
-        // &&
-        // identifier.equals(ApplicationScenario.MONITORING_ID_IDLE_TIME_DETECTION))
-        // {
-        // return getStaticMonitoringData(applicationScenario, clazz, folder +
-        // identifier + ".rdf");
-        // } else if ((applicationScenario ==
-        // ApplicationScenario.PrioritizationRule)
-        // &&
-        // identifier.equals(ApplicationScenario.MONITORING_ID_PRIORITIZATION_RULE))
-        // {
-        // return getStaticMonitoringData(applicationScenario, clazz, folder +
-        // identifier + ".rdf");
-        // }
-
         return getMonitoringData(applicationScenario.getBusinessCase(), clazz, identifier);
     }
 
@@ -343,6 +309,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
 
         List<String> ids = new ArrayList<String>();
         Dataset set = getDataSet(businessCase);
+        set.begin(ReadWrite.READ);
         Lock lock = set.getLock();
         lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
@@ -362,6 +329,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             logger.error(e.getMessage(), e);
         } finally {
             lock.leaveCriticalSection();
+            set.commit();
+            set.end();
         }
         return ids;
     }
@@ -492,6 +461,11 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             logger.error(qe.getMessage(), qe);
             throw qe;
         }
+    }
+
+    @Override
+    public void shutdown() {
+        shuttingDown();
     }
 
     /**
