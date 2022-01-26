@@ -100,14 +100,6 @@
         </dependency>
         <!-- End SimpleXMLFramework ! -->
 
-        <!-- H2DB for DataLayer ! -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>2.1.210</version>
-        </dependency>
-        <!-- End H2DB for DataLayer ! -->
-
         <!-- Ontology Handlers ! -->
         <dependency>
             <groupId>net.sourceforge.owlapi</groupId>
