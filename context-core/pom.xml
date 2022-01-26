@@ -31,11 +31,6 @@
             <version>2.17.1</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.4</version>
-        </dependency>
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.11.0</version>
@@ -112,14 +107,6 @@
             <version>2.1.210</version>
         </dependency>
         <!-- End H2DB for DataLayer ! -->
-
-        <!-- Ontology Handlers ! -->
-        <dependency>
-            <groupId>net.sourceforge.owlapi</groupId>
-            <artifactId>owlapi-distribution</artifactId>
-            <version>5.1.19</version>
-        </dependency>
-        <!-- END_Ontology Handlers ! -->
 
         <!-- JSON Support ! -->
         <dependency>
