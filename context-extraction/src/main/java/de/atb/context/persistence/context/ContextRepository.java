@@ -32,7 +32,6 @@ import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.tdb.TDBFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,12 +69,10 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
     }
 
     private synchronized void persistNamedContext(ContextContainer context) {
-// FIXME to fix
-/*        Store store = getStore(context.getBusinessCase());
-        Model named = TDBFactory.connectNamedModel(store, context.getIdentifier());
+        Model named = getDataSet(context.getBusinessCase()).getNamedModel(context.getIdentifier());
         named.removeAll();
         named.add(context);
-        named.close();*/
+        named.close();
     }
 
     private synchronized void persistReasonableContext(ContextContainer context) {
@@ -187,11 +184,10 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
-// FIXME
-/*        Store store = getStore(businessCase);
-        Model model = TDBFactory.connectNamedModel(store, contextId);*/
+
+        Model model = getDataSet(businessCase).getNamedModel(contextId);
         OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
-//        ontModel.add(model);
+        ontModel.add(model);
 
         ContextContainer context = new ContextContainer(ontModel);
         context.addDefaultNamespaces();
