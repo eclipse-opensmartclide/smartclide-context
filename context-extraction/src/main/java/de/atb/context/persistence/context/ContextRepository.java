@@ -129,8 +129,6 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
             throw new NullPointerException("BusinessCase may not be null!");
         }
 
-        String folder = "contexts/";
-
         String fileLocation = getLocationForBusinessCase(businessCase);
         String fileName = String.format("%s%s%s.owl", fileLocation, File.separator, contextId);
         File modelFile = new File(fileName);
@@ -270,6 +268,21 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
+        Dataset dataset = getDataSet(businessCase);
+        QueryExecution qexec = getQueryExecution(businessCase, query, useReasoner, dataset);
+        Boolean result = null;
+        try {
+            result = qexec.execAsk();
+        } catch (QueryException qe) {
+            ContextRepository.logger.error(qe.getMessage(), qe);
+        }
+        dataset.commit();
+        dataset.end();
+        dataset.close();
+        return result;
+    }
+
+    private QueryExecution getQueryExecution(BusinessCase businessCase, String query, boolean useReasoner, Dataset dataset) {
         if (query == null) {
             throw new NullPointerException("Query may not be null!");
         }
@@ -277,7 +290,6 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
             throw new IllegalArgumentException("Query may not be empty!");
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
-        Dataset dataset = getDataSet(businessCase);
         dataset.begin(ReadWrite.WRITE);
         Model model = dataset.getDefaultModel();
         OntModel ontModel = null;
@@ -287,15 +299,7 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
             ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
         }
         QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);
-        Boolean result = null;
-        try {
-            result = qexec.execAsk();
-        } catch (QueryException qe) {
-            ContextRepository.logger.error(qe.getMessage(), qe);
-        }
-        dataset.commit();
-        dataset.end();
-        return result;
+        return qexec;
     }
 
     /**
@@ -308,23 +312,8 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
-        if (query == null) {
-            throw new NullPointerException("Query may not be null!");
-        }
-        if (query.trim().length() == 0) {
-            throw new IllegalArgumentException("Query may not be empty!");
-        }
-        String finalQuery = prepareSparqlQuery(businessCase, query);
         Dataset dataset = getDataSet(businessCase);
-        dataset.begin(ReadWrite.WRITE);
-        Model model = dataset.getDefaultModel();
-        OntModel ontModel = null;
-        if (useReasoner) {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
-        } else {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
-        }
-        QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);
+        QueryExecution qexec = getQueryExecution(businessCase, query, useReasoner, dataset);
         ResultSet result = null;
         try {
             result = qexec.execSelect();
@@ -346,23 +335,8 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
-        if (query == null) {
-            throw new NullPointerException("Query may not be null!");
-        }
-        if (query.trim().length() == 0) {
-            throw new IllegalArgumentException("Query may not be empty!");
-        }
-        String finalQuery = prepareSparqlQuery(businessCase, query);
         Dataset dataset = getDataSet(businessCase);
-        dataset.begin(ReadWrite.WRITE);
-        Model model = dataset.getDefaultModel();
-        OntModel ontModel = null;
-        if (useReasoner) {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
-        } else {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, ontModel);
-        }
-        QueryExecution qexec = QueryExecutionFactory.create(finalQuery, model);
+        QueryExecution qexec = getQueryExecution(businessCase, query, useReasoner, dataset);
         Model result = null;
         try {
             result = qexec.execDescribe();
@@ -384,23 +358,8 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
-        if (query == null) {
-            throw new NullPointerException("Query may not be null!");
-        }
-        if (query.trim().length() == 0) {
-            throw new IllegalArgumentException("Query may not be empty!");
-        }
-        String finalQuery = prepareSparqlQuery(businessCase, query);
         Dataset dataset = getDataSet(businessCase);
-        dataset.begin(ReadWrite.WRITE);
-        Model model = dataset.getDefaultModel();
-        OntModel ontModel = null;
-        if (useReasoner) {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
-        } else {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
-        }
-        QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);
+        QueryExecution qexec = getQueryExecution(businessCase, query, useReasoner, dataset);
         Model result = null;
         try {
             result = qexec.execConstruct();

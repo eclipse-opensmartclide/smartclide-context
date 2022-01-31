@@ -26,7 +26,6 @@ import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.shared.Lock;
 import org.apache.jena.update.UpdateAction;
 import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.update.UpdateRequest;
@@ -131,15 +130,12 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         List<Type> result = new ArrayList<Type>();
         Dataset set = getDataSet(businessCase);
         set.begin(ReadWrite.WRITE);
-        Lock lock = set.getLock();
-        lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
 
         Collection<? extends Type> collection = Sparql.exec(model, clazz, query);
         for (Type type : collection) {
             result.add((Type) initLazyModel(model, type));
         }
-        lock.leaveCriticalSection();
         set.commit();
         set.end();
         return result;
@@ -188,8 +184,6 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         logger.debug(query);
         Dataset set = getDataSet(businessCase);
         set.begin(ReadWrite.WRITE);
-        Lock lock = set.getLock();
-        lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
 
         List<Type> result = new ArrayList<Type>();
@@ -197,7 +191,6 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         for (Type type : collection) {
             result.add((Type) initLazyModel(model, type));
         }
-        lock.leaveCriticalSection();
         set.commit();
         set.end();
         return result;
@@ -319,8 +312,6 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         List<String> ids = new ArrayList<String>();
         Dataset set = getDataSet(businessCase);
         set.begin(ReadWrite.WRITE);
-        Lock lock = set.getLock();
-        lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
 
         try {
@@ -337,7 +328,6 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         } catch (QueryException e) {
             logger.error(e.getMessage(), e);
         } finally {
-            lock.leaveCriticalSection();
             set.commit();
             set.end();
         }
@@ -398,8 +388,6 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         List<String> ids = new ArrayList<String>();
         Dataset set = getDataSet(businessCase);
         set.begin(ReadWrite.WRITE);
-        Lock lock = set.getLock();
-        lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
 
         try {
@@ -416,7 +404,6 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         } catch (QueryException e) {
             logger.error(e.getMessage(), e);
         } finally {
-            lock.leaveCriticalSection();
             set.commit();
             set.end();
         }
