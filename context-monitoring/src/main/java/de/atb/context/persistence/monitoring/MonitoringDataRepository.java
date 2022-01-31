@@ -54,7 +54,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
 
     private static final Logger logger = LoggerFactory.getLogger(MonitoringDataRepository.class);
     private static final String internalBaseUri = "monitoring";
-    private static volatile MonitoringDataRepository<? extends IMonitoringDataModel<?, ?>> instance;
+    private static final MonitoringDataRepository<? extends IMonitoringDataModel<?, ?>> instance;
 
     static {
         synchronized (new Object()) {
@@ -105,12 +105,6 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     @SuppressWarnings("unchecked")
     @Override
     public synchronized List<Type> getMonitoringData(final BusinessCase businessCase, final Class<Type> clazz, final int count) {
-        if (businessCase == null) {
-            throw new NullPointerException("BusinessCase may not be null!");
-        }
-        if (clazz == null) {
-            throw new NullPointerException("Clazz may not be null!");
-        }
         if (count < 0) {
             throw new IllegalArgumentException("Count has to be > -1!");
         }
@@ -124,20 +118,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             selectQuery = String.format("SELECT ?s WHERE { ?s a %s ; %s ?mon } ORDER BY DESC (?mon)",
                 SPARQLHelper.getRdfClassQualifier(clazz), SPARQLHelper.getRdfPropertyQualifier(clazz, "monitoredAt"));
         }
-        final String query = SPARQLHelper.appendDefaultPrefixes(selectQuery);
-        logger.debug(query);
 
-        List<Type> result = new ArrayList<Type>();
-        Dataset set = getDataSet(businessCase);
-        set.begin(ReadWrite.WRITE);
-        Model model = set.getDefaultModel();
-
-        Collection<? extends Type> collection = Sparql.exec(model, clazz, query);
-        for (Type type : collection) {
-            result.add((Type) initLazyModel(model, type));
-        }
-        set.commit();
-        set.end();
+        List<Type> result = getTypes(businessCase, clazz, selectQuery);
         return result;
     }
 
@@ -157,12 +139,6 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     @Override
     @SuppressWarnings("unchecked")
     public synchronized List<Type> getMonitoringData(final BusinessCase businessCase, final Class<Type> clazz, final TimeFrame timeFrame) {
-        if (businessCase == null) {
-            throw new NullPointerException("BusinessCase may not be null!");
-        }
-        if (clazz == null) {
-            throw new NullPointerException("Clazz may not be null!");
-        }
         if (timeFrame == null) {
             throw new NullPointerException("TimeFrame may not be null!");
         }
@@ -180,6 +156,17 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
                 startTime);
         }
 
+        List<Type> result = getTypes(businessCase, clazz, selectQuery);
+        return result;
+    }
+
+    private List<Type> getTypes(BusinessCase businessCase, Class<Type> clazz, String selectQuery) {
+        if (businessCase == null) {
+            throw new NullPointerException("BusinessCase may not be null!");
+        }
+        if (clazz == null) {
+            throw new NullPointerException("Clazz may not be null!");
+        }
         String query = SPARQLHelper.appendDefaultPrefixes(selectQuery);
         logger.debug(query);
         Dataset set = getDataSet(businessCase);
@@ -257,15 +244,6 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     public synchronized Type getMonitoringData(final ApplicationScenario applicationScenario, final Class<Type> clazz, final String identifier) {
         if (applicationScenario == null) {
             throw new NullPointerException("ApplicationScenario may not be null!");
-        }
-        if (clazz == null) {
-            throw new NullPointerException("Clazz may not be null!");
-        }
-        if (identifier == null) {
-            throw new NullPointerException("Identifier may not be null!");
-        }
-        if (identifier.trim().length() == 0) {
-            throw new IllegalArgumentException("Identifier may not be empty!");
         }
         final String folder = "monitoring/";
 
