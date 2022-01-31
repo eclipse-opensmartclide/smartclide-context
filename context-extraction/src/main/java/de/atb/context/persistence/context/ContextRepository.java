@@ -282,6 +282,7 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
         Dataset dataset = getDataSet(businessCase);
+        dataset.begin(ReadWrite.WRITE);
         Model model = dataset.getDefaultModel();
         OntModel ontModel = null;
         if (useReasoner) {
@@ -296,6 +297,8 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         } catch (QueryException qe) {
             ContextRepository.logger.error(qe.getMessage(), qe);
         }
+        dataset.commit();
+        dataset.end();
         return result;
     }
 
@@ -317,6 +320,7 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
         Dataset dataset = getDataSet(businessCase);
+        dataset.begin(ReadWrite.WRITE);
         Model model = dataset.getDefaultModel();
         OntModel ontModel = null;
         if (useReasoner) {
@@ -331,6 +335,8 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         } catch (QueryException qe) {
             ContextRepository.logger.error(qe.getMessage(), qe);
         }
+        dataset.commit();
+        dataset.end();
         return result;
     }
 
@@ -352,6 +358,7 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
         Dataset dataset = getDataSet(businessCase);
+        dataset.begin(ReadWrite.WRITE);
         Model model = dataset.getDefaultModel();
         OntModel ontModel = null;
         if (useReasoner) {
@@ -366,6 +373,8 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         } catch (QueryException qe) {
             ContextRepository.logger.error(qe.getMessage(), qe);
         }
+        dataset.commit();
+        dataset.end();
         return result;
     }
 
@@ -387,6 +396,7 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
         Dataset dataset = getDataSet(businessCase);
+        dataset.begin(ReadWrite.WRITE);
         Model model = dataset.getDefaultModel();
         OntModel ontModel = null;
         if (useReasoner) {
@@ -401,6 +411,8 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         } catch (QueryException qe) {
             ContextRepository.logger.error(qe.getMessage(), qe);
         }
+        dataset.commit();
+        dataset.end();
         return result;
     }
 
@@ -534,6 +546,7 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
     protected synchronized List<String> getLastIds(String finalQuery, BusinessCase bc) throws QueryException {
         List<String> ids = new ArrayList<>();
         Dataset ds = getDataSet(bc);
+        ds.begin(ReadWrite.WRITE);
         ResultSet set = executeSelectSparqlQuery(finalQuery, ds.getDefaultModel());
         while (set.hasNext()) {
             QuerySolution solution = set.nextSolution();
@@ -542,6 +555,8 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
                 ids.add(literal.getString());
             }
         }
+        ds.commit();
+        ds.end();
         return ids;
     }
 

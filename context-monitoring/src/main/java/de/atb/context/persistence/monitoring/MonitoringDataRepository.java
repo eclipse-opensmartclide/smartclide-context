@@ -130,6 +130,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
 
         List<Type> result = new ArrayList<Type>();
         Dataset set = getDataSet(businessCase);
+        set.begin(ReadWrite.WRITE);
         Lock lock = set.getLock();
         lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
@@ -139,6 +140,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             result.add((Type) initLazyModel(model, type));
         }
         lock.leaveCriticalSection();
+        set.commit();
+        set.end();
         return result;
     }
 
@@ -184,6 +187,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         String query = SPARQLHelper.appendDefaultPrefixes(selectQuery);
         logger.debug(query);
         Dataset set = getDataSet(businessCase);
+        set.begin(ReadWrite.WRITE);
         Lock lock = set.getLock();
         lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
@@ -194,6 +198,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             result.add((Type) initLazyModel(model, type));
         }
         lock.leaveCriticalSection();
+        set.commit();
+        set.end();
         return result;
     }
 
@@ -231,6 +237,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         String query = SPARQLHelper.appendDefaultPrefixes(selectQuery);
         logger.trace(query);
         Dataset set = getDataSet(businessCase);
+        set.begin(ReadWrite.WRITE);
         Model model = set.getDefaultModel();
 
         Collection<? extends Type> result2 = Sparql.exec(model, clazz, query);
@@ -243,6 +250,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         } else {
             logger.warn("No Monitoring Data with id '" + identifier + "' found!");
         }
+        set.commit();
+        set.end();
         return result;
     }
 
@@ -309,7 +318,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
 
         List<String> ids = new ArrayList<String>();
         Dataset set = getDataSet(businessCase);
-        set.begin(ReadWrite.READ);
+        set.begin(ReadWrite.WRITE);
         Lock lock = set.getLock();
         lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
@@ -388,6 +397,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
 
         List<String> ids = new ArrayList<String>();
         Dataset set = getDataSet(businessCase);
+        set.begin(ReadWrite.WRITE);
         Lock lock = set.getLock();
         lock.enterCriticalSection(true);
         Model model = set.getDefaultModel();
@@ -407,6 +417,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             logger.error(e.getMessage(), e);
         } finally {
             lock.leaveCriticalSection();
+            set.commit();
+            set.end();
         }
         return ids;
     }
@@ -486,6 +498,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
         Dataset dataset = getDataSet(businessCase);
+        dataset.begin(ReadWrite.WRITE);
         Model model = dataset.getDefaultModel();
         OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
         QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);
@@ -495,6 +508,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         } catch (QueryException qe) {
             logger.error(qe.getMessage(), qe);
         }
+        dataset.commit();
+        dataset.end();
         return result;
     }
 
