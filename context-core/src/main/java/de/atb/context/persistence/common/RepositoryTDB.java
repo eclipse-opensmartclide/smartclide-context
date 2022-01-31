@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Repository
@@ -68,12 +69,12 @@ extends Repository<T> {
 	protected static synchronized boolean clearDirectory(final File dir) {
 		if (dir.isDirectory()) {
 			boolean oneFailed = false;
-			for (final String file : dir.list()) {
+			for (final String file : Objects.requireNonNull(dir.list())) {
 				final boolean success = RepositoryTDB.clearDirectory(new File(
 						dir, file));
 				if (!success) {
 					oneFailed = true;
-					RepositoryTDB.logger.warn("Could not delete %s", dir.toString() + System.getProperty("file.separator") + file);
+					RepositoryTDB.logger.warn("Could not delete {}", dir.toString() + System.getProperty("file.separator") + file);
 				}
 			}
 			RepositoryTDB.logger.info("Cleared directory "
@@ -151,9 +152,7 @@ extends Repository<T> {
 		if (ds == null) {
             try {
                 ds = initializeDataset(bc);
-            } catch (ConfigurationException e) {
-                ds = null;
-            }
+            } catch (ConfigurationException e) {}
 		}
 		return ds;
 	}
