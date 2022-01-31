@@ -14,6 +14,7 @@ package de.atb.context.persistence.common;
  * #L%
  */
 
+import de.atb.context.common.exceptions.ConfigurationException;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.tdb.TDB;
@@ -24,6 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -131,23 +136,43 @@ extends Repository<T> {
 			set.close();
 			TDB.closedown();
 		}
-		initializeDataset(bc);
-		return true;
+        try {
+            initializeDataset(bc);
+            return true;
+        } catch (ConfigurationException e) {
+            logger.error(e.getMessage());
+        }
+        return false;
 	}
 
 	@Override
 	public final synchronized Dataset getDataSet(final BusinessCase bc) {
 		Dataset ds = datasets.get(bc);
 		if (ds == null) {
-			ds = initializeDataset(bc);
+            try {
+                ds = initializeDataset(bc);
+            } catch (ConfigurationException e) {
+                ds = null;
+            }
 		}
 		return ds;
 	}
 
-	private synchronized Dataset initializeDataset(final BusinessCase bc) {
-		final Dataset set = TDBFactory
-				.createDataset(getLocationForBusinessCase(bc));
-		datasets.put(bc, set);
-		return set;
+	private synchronized Dataset initializeDataset(final BusinessCase bc) throws ConfigurationException {
+        try {
+            Path dataDir = Paths.get(getLocationForBusinessCase(bc));
+            if (Files.notExists(dataDir)) {
+                Files.createDirectories(dataDir);
+            }
+
+            final Dataset set = TDBFactory
+                .createDataset(getLocationForBusinessCase(bc));
+            datasets.put(bc, set);
+            return set;
+
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            throw new ConfigurationException("Data directory for the TDB repository couldn't be created.");
+        }
 	}
 }
