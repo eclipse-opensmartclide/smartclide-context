@@ -161,6 +161,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     }
 
     private List<Type> getData(BusinessCase businessCase, Class<Type> clazz, String selectQuery) {
+        List<Type> result = new ArrayList<Type>();
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
@@ -171,15 +172,19 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         logger.debug(query);
         Dataset set = getDataSet(businessCase);
         set.begin(ReadWrite.WRITE);
-        Model model = set.getDefaultModel();
+        try {
+            Model model = set.getDefaultModel();
 
-        List<Type> result = new ArrayList<Type>();
-        Collection<? extends Type> collection = Sparql.exec(model, clazz, query);
-        for (Type type : collection) {
-            result.add((Type) initLazyModel(model, type));
+            Collection<? extends Type> collection = Sparql.exec(model, clazz, query);
+            for (Type type : collection) {
+                result.add((Type) initLazyModel(model, type));
+            }
+            set.commit();
+        } catch (Exception e) {
+            set.abort();
+        } finally {
+            set.end();
         }
-        set.commit();
-        set.end();
         return result;
     }
 
@@ -295,10 +300,11 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
                     ids.add(node.asLiteral().getString());
                 }
             }
+            set.commit();
         } catch (QueryException e) {
             logger.error(e.getMessage(), e);
+            set.abort();
         } finally {
-            set.commit();
             set.end();
         }
         return ids;
@@ -414,6 +420,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      */
     @Override
     public synchronized ResultSet executeSparqlSelectQuery(final BusinessCase businessCase, final String query) {
+        ResultSet result = null;
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
@@ -426,17 +433,21 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         String finalQuery = prepareSparqlQuery(businessCase, query);
         Dataset dataset = getDataSet(businessCase);
         dataset.begin(ReadWrite.WRITE);
-        Model model = dataset.getDefaultModel();
-        OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
-        QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);
-        ResultSet result = null;
         try {
-            result = qexec.execSelect();
-        } catch (QueryException qe) {
-            logger.error(qe.getMessage(), qe);
+            Model model = dataset.getDefaultModel();
+            OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
+            QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);
+            try {
+                result = qexec.execSelect();
+            } catch (QueryException qe) {
+                logger.error(qe.getMessage(), qe);
+            }
+            dataset.commit();
+        } catch (Exception e) {
+            dataset.abort();
+        } finally {
+            dataset.end();
         }
-        dataset.commit();
-        dataset.end();
         return result;
     }
 

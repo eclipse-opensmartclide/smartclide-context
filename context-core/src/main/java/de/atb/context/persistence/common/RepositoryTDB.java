@@ -102,13 +102,18 @@ extends Repository<T> {
 	protected final void shuttingDown() {
 		for (final Dataset set : datasets.values()) {
             set.begin(ReadWrite.WRITE);
-			TDB.sync(set);
-			if (set.getDefaultModel() != null) {
-				TDB.sync(set.getDefaultModel());
-				set.getDefaultModel().close();
-			}
-            set.commit();
-            set.end();
+            try {
+                TDB.sync(set);
+                if (set.getDefaultModel() != null) {
+                    TDB.sync(set.getDefaultModel());
+                    set.getDefaultModel().close();
+                }
+                set.commit();
+            } catch (Exception e) {
+                set.abort();
+            } finally {
+                set.end();
+            }
 			set.close();
 		}
 		datasets.clear();
@@ -124,16 +129,22 @@ extends Repository<T> {
 		final Dataset set = this.datasets.remove(bc);
 		if (set != null) {
             set.begin(ReadWrite.WRITE);
-			TDB.sync(set);
-			if (set.getDefaultModel() != null) {
-				TDB.sync(set.getDefaultModel());
-				set.getDefaultModel().removeAll();
-				TDB.sync(set.getDefaultModel());
-				set.getDefaultModel().close();
-				set.asDatasetGraph().close();
-			}
-            set.commit();
-            set.end();
+            try {
+                TDB.sync(set);
+                if (set.getDefaultModel() != null) {
+                    TDB.sync(set.getDefaultModel());
+                    set.getDefaultModel().removeAll();
+                    TDB.sync(set.getDefaultModel());
+                    set.getDefaultModel().close();
+                    set.asDatasetGraph().close();
+                }
+                set.commit();
+            } catch (Exception e) {
+                logger.error("Error occurred, rolling back.");
+                set.abort();
+            } finally {
+                set.end();
+            }
 			set.close();
 			TDB.closedown();
 		}
