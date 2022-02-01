@@ -90,7 +90,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         persist(bean);
     }
 
-    protected synchronized void persist(final Model monitoringData, final ApplicationScenario applicationScenario) {
+    public synchronized void persist(final Model monitoringData, final ApplicationScenario applicationScenario) {
         Model model = getDataSet(applicationScenario.getBusinessCase()).getDefaultModel();
         model.begin();
         model.add(monitoringData);
@@ -448,7 +448,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     }
 
     @SuppressWarnings("unchecked")
-    protected <T, D extends de.atb.context.monitoring.config.models.DataSource> IMonitoringDataModel<T, D> initLazyModel(final Model model,
+    private <T, D extends de.atb.context.monitoring.config.models.DataSource> IMonitoringDataModel<T, D> initLazyModel(final Model model,
                                                                                                                          final Type data) {
         RDF2Bean bb = new RDF2Bean(model);
         Class<T> implClass;
@@ -466,7 +466,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     }
 
     @SuppressWarnings("unchecked")
-    protected synchronized <D extends de.atb.context.monitoring.config.models.DataSource> Type getStaticMonitoringData(
+    private synchronized <D extends de.atb.context.monitoring.config.models.DataSource> Type getStaticMonitoringData(
         final ApplicationScenario scenario, final Class<Type> clazz, final String identifier) {
         Type type = null;
         Model model = ModelFactory.createDefaultModel();
