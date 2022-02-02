@@ -93,8 +93,13 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     public synchronized void persist(final Model monitoringData, final ApplicationScenario applicationScenario) {
         Model model = getDataSet(applicationScenario.getBusinessCase()).getDefaultModel();
         model.begin();
-        model.add(monitoringData);
-        model.commit();
+        try {
+            model.add(monitoringData);
+            model.commit();
+        } catch (Exception e) {
+            model.abort();
+        }
+
     }
 
     /**
