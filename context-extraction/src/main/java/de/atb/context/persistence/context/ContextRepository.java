@@ -24,6 +24,7 @@ import de.atb.context.extraction.ContextContainer;
 import de.atb.context.extraction.util.base.BaseDatatypeProperties;
 import de.atb.context.extraction.util.base.BaseOntologyClasses;
 import de.atb.context.persistence.common.RepositoryTDB;
+import de.atb.context.services.faults.ContextFault;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.jena.ontology.OntModel;
@@ -84,17 +85,20 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
     private synchronized void persistRawContext(ContextContainer context) {
         if (writeRawContextFiles) {
             String fileLocation = getLocationForBusinessCase(context.getBusinessCase());
-            new File(fileLocation).mkdirs();
-            String fileName = String.format("%s%s%s.owl", fileLocation, File.separator, context.getIdentifier());
-            File modelFile = new File(fileName);
-            try {
-                if (modelFile.exists() || modelFile.createNewFile()) {
-                    ContextRepository.logger.debug(String.format("Writing raw context with id '%s' to '%s'", context.getIdentifier(),
-                        modelFile.getAbsolutePath()));
-                    context.writeToFile(modelFile.getAbsolutePath());
+            if (new File(fileLocation).mkdirs()) {
+                String fileName = String.format("%s%s%s.owl", fileLocation, File.separator, context.getIdentifier());
+                File modelFile = new File(fileName);
+                try {
+                    if (modelFile.exists() || modelFile.createNewFile()) {
+                        ContextRepository.logger.debug(String.format("Writing raw context with id '%s' to '%s'", context.getIdentifier(),
+                            modelFile.getAbsolutePath()));
+                        context.writeToFile(modelFile.getAbsolutePath());
+                    }
+                } catch (IOException e) {
+                    ContextRepository.logger.error(e.getMessage(), e);
                 }
-            } catch (IOException e) {
-                ContextRepository.logger.error(e.getMessage(), e);
+            } else {
+                throw new ContextFault("Location for context repository could not be created");
             }
         }
     }
