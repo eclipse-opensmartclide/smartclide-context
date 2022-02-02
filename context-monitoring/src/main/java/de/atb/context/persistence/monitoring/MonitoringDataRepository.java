@@ -67,7 +67,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         return (MonitoringDataRepository<? extends Type>) instance;
     }
 
-    protected MonitoringDataRepository() {
+    private MonitoringDataRepository() {
         super(internalBaseUri);
     }
 
