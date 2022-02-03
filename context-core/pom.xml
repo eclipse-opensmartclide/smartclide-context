@@ -17,6 +17,7 @@
 
     <properties>
         <cxf.version>3.5.0</cxf.version>
+        <jena.version>4.3.2</jena.version>
     </properties>
 
     <dependencies>
@@ -56,17 +57,12 @@
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>
-            <version>3.17.0</version>
+            <version>${jena.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-tdb</artifactId>
-            <version>4.3.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.jena</groupId>
-            <artifactId>jena-sdb</artifactId>
-            <version>3.17.0</version>
+            <version>${jena.version}</version>
         </dependency>
         <dependency>
             <groupId>de.atb-bremen</groupId>
@@ -99,14 +95,6 @@
             <version>2.7.1</version>
         </dependency>
         <!-- End SimpleXMLFramework ! -->
-
-        <!-- H2DB for DataLayer ! -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>2.1.210</version>
-        </dependency>
-        <!-- End H2DB for DataLayer ! -->
 
         <!-- JSON Support ! -->
         <dependency>

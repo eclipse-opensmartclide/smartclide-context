@@ -14,7 +14,9 @@ package de.atb.context.persistence.common;
  * #L%
  */
 
+import de.atb.context.common.exceptions.ConfigurationException;
 import org.apache.jena.query.Dataset;
+import org.apache.jena.query.ReadWrite;
 import org.apache.jena.tdb.TDB;
 import org.apache.jena.tdb.TDBFactory;
 import de.atb.context.common.util.BusinessCase;
@@ -23,8 +25,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Repository
@@ -46,30 +53,32 @@ extends Repository<T> {
 		super(baseLocation);
 	}
 
-	protected final synchronized boolean clearBaseDirectory() { // TODO this should maybe replace by a call to DRM API
+	protected final synchronized boolean clearBaseDirectory() {
 		for (final BusinessCase bc : BusinessCase.values()) {
 			clearBusinessCaseDirectory(bc);
 		}
 		return RepositoryTDB.clearDirectory(new File(basicLocation));
 	}
 
-	protected final synchronized boolean clearBusinessCaseDirectory( // TODO this should maybe replace by a call to DRM API
+	protected final synchronized boolean clearBusinessCaseDirectory(
 			final BusinessCase businessCase) {
 		return RepositoryTDB.clearDirectory(new File(
 				getLocationForBusinessCase(businessCase)));
 	}
 
-	protected static synchronized boolean clearDirectory(final File dir) { // TODO this should maybe replace by a call to DRM API
+	protected static synchronized boolean clearDirectory(final File dir) {
 		if (dir.isDirectory()) {
 			boolean oneFailed = false;
-			for (final String file : dir.list()) {
-				final boolean success = RepositoryTDB.clearDirectory(new File(
-						dir, file));
-				if (!success) {
-					oneFailed = true;
-					RepositoryTDB.logger.warn("Could not delete %s", dir.toString() + System.getProperty("file.separator") + file);
-				}
-			}
+            if (dir.list() != null) {
+                for (final String file : dir.list()) {
+                    final boolean success = RepositoryTDB.clearDirectory(new File(
+                        dir, file));
+                    if (!success) {
+                        oneFailed = true;
+                        RepositoryTDB.logger.warn("Could not delete {}", dir.toString() + System.getProperty("file.separator") + file);
+                    }
+                }
+            }
 			RepositoryTDB.logger.info("Cleared directory "
 					+ dir.getAbsolutePath());
 			if (!oneFailed) {
@@ -94,11 +103,19 @@ extends Repository<T> {
 	@Override
 	protected final void shuttingDown() {
 		for (final Dataset set : datasets.values()) {
-			TDB.sync(set);
-			if (set.getDefaultModel() != null) {
-				TDB.sync(set.getDefaultModel());
-				set.getDefaultModel().close();
-			}
+            set.begin(ReadWrite.WRITE);
+            try {
+                TDB.sync(set);
+                if (set.getDefaultModel() != null) {
+                    TDB.sync(set.getDefaultModel());
+                    set.getDefaultModel().close();
+                }
+                set.commit();
+            } catch (Exception e) {
+                set.abort();
+            } finally {
+                set.end();
+            }
 			set.close();
 		}
 		datasets.clear();
@@ -113,34 +130,61 @@ extends Repository<T> {
 	public final boolean reset(final BusinessCase bc) {
 		final Dataset set = this.datasets.remove(bc);
 		if (set != null) {
-			TDB.sync(set);
-			if (set.getDefaultModel() != null) {
-				TDB.sync(set.getDefaultModel());
-				set.getDefaultModel().removeAll();
-				TDB.sync(set.getDefaultModel());
-				set.getDefaultModel().close();
-				set.asDatasetGraph().close();
-			}
+            set.begin(ReadWrite.WRITE);
+            try {
+                TDB.sync(set);
+                if (set.getDefaultModel() != null) {
+                    TDB.sync(set.getDefaultModel());
+                    set.getDefaultModel().removeAll();
+                    TDB.sync(set.getDefaultModel());
+                    set.getDefaultModel().close();
+                    set.asDatasetGraph().close();
+                }
+                set.commit();
+            } catch (Exception e) {
+                logger.error("Error occurred, rolling back.");
+                set.abort();
+            } finally {
+                set.end();
+            }
 			set.close();
 			TDB.closedown();
 		}
-		initializeDataset(bc);
-		return true;
+        try {
+            initializeDataset(bc);
+            return true;
+        } catch (ConfigurationException e) {
+            logger.error(e.getMessage());
+        }
+        return false;
 	}
 
 	@Override
 	public final synchronized Dataset getDataSet(final BusinessCase bc) {
 		Dataset ds = datasets.get(bc);
 		if (ds == null) {
-			ds = initializeDataset(bc);
+            try {
+                ds = initializeDataset(bc);
+            } catch (ConfigurationException e) {}
 		}
 		return ds;
 	}
 
-	private synchronized Dataset initializeDataset(final BusinessCase bc) {
-		final Dataset set = TDBFactory
-				.createDataset(getLocationForBusinessCase(bc));
-		datasets.put(bc, set);
-		return set;
+	private synchronized Dataset initializeDataset(final BusinessCase bc) throws ConfigurationException {
+        try {
+            Path dataDir = Paths.get(getLocationForBusinessCase(bc));
+            if (Files.notExists(dataDir)) {
+                Files.createDirectories(dataDir);
+            }
+
+            final Dataset set = TDBFactory
+                .createDataset(getLocationForBusinessCase(bc));
+            datasets.put(bc, set);
+            return set;
+
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            throw new ConfigurationException("Data directory for the TDB repository couldn't be created.");
+        }
 	}
 }

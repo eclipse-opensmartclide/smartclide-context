@@ -23,7 +23,8 @@ import de.atb.context.context.util.OntologyNamespace;
 import de.atb.context.extraction.ContextContainer;
 import de.atb.context.extraction.util.base.BaseDatatypeProperties;
 import de.atb.context.extraction.util.base.BaseOntologyClasses;
-import de.atb.context.persistence.common.RepositorySDB;
+import de.atb.context.persistence.common.RepositoryTDB;
+import de.atb.context.services.faults.ContextFault;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.jena.ontology.OntModel;
@@ -32,8 +33,6 @@ import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.sdb.SDBFactory;
-import org.apache.jena.sdb.Store;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +51,7 @@ import java.util.List;
  */
 @Setter
 @Getter
-public final class ContextRepository extends RepositorySDB<ContextContainer> implements IContextRepository {
+public final class ContextRepository extends RepositoryTDB<ContextContainer> implements IContextRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ContextRepository.class);
     private static final String internalBaseUri = "contexts";
@@ -71,8 +70,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
     }
 
     private synchronized void persistNamedContext(ContextContainer context) {
-        Store store = getStore(context.getBusinessCase());
-        Model named = SDBFactory.connectNamedModel(store, context.getIdentifier());
+        Model named = getDataSet(context.getBusinessCase()).getNamedModel(context.getIdentifier());
         named.removeAll();
         named.add(context);
         named.close();
@@ -87,17 +85,20 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
     private synchronized void persistRawContext(ContextContainer context) {
         if (writeRawContextFiles) {
             String fileLocation = getLocationForBusinessCase(context.getBusinessCase());
-            new File(fileLocation).mkdirs();
-            String fileName = String.format("%s%s%s.owl", fileLocation, File.separator, context.getIdentifier());
-            File modelFile = new File(fileName);
-            try {
-                if (modelFile.exists() || modelFile.createNewFile()) {
-                    ContextRepository.logger.debug(String.format("Writing raw context with id '%s' to '%s'", context.getIdentifier(),
-                        modelFile.getAbsolutePath()));
-                    context.writeToFile(modelFile.getAbsolutePath());
+            if (new File(fileLocation).mkdirs()) {
+                String fileName = String.format("%s%s%s.owl", fileLocation, File.separator, context.getIdentifier());
+                File modelFile = new File(fileName);
+                try {
+                    if (modelFile.exists() || modelFile.createNewFile()) {
+                        ContextRepository.logger.debug(String.format("Writing raw context with id '%s' to '%s'", context.getIdentifier(),
+                            modelFile.getAbsolutePath()));
+                        context.writeToFile(modelFile.getAbsolutePath());
+                    }
+                } catch (IOException e) {
+                    ContextRepository.logger.error(e.getMessage(), e);
                 }
-            } catch (IOException e) {
-                ContextRepository.logger.error(e.getMessage(), e);
+            } else {
+                throw new ContextFault("Location for context repository could not be created");
             }
         }
     }
@@ -131,8 +132,6 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
-
-        String folder = "contexts/";
 
         String fileLocation = getLocationForBusinessCase(businessCase);
         String fileName = String.format("%s%s%s.owl", fileLocation, File.separator, contextId);
@@ -187,8 +186,8 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
-        Store store = getStore(businessCase);
-        Model model = SDBFactory.connectNamedModel(store, contextId);
+
+        Model model = getDataSet(businessCase).getNamedModel(contextId);
         OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
         ontModel.add(model);
 
@@ -198,7 +197,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
         return prepareRawContextContainer(context);
     }
 
-    protected ContextContainer getStaticContext(ApplicationScenario appScenario, String identifier) {
+    private ContextContainer getStaticContext(ApplicationScenario appScenario, String identifier) {
         OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
         URL fileUri = Thread.currentThread().getContextClassLoader().getResource(identifier);
         if (fileUri != null) {
@@ -210,7 +209,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
         return null;
     }
 
-    protected ContextContainer getStaticContext(BusinessCase businessCase, String filePath, String identifier) {
+    private ContextContainer getStaticContext(BusinessCase businessCase, String filePath, String identifier) {
         OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
         URL fileUri = Thread.currentThread().getContextClassLoader().getResource(filePath);
         if (fileUri != null) {
@@ -273,6 +272,21 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
+        Dataset dataset = getDataSet(businessCase);
+        QueryExecution qexec = getQueryExecution(businessCase, query, useReasoner, dataset);
+        Boolean result = null;
+        try {
+            result = qexec.execAsk();
+        } catch (QueryException qe) {
+            ContextRepository.logger.error(qe.getMessage(), qe);
+        }
+        dataset.commit();
+        dataset.end();
+        dataset.close();
+        return result;
+    }
+
+    private QueryExecution getQueryExecution(BusinessCase businessCase, String query, boolean useReasoner, Dataset dataset) {
         if (query == null) {
             throw new NullPointerException("Query may not be null!");
         }
@@ -280,7 +294,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
             throw new IllegalArgumentException("Query may not be empty!");
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
-        Dataset dataset = getDataSet(businessCase);
+        dataset.begin(ReadWrite.WRITE);
         Model model = dataset.getDefaultModel();
         OntModel ontModel = null;
         if (useReasoner) {
@@ -289,13 +303,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
             ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
         }
         QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);
-        Boolean result = null;
-        try {
-            result = qexec.execAsk();
-        } catch (QueryException qe) {
-            ContextRepository.logger.error(qe.getMessage(), qe);
-        }
-        return result;
+        return qexec;
     }
 
     /**
@@ -308,28 +316,16 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
-        if (query == null) {
-            throw new NullPointerException("Query may not be null!");
-        }
-        if (query.trim().length() == 0) {
-            throw new IllegalArgumentException("Query may not be empty!");
-        }
-        String finalQuery = prepareSparqlQuery(businessCase, query);
         Dataset dataset = getDataSet(businessCase);
-        Model model = dataset.getDefaultModel();
-        OntModel ontModel = null;
-        if (useReasoner) {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
-        } else {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
-        }
-        QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);
+        QueryExecution qexec = getQueryExecution(businessCase, query, useReasoner, dataset);
         ResultSet result = null;
         try {
             result = qexec.execSelect();
         } catch (QueryException qe) {
             ContextRepository.logger.error(qe.getMessage(), qe);
         }
+        dataset.commit();
+        dataset.end();
         return result;
     }
 
@@ -343,28 +339,16 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
-        if (query == null) {
-            throw new NullPointerException("Query may not be null!");
-        }
-        if (query.trim().length() == 0) {
-            throw new IllegalArgumentException("Query may not be empty!");
-        }
-        String finalQuery = prepareSparqlQuery(businessCase, query);
         Dataset dataset = getDataSet(businessCase);
-        Model model = dataset.getDefaultModel();
-        OntModel ontModel = null;
-        if (useReasoner) {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
-        } else {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, ontModel);
-        }
-        QueryExecution qexec = QueryExecutionFactory.create(finalQuery, model);
+        QueryExecution qexec = getQueryExecution(businessCase, query, useReasoner, dataset);
         Model result = null;
         try {
             result = qexec.execDescribe();
         } catch (QueryException qe) {
             ContextRepository.logger.error(qe.getMessage(), qe);
         }
+        dataset.commit();
+        dataset.end();
         return result;
     }
 
@@ -378,28 +362,16 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
-        if (query == null) {
-            throw new NullPointerException("Query may not be null!");
-        }
-        if (query.trim().length() == 0) {
-            throw new IllegalArgumentException("Query may not be empty!");
-        }
-        String finalQuery = prepareSparqlQuery(businessCase, query);
         Dataset dataset = getDataSet(businessCase);
-        Model model = dataset.getDefaultModel();
-        OntModel ontModel = null;
-        if (useReasoner) {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
-        } else {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
-        }
-        QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);
+        QueryExecution qexec = getQueryExecution(businessCase, query, useReasoner, dataset);
         Model result = null;
         try {
             result = qexec.execConstruct();
         } catch (QueryException qe) {
             ContextRepository.logger.error(qe.getMessage(), qe);
         }
+        dataset.commit();
+        dataset.end();
         return result;
     }
 
@@ -425,7 +397,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
         return dataset.getDefaultModel();
     }
 
-    protected synchronized ContextContainer prepareRawContextContainer(ContextContainer container) {
+    private synchronized ContextContainer prepareRawContextContainer(ContextContainer container) {
         ApplicationScenario applicationScenario = container.inferApplicationScenario();
         container.setApplicationScenario(applicationScenario);
 
@@ -439,7 +411,7 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
         return container;
     }
 
-    protected synchronized String prepareSparqlQuery(BusinessCase businessCase, String query) {
+    private synchronized String prepareSparqlQuery(BusinessCase businessCase, String query) {
         ContextRepository.logger.debug("Preparing sparql query '" + query + "' for business case " + businessCase);
         String finalQuery = OntologyNamespace.prepareSparqlQuery(query);
         ContextRepository.logger.debug("Final query is " + finalQuery);
@@ -458,10 +430,9 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
                 BaseOntologyClasses.Context, BaseDatatypeProperties.Identifier, BaseDatatypeProperties.ApplicationScenarioIdentifier, applicationScenario.toString(), BaseDatatypeProperties.CapturedAt,
                 count);
 
-        String finalQuery = prepareSparqlQuery(applicationScenario.getBusinessCase(), queryString);
         List<String> ids = new ArrayList<>();
         try {
-            ids = getLastIds(finalQuery, applicationScenario.getBusinessCase());
+            ids = getLastIds(queryString, applicationScenario.getBusinessCase());
         } catch (QueryException e) {
             ContextRepository.logger.error(e.getMessage(), e);
         }
@@ -479,10 +450,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
             .format("SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x . ?x <= %6$s . ?x >= %7$s} ORDER BY DESC(?x)",
                 BaseOntologyClasses.Context, BaseDatatypeProperties.Identifier, BaseDatatypeProperties.ApplicationScenarioIdentifier, applicationScenario.toString(), BaseDatatypeProperties.CapturedAt,
                 timeFrame.getXSDLexicalFormForStartTime(), timeFrame.getXSDLexicalFormForEndTime());
-        String finalQuery = prepareSparqlQuery(applicationScenario.getBusinessCase(), queryString);
+
         List<String> ids = new ArrayList<>();
         try {
-            ids = getLastIds(finalQuery, applicationScenario.getBusinessCase());
+            ids = getLastIds(queryString, applicationScenario.getBusinessCase());
         } catch (QueryException e) {
             ContextRepository.logger.error(e.getMessage(), e);
         }
@@ -499,10 +470,10 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
         String queryString = String
             .format("SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x} ORDER BY DESC(?x) LIMIT %6$d",
                 BaseOntologyClasses.Context, BaseDatatypeProperties.Identifier, BaseDatatypeProperties.BusinessCaseIdentifier, bc.toString(), BaseDatatypeProperties.CapturedAt, count);
-        String finalQuery = prepareSparqlQuery(bc, queryString);
+
         List<String> ids = new ArrayList<>();
         try {
-            ids = getLastIds(finalQuery, bc);
+            ids = getLastIds(queryString, bc);
         } catch (QueryException e) {
             ContextRepository.logger.error(e.getMessage(), e);
         }
@@ -520,19 +491,22 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
             .format("SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x . ?x <= %6$s . ?x >= %7$s} ORDER BY DESC(?x)",
                 BaseOntologyClasses.Context, BaseDatatypeProperties.Identifier, BaseDatatypeProperties.BusinessCaseIdentifier, bc.toString(), BaseDatatypeProperties.CapturedAt, timeFrame.getXSDLexicalFormForStartTime(),
                 timeFrame.getXSDLexicalFormForEndTime());
-        String finalQuery = prepareSparqlQuery(bc, queryString);
+
         List<String> ids = new ArrayList<>();
         try {
-            ids = getLastIds(finalQuery, bc);
+            ids = getLastIds(queryString, bc);
         } catch (QueryException e) {
             ContextRepository.logger.error(e.getMessage(), e);
         }
         return ids;
     }
 
-    protected synchronized List<String> getLastIds(String finalQuery, BusinessCase bc) throws QueryException {
+    private synchronized List<String> getLastIds(String queryString, BusinessCase bc) throws QueryException {
+        String finalQuery = prepareSparqlQuery(bc, queryString);
+
         List<String> ids = new ArrayList<>();
         Dataset ds = getDataSet(bc);
+        ds.begin(ReadWrite.WRITE);
         ResultSet set = executeSelectSparqlQuery(finalQuery, ds.getDefaultModel());
         while (set.hasNext()) {
             QuerySolution solution = set.nextSolution();
@@ -541,10 +515,12 @@ public final class ContextRepository extends RepositorySDB<ContextContainer> imp
                 ids.add(literal.getString());
             }
         }
+        ds.commit();
+        ds.end();
         return ids;
     }
 
-    protected ResultSet executeSelectSparqlQuery(String sparqlQuery, Model model) {
+    private ResultSet executeSelectSparqlQuery(String sparqlQuery, Model model) {
         Query query = QueryFactory.create(sparqlQuery);
         QueryExecution qexec = QueryExecutionFactory.create(query, model);
         ContextRepository.logger.debug("Executing SparQL select query '" + query + "'");
