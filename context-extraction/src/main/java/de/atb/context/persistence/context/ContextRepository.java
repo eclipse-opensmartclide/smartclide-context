@@ -38,10 +38,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * ContextRepository
@@ -90,12 +90,15 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
                 File modelFile = new File(fileName);
                 try {
                     if (modelFile.exists() || modelFile.createNewFile()) {
-                        ContextRepository.logger.debug(String.format("Writing raw context with id '%s' to '%s'", context.getIdentifier(),
-                            modelFile.getAbsolutePath()));
+                        logger.debug(
+                            "Writing raw context with id '{}' to '{}'",
+                            context.getIdentifier(),
+                            modelFile.getAbsolutePath()
+                        );
                         context.writeToFile(modelFile.getAbsolutePath());
                     }
                 } catch (IOException e) {
-                    ContextRepository.logger.error(e.getMessage(), e);
+                    logger.error(e.getMessage(), e);
                 }
             } else {
                 throw new ContextFault("Location for context repository could not be created");
@@ -197,31 +200,6 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         return prepareRawContextContainer(context);
     }
 
-    private ContextContainer getStaticContext(ApplicationScenario appScenario, String identifier) {
-        OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
-        URL fileUri = Thread.currentThread().getContextClassLoader().getResource(identifier);
-        if (fileUri != null) {
-            model.read(fileUri.toString());
-            ContextContainer cc = new ContextContainer(appScenario, model, false);
-            prepareRawContextContainer(cc);
-            return cc;
-        }
-        return null;
-    }
-
-    private ContextContainer getStaticContext(BusinessCase businessCase, String filePath, String identifier) {
-        OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
-        URL fileUri = Thread.currentThread().getContextClassLoader().getResource(filePath);
-        if (fileUri != null) {
-            model.read(fileUri.toString());
-            ContextContainer cc = new ContextContainer(model, false);
-            cc.setIdentifier(identifier);
-            prepareRawContextContainer(cc);
-            return cc;
-        }
-        return null;
-    }
-
     /**
      * (non-Javadoc)
      *
@@ -269,21 +247,62 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
      */
     @Override
     public synchronized Boolean executeSparqlAskQuery(BusinessCase businessCase, String query, boolean useReasoner) {
+        return executeSparql(businessCase, query, useReasoner, QueryExecution::execAsk);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlSelectQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
+     */
+    @Override
+    public synchronized ResultSet executeSparqlSelectQuery(BusinessCase businessCase,
+                                                           String query,
+                                                           boolean useReasoner) {
+        return executeSparql(businessCase, query, useReasoner, QueryExecution::execSelect);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlDescribeQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
+     */
+    @Override
+    public synchronized Model executeSparqlDescribeQuery(BusinessCase businessCase, String query, boolean useReasoner) {
+        return executeSparql(businessCase, query, useReasoner, QueryExecution::execDescribe);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
+     */
+    @Override
+    public synchronized Model executeSparqlConstructQuery(BusinessCase businessCase,
+                                                          String query,
+                                                          boolean useReasoner) {
+        return executeSparql(businessCase, query, useReasoner, QueryExecution::execConstruct);
+    }
+
+    private <R> R executeSparql(BusinessCase businessCase, String query, boolean useReasoner, Function<QueryExecution, R> executioner) {
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
         Dataset dataset = getDataSet(businessCase);
-        QueryExecution qexec = getQueryExecution(businessCase, query, useReasoner, dataset);
-        Boolean result = null;
+        // FIXME: Should this be `begin(ReadWrite.READ)`? Because everything in `block` seems to be just "selects"?
+        dataset.begin(ReadWrite.WRITE);
         try {
-            result = qexec.execAsk();
-        } catch (QueryException qe) {
-            ContextRepository.logger.error(qe.getMessage(), qe);
+            QueryExecution queryExecution = getQueryExecution(businessCase, query, useReasoner, dataset);
+            R result = executioner.apply(queryExecution);
+            dataset.commit();
+            return result;
+        } catch (Exception e) {
+            ContextRepository.logger.error(e.getMessage(), e);
+            dataset.abort();
+            return null;
+        } finally {
+            dataset.end();
         }
-        dataset.commit();
-        dataset.end();
-        dataset.close();
-        return result;
     }
 
     private QueryExecution getQueryExecution(BusinessCase businessCase, String query, boolean useReasoner, Dataset dataset) {
@@ -296,83 +315,13 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         String finalQuery = prepareSparqlQuery(businessCase, query);
         dataset.begin(ReadWrite.WRITE);
         Model model = dataset.getDefaultModel();
-        OntModel ontModel = null;
+        OntModel ontModel;
         if (useReasoner) {
             ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
         } else {
             ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
         }
-        QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);
-        return qexec;
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlSelectQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
-     */
-    @Override
-    public synchronized ResultSet executeSparqlSelectQuery(BusinessCase businessCase, String query, boolean useReasoner) {
-        if (businessCase == null) {
-            throw new NullPointerException("BusinessCase may not be null!");
-        }
-        Dataset dataset = getDataSet(businessCase);
-        QueryExecution qexec = getQueryExecution(businessCase, query, useReasoner, dataset);
-        ResultSet result = null;
-        try {
-            result = qexec.execSelect();
-        } catch (QueryException qe) {
-            ContextRepository.logger.error(qe.getMessage(), qe);
-        }
-        dataset.commit();
-        dataset.end();
-        return result;
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlDescribeQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
-     */
-    @Override
-    public synchronized Model executeSparqlDescribeQuery(BusinessCase businessCase, String query, boolean useReasoner) {
-        if (businessCase == null) {
-            throw new NullPointerException("BusinessCase may not be null!");
-        }
-        Dataset dataset = getDataSet(businessCase);
-        QueryExecution qexec = getQueryExecution(businessCase, query, useReasoner, dataset);
-        Model result = null;
-        try {
-            result = qexec.execDescribe();
-        } catch (QueryException qe) {
-            ContextRepository.logger.error(qe.getMessage(), qe);
-        }
-        dataset.commit();
-        dataset.end();
-        return result;
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
-     */
-    @Override
-    public synchronized Model executeSparqlConstructQuery(BusinessCase businessCase, String query, boolean useReasoner) {
-        if (businessCase == null) {
-            throw new NullPointerException("BusinessCase may not be null!");
-        }
-        Dataset dataset = getDataSet(businessCase);
-        QueryExecution qexec = getQueryExecution(businessCase, query, useReasoner, dataset);
-        Model result = null;
-        try {
-            result = qexec.execConstruct();
-        } catch (QueryException qe) {
-            ContextRepository.logger.error(qe.getMessage(), qe);
-        }
-        dataset.commit();
-        dataset.end();
-        return result;
+        return QueryExecutionFactory.create(finalQuery, ontModel);
     }
 
     /**
@@ -382,7 +331,7 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
      */
     @Override
     public synchronized void initializeRepository(BusinessCase bc, String modelUri) {
-        ContextRepository.logger.info(String.format("Initializing repository for BusinessCase '%s', loading from url '%s'", bc, modelUri));
+        logger.info("Initializing repository for BusinessCase '{}', loading from url '{}'", bc, modelUri);
         createDefaultModel(OntModel.class, bc, modelUri, false);
     }
 
@@ -412,9 +361,9 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
     }
 
     private synchronized String prepareSparqlQuery(BusinessCase businessCase, String query) {
-        ContextRepository.logger.debug("Preparing sparql query '" + query + "' for business case " + businessCase);
+        logger.debug("Preparing sparql query '" + query + "' for business case " + businessCase);
         String finalQuery = OntologyNamespace.prepareSparqlQuery(query);
-        ContextRepository.logger.debug("Final query is " + finalQuery);
+        logger.debug("Final query is " + finalQuery);
         return finalQuery;
     }
 
@@ -425,18 +374,17 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
      */
     @Override
     public synchronized List<String> getLastContextsIds(ApplicationScenario applicationScenario, int count) {
-        String queryString = String
-            .format("SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x} ORDER BY DESC(?x) LIMIT %6$d",
-                BaseOntologyClasses.Context, BaseDatatypeProperties.Identifier, BaseDatatypeProperties.ApplicationScenarioIdentifier, applicationScenario.toString(), BaseDatatypeProperties.CapturedAt,
-                count);
+        String queryString = String.format(
+            "SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x} ORDER BY DESC(?x) LIMIT %6$d",
+            BaseOntologyClasses.Context,
+            BaseDatatypeProperties.Identifier,
+            BaseDatatypeProperties.ApplicationScenarioIdentifier,
+            applicationScenario.toString(),
+            BaseDatatypeProperties.CapturedAt,
+            count
+        );
 
-        List<String> ids = new ArrayList<>();
-        try {
-            ids = getLastIds(queryString, applicationScenario.getBusinessCase());
-        } catch (QueryException e) {
-            ContextRepository.logger.error(e.getMessage(), e);
-        }
-        return ids;
+        return getLastIds(queryString, applicationScenario.getBusinessCase());
     }
 
     /**
@@ -446,18 +394,18 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
      */
     @Override
     public synchronized List<String> getLastContextsIds(ApplicationScenario applicationScenario, TimeFrame timeFrame) {
-        String queryString = String
-            .format("SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x . ?x <= %6$s . ?x >= %7$s} ORDER BY DESC(?x)",
-                BaseOntologyClasses.Context, BaseDatatypeProperties.Identifier, BaseDatatypeProperties.ApplicationScenarioIdentifier, applicationScenario.toString(), BaseDatatypeProperties.CapturedAt,
-                timeFrame.getXSDLexicalFormForStartTime(), timeFrame.getXSDLexicalFormForEndTime());
+        String queryString = String.format(
+            "SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x . ?x <= %6$s . ?x >= %7$s} ORDER BY DESC(?x)",
+            BaseOntologyClasses.Context,
+            BaseDatatypeProperties.Identifier,
+            BaseDatatypeProperties.ApplicationScenarioIdentifier,
+            applicationScenario.toString(),
+            BaseDatatypeProperties.CapturedAt,
+            timeFrame.getXSDLexicalFormForStartTime(),
+            timeFrame.getXSDLexicalFormForEndTime()
+        );
 
-        List<String> ids = new ArrayList<>();
-        try {
-            ids = getLastIds(queryString, applicationScenario.getBusinessCase());
-        } catch (QueryException e) {
-            ContextRepository.logger.error(e.getMessage(), e);
-        }
-        return ids;
+        return getLastIds(queryString, applicationScenario.getBusinessCase());
     }
 
     /**
@@ -467,17 +415,17 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
      */
     @Override
     public synchronized List<String> getLastContextsIds(BusinessCase bc, int count) {
-        String queryString = String
-            .format("SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x} ORDER BY DESC(?x) LIMIT %6$d",
-                BaseOntologyClasses.Context, BaseDatatypeProperties.Identifier, BaseDatatypeProperties.BusinessCaseIdentifier, bc.toString(), BaseDatatypeProperties.CapturedAt, count);
+        String queryString = String.format(
+            "SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x} ORDER BY DESC(?x) LIMIT %6$d",
+            BaseOntologyClasses.Context,
+            BaseDatatypeProperties.Identifier,
+            BaseDatatypeProperties.BusinessCaseIdentifier,
+            bc.toString(),
+            BaseDatatypeProperties.CapturedAt,
+            count
+        );
 
-        List<String> ids = new ArrayList<>();
-        try {
-            ids = getLastIds(queryString, bc);
-        } catch (QueryException e) {
-            ContextRepository.logger.error(e.getMessage(), e);
-        }
-        return ids;
+        return getLastIds(queryString, bc);
     }
 
     /**
@@ -487,43 +435,46 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
      */
     @Override
     public synchronized List<String> getLastContextsIds(BusinessCase bc, TimeFrame timeFrame) {
-        String queryString = String
-            .format("SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x . ?x <= %6$s . ?x >= %7$s} ORDER BY DESC(?x)",
-                BaseOntologyClasses.Context, BaseDatatypeProperties.Identifier, BaseDatatypeProperties.BusinessCaseIdentifier, bc.toString(), BaseDatatypeProperties.CapturedAt, timeFrame.getXSDLexicalFormForStartTime(),
-                timeFrame.getXSDLexicalFormForEndTime());
+        String queryString = String.format(
+            "SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x . ?x <= %6$s . ?x >= %7$s} ORDER BY DESC(?x)",
+            BaseOntologyClasses.Context,
+            BaseDatatypeProperties.Identifier,
+            BaseDatatypeProperties.BusinessCaseIdentifier,
+            bc.toString(),
+            BaseDatatypeProperties.CapturedAt,
+            timeFrame.getXSDLexicalFormForStartTime(),
+            timeFrame.getXSDLexicalFormForEndTime()
+        );
 
-        List<String> ids = new ArrayList<>();
-        try {
-            ids = getLastIds(queryString, bc);
-        } catch (QueryException e) {
-            ContextRepository.logger.error(e.getMessage(), e);
-        }
-        return ids;
+        return getLastIds(queryString, bc);
     }
 
     private synchronized List<String> getLastIds(String queryString, BusinessCase bc) throws QueryException {
-        String finalQuery = prepareSparqlQuery(bc, queryString);
-
         List<String> ids = new ArrayList<>();
-        Dataset ds = getDataSet(bc);
-        ds.begin(ReadWrite.WRITE);
-        ResultSet set = executeSelectSparqlQuery(finalQuery, ds.getDefaultModel());
-        while (set.hasNext()) {
-            QuerySolution solution = set.nextSolution();
-            Literal literal = solution.getLiteral("identifier");
-            if (literal != null) {
-                ids.add(literal.getString());
+        try {
+            String finalQuery = prepareSparqlQuery(bc, queryString);
+            Dataset ds = getDataSet(bc);
+            ds.begin(ReadWrite.WRITE);
+            ResultSet set = executeSelectSparqlQuery(finalQuery, ds.getDefaultModel());
+            while (set.hasNext()) {
+                QuerySolution solution = set.nextSolution();
+                Literal literal = solution.getLiteral("identifier");
+                if (literal != null) {
+                    ids.add(literal.getString());
+                }
             }
+            ds.commit();
+            ds.end();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
-        ds.commit();
-        ds.end();
         return ids;
     }
 
     private ResultSet executeSelectSparqlQuery(String sparqlQuery, Model model) {
         Query query = QueryFactory.create(sparqlQuery);
         QueryExecution qexec = QueryExecutionFactory.create(query, model);
-        ContextRepository.logger.debug("Executing SparQL select query '" + query + "'");
+        logger.debug("Executing SparQL select query '" + query + "'");
         return qexec.execSelect();
     }
 
@@ -553,8 +504,12 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         if (context.getIdentifier().trim().length() < 1) {
             throw new IllegalArgumentException("Context Identifier may not be empty!");
         }
-        ContextRepository.logger.debug("Persisting context '" + context.getIdentifier() + " for " + context.getApplicationScenario() + " in BC "
-            + context.getBusinessCase());
+        logger.debug(
+            "Persisting context '{}' for {} in BC {}",
+            context.getIdentifier(),
+            context.getApplicationScenario(),
+            context.getBusinessCase()
+        );
         triggerPreProcessors(context.getApplicationScenario(), context);
         persistRawContext(context);
         persistReasonableContext(context);
