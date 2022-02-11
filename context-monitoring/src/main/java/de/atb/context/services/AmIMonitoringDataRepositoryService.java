@@ -62,12 +62,11 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
     public void setOutputModel(OutputDataModel outputDataModel) throws ContextFault {
     }
 
-    // FIXME: parameter names are not very descriptive
     @Override
-    public boolean setupRepos(String s,
-                              int i,
-                              String s1,
-                              String s2,
+    public boolean setupRepos(String host,
+                              int port,
+                              String className,
+                              String pesId,
                               OutputDataModel outputDataModel,
                               ArrayList<String> arrayList,
                               String s3) throws ContextFault {

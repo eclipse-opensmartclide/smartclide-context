@@ -42,6 +42,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * MonitoringDataRepository
@@ -186,12 +187,10 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
 
         return transactional(dataSet, new ArrayList<>(), () -> {
             final Model model = dataSet.getDefaultModel();
-            final Collection<? extends Type> collection = Sparql.exec(model, clazz, query);
-            final List<Type> result = new ArrayList<>();
-            for (Type type : collection) {
-                result.add((Type) initLazyModel(model, type));
-            }
-            return result;
+            return Sparql.exec(model, clazz, query)
+                .stream()
+                .map(type -> (Type) initLazyModel(model, type))
+                .collect(Collectors.toList());
         });
     }
 

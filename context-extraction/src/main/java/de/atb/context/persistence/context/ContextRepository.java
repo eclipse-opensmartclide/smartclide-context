@@ -289,8 +289,7 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
             throw new NullPointerException("BusinessCase may not be null!");
         }
         Dataset dataset = getDataSet(businessCase);
-        // FIXME: Should this be `begin(ReadWrite.READ)`? Because everything in `block` seems to be just "selects"?
-        dataset.begin(ReadWrite.WRITE);
+        dataset.begin(ReadWrite.READ);
         try {
             QueryExecution queryExecution = getQueryExecution(businessCase, query, useReasoner, dataset);
             R result = executioner.apply(queryExecution);
@@ -313,7 +312,6 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
             throw new IllegalArgumentException("Query may not be empty!");
         }
         String finalQuery = prepareSparqlQuery(businessCase, query);
-        dataset.begin(ReadWrite.WRITE);
         Model model = dataset.getDefaultModel();
         OntModel ontModel;
         if (useReasoner) {

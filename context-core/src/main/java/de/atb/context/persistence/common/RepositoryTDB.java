@@ -152,7 +152,6 @@ public abstract class RepositoryTDB<T extends IApplicationScenarioProvider> exte
     }
 
     protected <R> R transactional(final Dataset dataSet, final R defaultResult, final Supplier<R> block) {
-        // FIXME: Should this be `begin(ReadWrite.READ)`? Because everything in `block` seems to be just "selects"?
         dataSet.begin(ReadWrite.WRITE);
         try {
             R result = block.get();
