@@ -19,7 +19,6 @@ import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.SPARQLHelper;
 import de.atb.context.common.util.TimeFrame;
-import de.atb.context.context.util.OntologyNamespace;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.rdf.RdfHelper;
@@ -40,7 +39,6 @@ import thewebsemantic.Sparql;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -471,13 +469,6 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             final QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);
             return qexec.execSelect();
         });
-    }
-
-    public static synchronized String prepareSparqlQuery(final String query) {
-        logger.trace("Preparing sparql query '" + query);
-        String finalQuery = OntologyNamespace.prepareSparqlQuery(query);
-        logger.trace("Final query is " + finalQuery);
-        return finalQuery;
     }
 
     @SuppressWarnings("unchecked")

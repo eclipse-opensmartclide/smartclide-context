@@ -17,6 +17,7 @@ package de.atb.context.persistence.common;
 import de.atb.context.common.exceptions.ConfigurationException;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.IApplicationScenarioProvider;
+import de.atb.context.context.util.OntologyNamespace;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.tdb.TDB;
@@ -72,6 +73,13 @@ public abstract class RepositoryTDB<T extends IApplicationScenarioProvider> exte
             logger.warn("File or directory {} does not exist, creating directory!", dir.getAbsolutePath());
             return dir.mkdirs();
         }
+    }
+
+    public static synchronized String prepareSparqlQuery(final String query) {
+        logger.trace("Preparing sparql query '" + query);
+        String finalQuery = OntologyNamespace.prepareSparqlQuery(query);
+        logger.trace("Final query is " + finalQuery);
+        return finalQuery;
     }
 
     /**

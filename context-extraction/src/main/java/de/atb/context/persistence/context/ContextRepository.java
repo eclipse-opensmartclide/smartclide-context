@@ -311,7 +311,7 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         if (query.trim().length() == 0) {
             throw new IllegalArgumentException("Query may not be empty!");
         }
-        String finalQuery = prepareSparqlQuery(businessCase, query);
+        String finalQuery = prepareSparqlQuery(query);
         Model model = dataset.getDefaultModel();
         OntModel ontModel;
         if (useReasoner) {
@@ -356,13 +356,6 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
             container.setMonitoringDataId(monitoringDataId);
         }
         return container;
-    }
-
-    private synchronized String prepareSparqlQuery(BusinessCase businessCase, String query) {
-        logger.debug("Preparing sparql query '" + query + "' for business case " + businessCase);
-        String finalQuery = OntologyNamespace.prepareSparqlQuery(query);
-        logger.debug("Final query is " + finalQuery);
-        return finalQuery;
     }
 
     /**
@@ -450,7 +443,7 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
     private synchronized List<String> getLastIds(String queryString, BusinessCase bc) throws QueryException {
         List<String> ids = new ArrayList<>();
         try {
-            String finalQuery = prepareSparqlQuery(bc, queryString);
+            String finalQuery = prepareSparqlQuery(queryString);
             Dataset ds = getDataSet(bc);
             ds.begin(ReadWrite.WRITE);
             ResultSet set = executeSelectSparqlQuery(finalQuery, ds.getDefaultModel());
