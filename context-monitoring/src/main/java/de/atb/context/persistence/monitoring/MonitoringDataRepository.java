@@ -456,10 +456,7 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
 
         final Dataset dataset = getDataSet(businessCase);
 
-        return transactional(dataset, null, () -> {
-            final QueryExecution qexec = getQueryExecution(query, false, dataset);
-            return qexec.execSelect();
-        });
+        return transactional(dataset, null, () -> getQueryExecution(query, false, dataset).execSelect());
     }
 
     @SuppressWarnings("unchecked")
