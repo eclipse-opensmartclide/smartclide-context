@@ -18,8 +18,14 @@ import de.atb.context.common.exceptions.ConfigurationException;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.IApplicationScenarioProvider;
 import de.atb.context.context.util.OntologyNamespace;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.query.Dataset;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.ReadWrite;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.tdb.TDB;
 import org.apache.jena.tdb.TDBFactory;
 import org.slf4j.Logger;
@@ -188,5 +194,23 @@ public abstract class RepositoryTDB<T extends IApplicationScenarioProvider> exte
             logger.error(e.getMessage());
             throw new ConfigurationException("Data directory for the TDB repository couldn't be created.");
         }
+    }
+
+    protected QueryExecution getQueryExecution(String query, boolean useReasoner, Dataset dataset) {
+        if (query == null) {
+            throw new NullPointerException("Query may not be null!");
+        }
+        if (query.trim().length() == 0) {
+            throw new IllegalArgumentException("Query may not be empty!");
+        }
+        String finalQuery = prepareSparqlQuery(query);
+        Model model = dataset.getDefaultModel();
+        OntModel ontModel;
+        if (useReasoner) {
+            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
+        } else {
+            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
+        }
+        return QueryExecutionFactory.create(finalQuery, ontModel);
     }
 }

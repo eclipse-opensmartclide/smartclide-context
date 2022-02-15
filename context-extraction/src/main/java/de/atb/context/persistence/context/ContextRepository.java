@@ -19,7 +19,6 @@ import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.IApplicationScenarioProvider;
 import de.atb.context.common.util.TimeFrame;
-import de.atb.context.context.util.OntologyNamespace;
 import de.atb.context.extraction.ContextContainer;
 import de.atb.context.extraction.util.base.BaseDatatypeProperties;
 import de.atb.context.extraction.util.base.BaseOntologyClasses;
@@ -291,7 +290,7 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         Dataset dataset = getDataSet(businessCase);
         dataset.begin(ReadWrite.READ);
         try {
-            QueryExecution queryExecution = getQueryExecution(businessCase, query, useReasoner, dataset);
+            QueryExecution queryExecution = getQueryExecution(query, useReasoner, dataset);
             R result = executioner.apply(queryExecution);
             dataset.commit();
             return result;
@@ -302,24 +301,6 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         } finally {
             dataset.end();
         }
-    }
-
-    private QueryExecution getQueryExecution(BusinessCase businessCase, String query, boolean useReasoner, Dataset dataset) {
-        if (query == null) {
-            throw new NullPointerException("Query may not be null!");
-        }
-        if (query.trim().length() == 0) {
-            throw new IllegalArgumentException("Query may not be empty!");
-        }
-        String finalQuery = prepareSparqlQuery(query);
-        Model model = dataset.getDefaultModel();
-        OntModel ontModel;
-        if (useReasoner) {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
-        } else {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
-        }
-        return QueryExecutionFactory.create(finalQuery, ontModel);
     }
 
     /**

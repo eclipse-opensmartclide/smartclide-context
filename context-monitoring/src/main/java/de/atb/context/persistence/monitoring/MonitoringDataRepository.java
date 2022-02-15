@@ -453,20 +453,11 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         if (businessCase == null) {
             throw new NullPointerException("BusinessCase may not be null!");
         }
-        if (query == null) {
-            throw new NullPointerException("Query may not be null!");
-        }
-        if (query.trim().length() == 0) {
-            throw new IllegalArgumentException("Query may not be empty!");
-        }
 
-        final String finalQuery = prepareSparqlQuery(query);
         final Dataset dataset = getDataSet(businessCase);
 
         return transactional(dataset, null, () -> {
-            final Model model = dataset.getDefaultModel();
-            final OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
-            final QueryExecution qexec = QueryExecutionFactory.create(finalQuery, ontModel);
+            final QueryExecution qexec = getQueryExecution(query, false, dataset);
             return qexec.execSelect();
         });
     }
