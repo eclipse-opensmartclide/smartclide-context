@@ -50,26 +50,26 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
     }
 
     @Override
-    public void setOutputIds(ArrayList<String> arrayList) throws ContextFault {
+    public void setOutputIds(final ArrayList<String> outputIds) throws ContextFault {
     }
 
     @Override
-    public String invokeForData(String s) throws ContextFault {
+    public String invokeForData(final String ElementId) throws ContextFault {
         return null;
     }
 
     @Override
-    public void setOutputModel(OutputDataModel outputDataModel) throws ContextFault {
+    public void setOutputModel(final OutputDataModel model) throws ContextFault {
     }
 
     @Override
-    public boolean setupRepos(String host,
-                              int port,
-                              String className,
-                              String pesId,
-                              OutputDataModel outputDataModel,
-                              ArrayList<String> arrayList,
-                              String s3) throws ContextFault {
+    public boolean setupRepos(final String host,
+                              final int port,
+                              final String className,
+                              final String pesId,
+                              final OutputDataModel model,
+                              final ArrayList<String> outIds,
+                              final String serviceId) throws ContextFault {
         return false;
     }
 

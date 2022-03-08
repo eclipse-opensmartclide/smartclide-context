@@ -23,12 +23,9 @@ import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.rdf.RdfHelper;
 import de.atb.context.persistence.common.RepositoryTDB;
-import org.apache.jena.ontology.OntModel;
-import org.apache.jena.ontology.OntModelSpec;
-import org.apache.jena.query.*;
+import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.update.UpdateAction;
 import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.update.UpdateRequest;
@@ -79,6 +76,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      */
     @Override
     public synchronized void persist(final Type monitoringData) {
+        validateNotNull(monitoringData, "monitoringData");
+
         triggerPreProcessors(monitoringData.getApplicationScenario(), monitoringData);
         persist(monitoringData.toRdfModel(), monitoringData.getApplicationScenario());
         triggerPostProcessors(monitoringData.getApplicationScenario(), monitoringData);
@@ -86,11 +85,17 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
 
     @SuppressWarnings("unchecked")
     public synchronized <D extends DataSource> void persist(final String rdfString, final Class<Type> clazz) {
+        validateString(rdfString, "rdfString");
+        validateNotNull(clazz, "clazz");
+
         Type bean = RdfHelper.createMonitoringData(rdfString, (Class<? extends IMonitoringDataModel<Type, D>>) clazz);
         persist(bean);
     }
 
     public synchronized void persist(final Model monitoringData, final ApplicationScenario applicationScenario) {
+        validateNotNull(monitoringData, "monitoringData");
+        validateNotNull(applicationScenario, "applicationScenario");
+
         Model model = getDataSet(applicationScenario.getBusinessCase()).getDefaultModel();
         model.begin();
         try {
@@ -110,6 +115,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     public synchronized List<Type> getMonitoringData(final BusinessCase businessCase,
                                                      final Class<Type> clazz,
                                                      final int count) {
+        validateNotNull(businessCase, "businessCase");
+        validateNotNull(clazz, "clazz");
         if (count < 0) {
             throw new IllegalArgumentException("Count has to be > -1!");
         }
@@ -142,9 +149,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     public synchronized List<Type> getMonitoringData(final ApplicationScenario applicationScenario,
                                                      final Class<Type> clazz,
                                                      final int count) {
-        if (applicationScenario == null) {
-            throw new NullPointerException("ApplicationScenario may not be null!");
-        }
+        validateNotNull(applicationScenario, "applicationScenario");
+
         return getMonitoringData(applicationScenario.getBusinessCase(), clazz, count);
     }
 
@@ -152,6 +158,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     public synchronized List<Type> getMonitoringData(final BusinessCase businessCase,
                                                      final Class<Type> clazz,
                                                      final TimeFrame timeFrame) {
+        validateNotNull(businessCase, "businessCase");
+        validateNotNull(clazz, "clazz");
         validateTimeFrame(timeFrame);
 
         String endTime = timeFrame.getXSDLexicalFormForEndTime();
@@ -171,27 +179,6 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         return getData(businessCase, clazz, selectQuery);
     }
 
-    private List<Type> getData(BusinessCase businessCase, Class<Type> clazz, String selectQuery) {
-        if (businessCase == null) {
-            throw new NullPointerException("BusinessCase may not be null!");
-        }
-        if (clazz == null) {
-            throw new NullPointerException("Clazz may not be null!");
-        }
-
-        final String query = SPARQLHelper.appendDefaultPrefixes(selectQuery);
-        logger.debug(query);
-        final Dataset dataSet = getDataSet(businessCase);
-
-        return transactional(dataSet, new ArrayList<>(), () -> {
-            final Model model = dataSet.getDefaultModel();
-            return Sparql.exec(model, clazz, query)
-                .stream()
-                .map(type -> (Type) initLazyModel(model, type))
-                .collect(Collectors.toList());
-        });
-    }
-
     /**
      * (non-Javadoc)
      *
@@ -201,9 +188,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     public synchronized List<Type> getMonitoringData(final ApplicationScenario applicationScenario,
                                                      final Class<Type> clazz,
                                                      final TimeFrame timeFrame) {
-        if (applicationScenario == null) {
-            throw new NullPointerException("ApplicationScenario may not be null!");
-        }
+        validateNotNull(applicationScenario, "applicationScenario");
+
         return getMonitoringData(applicationScenario.getBusinessCase(), clazz, timeFrame);
     }
 
@@ -211,12 +197,9 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     public synchronized Type getMonitoringData(final BusinessCase businessCase,
                                                final Class<Type> clazz,
                                                final String identifier) {
-        if (identifier == null) {
-            throw new NullPointerException("Identifier may not be null!");
-        }
-        if (identifier.trim().length() == 0) {
-            throw new IllegalArgumentException("Identifier may not be empty!");
-        }
+        validateNotNull(businessCase, "businessCase");
+        validateNotNull(clazz, "clazz");
+        validateString(identifier, "identifier");
 
         String selectQuery = String.format(
             "SELECT ?s WHERE { ?s rdf:type %s . ?s %s \"%s\"^^xsd:string}",
@@ -247,18 +230,13 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     public synchronized Type getMonitoringData(final ApplicationScenario applicationScenario,
                                                final Class<Type> clazz,
                                                final String identifier) {
-        if (applicationScenario == null) {
-            throw new NullPointerException("ApplicationScenario may not be null!");
-        }
-        if (identifier == null) {
-            throw new NullPointerException("Identifier may not be null!");
-        }
-
-        final String folder = "monitoring/";
+        validateNotNull(applicationScenario, "applicationScenario");
+        validateNotNull(clazz, "clazz");
+        validateString(identifier, "identifier");
 
         for (ApplicationScenario scenario : ApplicationScenario.values()) {
             if (identifier.equals(scenario.toString())) {
-                return getStaticMonitoringData(applicationScenario, clazz, folder + identifier + ".rdf");
+                return getStaticMonitoringData(applicationScenario, clazz, "monitoring/" + identifier + ".rdf");
             }
         }
 
@@ -274,9 +252,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     public synchronized List<String> getLastIds(final BusinessCase businessCase,
                                                 final Class<Type> clazz,
                                                 final int count) {
-        if (clazz == null) {
-            throw new NullPointerException("Clazz may not be null!");
-        }
+        validateNotNull(businessCase, "businessCase");
+        validateNotNull(clazz, "clazz");
         if (count < 0) {
             throw new IllegalArgumentException("Count has to be > -1!");
         }
@@ -301,35 +278,6 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         return getIDs(businessCase, selectQuery);
     }
 
-    private List<String> getIDs(BusinessCase businessCase, String selectQuery) {
-        if (businessCase == null) {
-            throw new NullPointerException("BusinessCase may not be null!");
-        }
-        if (selectQuery == null) {
-            throw new NullPointerException("selectQuery may not be null!");
-        }
-
-        final String query = SPARQLHelper.appendDefaultPrefixes(selectQuery);
-        logger.debug(query);
-        final Dataset dataSet = getDataSet(businessCase);
-
-        return transactional(dataSet, new ArrayList<>(), () -> {
-            final Model model = dataSet.getDefaultModel();
-            final Query q = QueryFactory.create(query);
-            final QueryExecution qe = QueryExecutionFactory.create(q, model);
-            final ResultSet rs = qe.execSelect();
-            final List<String> ids = new ArrayList<>();
-            while (rs.hasNext()) {
-                QuerySolution qs = rs.next();
-                RDFNode node = qs.get("id");
-                if ((node != null) && node.isLiteral()) {
-                    ids.add(node.asLiteral().getString());
-                }
-            }
-            return ids;
-        });
-    }
-
     /**
      * (non-Javadoc)
      *
@@ -339,9 +287,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     public synchronized List<String> getLastIds(final ApplicationScenario applicationScenario,
                                                 final Class<Type> clazz,
                                                 final int count) {
-        if (applicationScenario == null) {
-            throw new NullPointerException("ApplicationScenario may not be null!");
-        }
+        validateNotNull(applicationScenario, "applicationScenario");
+
         return getLastIds(applicationScenario.getBusinessCase(), clazz, count);
     }
 
@@ -354,9 +301,8 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     public synchronized List<String> getLastIds(final BusinessCase businessCase,
                                                 final Class<Type> clazz,
                                                 final TimeFrame timeFrame) {
-        if (clazz == null) {
-            throw new NullPointerException("Clazz may not be null!");
-        }
+        validateNotNull(businessCase, "businessCase");
+        validateNotNull(clazz, "clazz");
         validateTimeFrame(timeFrame);
 
         String endTime = timeFrame.getXSDLexicalFormForEndTime();
@@ -393,11 +339,9 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
     public synchronized List<String> getLastIds(final ApplicationScenario applicationScenario,
                                                 final Class<Type> clazz,
                                                 final TimeFrame timeFrame) {
-        if (applicationScenario == null) {
-            throw new NullPointerException("ApplicationScenario may not be null!");
-        }
-        return getLastIds(applicationScenario.getBusinessCase(), clazz, timeFrame);
+        validateNotNull(applicationScenario, "applicationScenario");
 
+        return getLastIds(applicationScenario.getBusinessCase(), clazz, timeFrame);
     }
 
     /**
@@ -417,20 +361,18 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
      */
     @Override
     public synchronized void executeSparqlUpdateQueries(final BusinessCase businessCase, final String... queries) {
-        if (businessCase == null) {
-            throw new NullPointerException("BusinessCase may not be null!");
-        }
-        if (queries == null) {
-            throw new NullPointerException("Queries may not be null!");
-        }
+        validateNotNull(businessCase, "businessCase");
+        validateNotNull(queries, "queries");
         if (queries.length <= 0) {
-            throw new NullPointerException("Queries may not be empty!");
+            throw new IllegalArgumentException("Queries may not be empty!");
         }
+
         UpdateRequest ur = UpdateFactory.create();
         for (String query : queries) {
             ur.add(prepareSparqlQuery(query));
         }
         try {
+            // FIXME: should an UpdateAction be wrapped in a transaction?
             UpdateAction.execute(ur, getDataSet(businessCase));
         } catch (RuntimeException qe) {
             logger.error(qe.getMessage(), qe);
@@ -443,20 +385,28 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
         shuttingDown();
     }
 
-    /**
-     * (non-Javadoc)
-     *
-     * @see IMonitoringDataRepository#executeSparqlSelectQuery(BusinessCase, java.lang.String)
-     */
-    @Override
-    public synchronized ResultSet executeSparqlSelectQuery(final BusinessCase businessCase, final String query) {
-        if (businessCase == null) {
-            throw new NullPointerException("BusinessCase may not be null!");
+    private List<Type> getData(BusinessCase businessCase, Class<Type> clazz, String selectQuery) {
+        final String query = SPARQLHelper.appendDefaultPrefixes(selectQuery);
+        logger.debug(query);
+        final Dataset dataSet = getDataSet(businessCase);
+
+        return transactional(dataSet, new ArrayList<>(), () -> {
+            final Model model = dataSet.getDefaultModel();
+            //noinspection unchecked
+            return Sparql.exec(model, clazz, query)
+                .stream()
+                .map(type -> (Type) initLazyModel(model, type))
+                .collect(Collectors.toList());
+        });
+    }
+
+    private List<String> getIDs(BusinessCase businessCase, String selectQuery) {
+        if (selectQuery == null) {
+            throw new NullPointerException("selectQuery may not be null!");
         }
 
-        final Dataset dataset = getDataSet(businessCase);
-
-        return transactional(dataset, null, () -> getQueryExecution(query, false, dataset).execSelect());
+        final String query = SPARQLHelper.appendDefaultPrefixes(selectQuery);
+        return getIds(businessCase, query, "id");
     }
 
     @SuppressWarnings("unchecked")
@@ -493,14 +443,5 @@ public final class MonitoringDataRepository<Type extends IMonitoringDataModel<?,
             logger.debug("Unable to locate static monitoring data for " + scenario + " under '" + identifier + "'");
         }
         return type;
-    }
-
-    private void validateTimeFrame(TimeFrame timeFrame) {
-        if (timeFrame == null) {
-            throw new NullPointerException("TimeFrame may not be null!");
-        }
-        if ((timeFrame.getStartTime() == null) && (timeFrame.getEndTime() == null)) {
-            throw new IllegalArgumentException("TimeFrame has to have at least a start date or an and date!");
-        }
     }
 }

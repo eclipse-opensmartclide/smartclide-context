@@ -17,13 +17,12 @@ package de.atb.context.persistence.common;
 import de.atb.context.common.exceptions.ConfigurationException;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.IApplicationScenarioProvider;
+import de.atb.context.common.util.TimeFrame;
 import de.atb.context.context.util.OntologyNamespace;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
-import org.apache.jena.query.Dataset;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.ReadWrite;
+import org.apache.jena.query.*;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.tdb.TDB;
@@ -31,12 +30,13 @@ import org.apache.jena.tdb.TDBFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -54,38 +54,70 @@ public abstract class RepositoryTDB<T extends IApplicationScenarioProvider> exte
 
     private final Map<BusinessCase, Dataset> datasets = new HashMap<>();
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.common.Repository#reset(de.atb.context.common.util.BusinessCase)
+     */
+    @Override
+    public final boolean reset(final BusinessCase businessCase) {
+        validateNotNull(businessCase, "businessCase");
+
+        final Dataset set = this.datasets.remove(businessCase);
+        if (set != null) {
+            transactional(set, (ds) -> {
+                TDB.sync(ds);
+                if (ds.getDefaultModel() != null) {
+                    TDB.sync(ds.getDefaultModel());
+                    ds.getDefaultModel().removeAll();
+                    TDB.sync(ds.getDefaultModel());
+                    ds.getDefaultModel().close();
+                    ds.asDatasetGraph().close();
+                }
+            });
+            set.close();
+            TDB.closedown();
+        }
+        try {
+            initializeDataset(businessCase);
+            return true;
+        } catch (ConfigurationException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    @Override
+    public final synchronized Dataset getDataSet(final BusinessCase businessCase) {
+        validateNotNull(businessCase, "businessCase");
+
+        Dataset ds = datasets.get(businessCase);
+        if (ds == null) {
+            try {
+                ds = initializeDataset(businessCase);
+            } catch (ConfigurationException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        return ds;
+    }
+
+    public synchronized ResultSet executeSparqlSelectQuery(final BusinessCase businessCase, final String query) {
+        return executeSparqlSelectQuery(businessCase, query, false);
+    }
+
+    public synchronized ResultSet executeSparqlSelectQuery(final BusinessCase businessCase,
+                                                           final String query,
+                                                           final boolean useReasoner) {
+        validateNotNull(businessCase, "businessCase");
+        validateString(query, "query");
+
+        final Dataset dataset = getDataSet(businessCase);
+        return transactional(dataset, null, () -> getQueryExecution(query, useReasoner, dataset).execSelect());
+    }
+
     protected RepositoryTDB(final String baseLocation) {
         super(baseLocation);
-    }
-
-    protected static synchronized boolean clearDirectory(final File dir) {
-        if (dir.isDirectory()) {
-            boolean oneFailed = false;
-            String[] fileList = dir.list();
-            if (fileList != null) {
-                for (final String file : fileList) {
-                    final boolean success = RepositoryTDB.clearDirectory(new File(dir, file));
-                    if (!success) {
-                        oneFailed = true;
-                        logger.warn("Could not delete {}", dir + System.getProperty("file.separator") + file);
-                    }
-                }
-            }
-            logger.info("Cleared directory {}", dir.getAbsolutePath());
-            return !oneFailed;
-        } else if (dir.isFile()) {
-            return dir.delete();
-        } else {
-            logger.warn("File or directory {} does not exist, creating directory!", dir.getAbsolutePath());
-            return dir.mkdirs();
-        }
-    }
-
-    public static synchronized String prepareSparqlQuery(final String query) {
-        logger.trace("Preparing sparql query '" + query);
-        String finalQuery = OntologyNamespace.prepareSparqlQuery(query);
-        logger.trace("Final query is " + finalQuery);
-        return finalQuery;
     }
 
     /**
@@ -108,81 +140,100 @@ public abstract class RepositoryTDB<T extends IApplicationScenarioProvider> exte
         datasets.clear();
     }
 
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.common.Repository#reset(de.atb.context.common.util.BusinessCase)
-     */
-    @Override
-    public final boolean reset(final BusinessCase bc) {
-        final Dataset set = this.datasets.remove(bc);
-        if (set != null) {
-            transactional(set, (ds) -> {
-                TDB.sync(ds);
-                if (ds.getDefaultModel() != null) {
-                    TDB.sync(ds.getDefaultModel());
-                    ds.getDefaultModel().removeAll();
-                    TDB.sync(ds.getDefaultModel());
-                    ds.getDefaultModel().close();
-                    ds.asDatasetGraph().close();
+    protected final List<String> getIds(final BusinessCase businessCase,
+                                        final String query,
+                                        final String idLiteralName) {
+        validateNotNull(businessCase, "businessCase");
+        validateString(query, "query");
+        validateString(idLiteralName, "idLiteralName");
+
+        logger.debug(query);
+        final Dataset dataSet = getDataSet(businessCase);
+
+        return transactional(dataSet, new ArrayList<>(), () -> {
+            final Model m = dataSet.getDefaultModel();
+            final Query q = QueryFactory.create(query);
+            final QueryExecution qe = QueryExecutionFactory.create(q, m);
+            final ResultSet rs = qe.execSelect();
+            final List<String> ids = new ArrayList<>();
+            while (rs.hasNext()) {
+                QuerySolution qs = rs.nextSolution();
+                final Literal idLiteral = qs.getLiteral(idLiteralName);
+                if (idLiteral != null) {
+                    ids.add(idLiteral.getString());
                 }
-            });
-            set.close();
-            TDB.closedown();
-        }
-        try {
-            initializeDataset(bc);
-            return true;
-        } catch (ConfigurationException e) {
-            logger.error(e.getMessage(), e);
-        }
-        return false;
-    }
-
-    @Override
-    public final synchronized Dataset getDataSet(final BusinessCase bc) {
-        Dataset ds = datasets.get(bc);
-        if (ds == null) {
-            try {
-                ds = initializeDataset(bc);
-            } catch (ConfigurationException e) {
-                logger.error(e.getMessage(), e);
             }
-        }
-        return ds;
+            return ids;
+        });
     }
 
-    protected void transactional(final Dataset dataSet, final Consumer<Dataset> block) {
-        dataSet.begin(ReadWrite.WRITE);
+    protected final void transactional(final Dataset dataset, final Consumer<Dataset> consumer) {
+        validateNotNull(dataset, "dataset");
+        validateNotNull(consumer, "consumer");
+
+        dataset.begin(ReadWrite.WRITE);
         try {
-            block.accept(dataSet);
-            dataSet.commit();
+            consumer.accept(dataset);
+            dataset.commit();
         } catch (Exception e) {
             logger.error("Error occurred, rolling back.", e);
-            dataSet.abort();
+            dataset.abort();
         } finally {
-            dataSet.end();
+            dataset.end();
         }
     }
 
-    protected <R> R transactional(final Dataset dataSet, final R defaultResult, final Supplier<R> block) {
-        dataSet.begin(ReadWrite.WRITE);
+    protected final <R> R transactional(final Dataset dataset, final R defaultResult, final Supplier<R> supplier) {
+        validateNotNull(dataset, "dataset");
+        validateNotNull(supplier, "supplier");
+
+        dataset.begin(ReadWrite.WRITE);
         try {
-            R result = block.get();
-            dataSet.commit();
+            R result = supplier.get();
+            dataset.commit();
             return result;
         } catch (Exception e) {
             logger.error("Error occurred, rolling back.", e);
-            dataSet.abort();
+            dataset.abort();
             return defaultResult;
         } finally {
-            dataSet.end();
+            dataset.end();
+        }
+    }
+
+    protected final QueryExecution getQueryExecution(String query, boolean useReasoner, Dataset dataset) {
+        validateString(query, "query");
+        validateNotNull(dataset, "dataset");
+
+        final String finalQuery = prepareSparqlQuery(query);
+        final Model model = dataset.getDefaultModel();
+        final OntModel ontModel;
+        if (useReasoner) {
+            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
+        } else {
+            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
+        }
+        return QueryExecutionFactory.create(finalQuery, ontModel);
+    }
+
+    protected final synchronized String prepareSparqlQuery(final String query) {
+        validateString(query, "query");
+        logger.debug("Preparing sparql query '" + query);
+        String finalQuery = OntologyNamespace.prepareSparqlQuery(query);
+        logger.debug("Final query is " + finalQuery);
+        return finalQuery;
+    }
+
+    protected final void validateTimeFrame(final TimeFrame timeFrame) {
+        validateNotNull(timeFrame, "timeFrame");
+        if ((timeFrame.getStartTime() == null) && (timeFrame.getEndTime() == null)) {
+            throw new IllegalArgumentException("TimeFrame has to have at least a start date or an and date!");
         }
     }
 
     private synchronized Dataset initializeDataset(final BusinessCase bc) throws ConfigurationException {
         try {
-            Path dataDir = Paths.get(getLocationForBusinessCase(bc));
+            final Path dataDir = Paths.get(getLocationForBusinessCase(bc));
             if (Files.notExists(dataDir)) {
                 Files.createDirectories(dataDir);
             }
@@ -194,23 +245,5 @@ public abstract class RepositoryTDB<T extends IApplicationScenarioProvider> exte
             logger.error(e.getMessage());
             throw new ConfigurationException("Data directory for the TDB repository couldn't be created.");
         }
-    }
-
-    protected QueryExecution getQueryExecution(String query, boolean useReasoner, Dataset dataset) {
-        if (query == null) {
-            throw new NullPointerException("Query may not be null!");
-        }
-        if (query.trim().length() == 0) {
-            throw new IllegalArgumentException("Query may not be empty!");
-        }
-        String finalQuery = prepareSparqlQuery(query);
-        Model model = dataset.getDefaultModel();
-        OntModel ontModel;
-        if (useReasoner) {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, model);
-        } else {
-            ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
-        }
-        return QueryExecutionFactory.create(finalQuery, ontModel);
     }
 }

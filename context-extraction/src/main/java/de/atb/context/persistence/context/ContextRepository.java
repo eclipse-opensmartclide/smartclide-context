@@ -28,8 +28,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
-import org.apache.jena.query.*;
-import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.QueryException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
@@ -37,10 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * ContextRepository
@@ -56,12 +54,310 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
     private static final String internalBaseUri = "contexts";
     @Getter
     private static final ContextRepository instance;
+
     private final boolean writeRawContextFiles = true;
 
     static {
         synchronized (ContextRepository.class) {
             instance = new ContextRepository();
         }
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#getRawContext(de.atb.context.common.util.ApplicationScenario, java.lang.String)
+     */
+    @Override
+    public synchronized ContextContainer getRawContext(ApplicationScenario applicationScenario, String contextId) {
+        validateNotNull(applicationScenario, "applicationScenario");
+        validateString(contextId, "contextId");
+
+        return getRawContext(applicationScenario.getBusinessCase(), contextId);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#getRawContext(de.atb.context.common.util.BusinessCase, java.lang.String)
+     */
+    @Override
+    public synchronized ContextContainer getRawContext(BusinessCase businessCase, String contextId) {
+        validateNotNull(businessCase, "businessCase");
+        validateString(contextId, "contextId");
+
+        String fileLocation = getLocationForBusinessCase(businessCase);
+        String fileName = String.format("%s%s%s.owl", fileLocation, File.separator, contextId);
+        File modelFile = new File(fileName);
+        if (modelFile.canRead()) {
+            OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
+            String absPath = String.valueOf(modelFile.toURI());
+            model.read(absPath);
+            ContextContainer context = new ContextContainer(model, false);
+            context.setIdentifier(contextId);
+            return prepareRawContextContainer(context);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#getContext(de.atb.context.common.util.BusinessCase, java.lang.String)
+     */
+    @Override
+    public synchronized ContextContainer getContext(ApplicationScenario applicationScenario, String contextId) {
+        validateNotNull(applicationScenario, "applicationScenario");
+        validateNotNull(applicationScenario.getBusinessCase(), "BusinessCase for ApplicationScenario");
+        validateString(contextId, "contextId");
+
+        return getRawContext(applicationScenario, contextId);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.services.IContextRepositoryService#getContext(de.atb.context.common.util.BusinessCase, java.lang.String)
+     */
+    @Override
+    public synchronized ContextContainer getContext(BusinessCase businessCase, String contextId) {
+        validateNotNull(businessCase, "businessCase");
+        validateString(contextId, "contextId");
+
+        Model model = getDataSet(businessCase).getNamedModel(contextId);
+        OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
+        ontModel.add(model);
+
+        ContextContainer context = new ContextContainer(ontModel);
+        context.addDefaultNamespaces();
+        context.setIdentifier(contextId);
+        return prepareRawContextContainer(context);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.ApplicationScenario, int)
+     */
+    @Override
+    public synchronized List<String> getLastContextsIds(ApplicationScenario applicationScenario, int count) {
+        validateNotNull(applicationScenario, "applicationScenario");
+        if (count < 0) {
+            throw new IllegalArgumentException("Count has to be > -1!");
+        }
+
+        String queryString = String.format(
+            "SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x} ORDER BY DESC(?x) LIMIT %6$d",
+            BaseOntologyClasses.Context,
+            BaseDatatypeProperties.Identifier,
+            BaseDatatypeProperties.ApplicationScenarioIdentifier,
+            applicationScenario,
+            BaseDatatypeProperties.CapturedAt,
+            count
+        );
+
+        return getLastIds(queryString, applicationScenario.getBusinessCase());
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.ApplicationScenario, de.atb.context.common.util.TimeFrame)
+     */
+    @Override
+    public synchronized List<String> getLastContextsIds(ApplicationScenario applicationScenario, TimeFrame timeFrame) {
+        validateNotNull(applicationScenario, "applicationScenario");
+        validateTimeFrame(timeFrame);
+
+        String queryString = String.format(
+            "SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x . ?x <= %6$s . ?x >= %7$s} ORDER BY DESC(?x)",
+            BaseOntologyClasses.Context,
+            BaseDatatypeProperties.Identifier,
+            BaseDatatypeProperties.ApplicationScenarioIdentifier,
+            applicationScenario,
+            BaseDatatypeProperties.CapturedAt,
+            timeFrame.getXSDLexicalFormForStartTime(),
+            timeFrame.getXSDLexicalFormForEndTime()
+        );
+
+        return getLastIds(queryString, applicationScenario.getBusinessCase());
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.BusinessCase, int)
+     */
+    @Override
+    public synchronized List<String> getLastContextsIds(BusinessCase businessCase, int count) {
+        validateNotNull(businessCase, "businessCase");
+        if (count < 0) {
+            throw new IllegalArgumentException("Count has to be > -1!");
+        }
+
+        String queryString = String.format(
+            "SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x} ORDER BY DESC(?x) LIMIT %6$d",
+            BaseOntologyClasses.Context,
+            BaseDatatypeProperties.Identifier,
+            BaseDatatypeProperties.BusinessCaseIdentifier,
+            businessCase,
+            BaseDatatypeProperties.CapturedAt,
+            count
+        );
+
+        return getLastIds(queryString, businessCase);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.BusinessCase, de.atb.context.common.util.TimeFrame)
+     */
+    @Override
+    public synchronized List<String> getLastContextsIds(BusinessCase businessCase, TimeFrame timeFrame) {
+        validateNotNull(businessCase, "businessCase");
+        validateTimeFrame(timeFrame);
+
+        String queryString = String.format(
+            "SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x . ?x <= %6$s . ?x >= %7$s} ORDER BY DESC(?x)",
+            BaseOntologyClasses.Context,
+            BaseDatatypeProperties.Identifier,
+            BaseDatatypeProperties.BusinessCaseIdentifier,
+            businessCase,
+            BaseDatatypeProperties.CapturedAt,
+            timeFrame.getXSDLexicalFormForStartTime(),
+            timeFrame.getXSDLexicalFormForEndTime()
+        );
+
+        return getLastIds(queryString, businessCase);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.common.IPersistenceUnit#persist(IApplicationScenarioProvider)
+     */
+    @Override
+    public void persist(ContextContainer context) {
+        validateNotNull(context, "context");
+        validateNotNull(context.getApplicationScenario(), "ApplicationScenario for Context");
+        validateNotNull(context.getBusinessCase(), "BusinessCase for Context");
+        validateNotNull(context.getIdentifier(), "Context Identifier");
+        validateString(context.getIdentifier(), "Context Identifier");
+
+        logger.debug(
+            "Persisting context '{}' for {} in BC {}",
+            context.getIdentifier(),
+            context.getApplicationScenario(),
+            context.getBusinessCase()
+        );
+        triggerPreProcessors(context.getApplicationScenario(), context);
+        persistRawContext(context);
+        persistReasonableContext(context);
+        persistNamedContext(context);
+        triggerPostProcessors(context.getApplicationScenario(), context);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlDescribeQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
+     */
+    @Override
+    public synchronized Model executeSparqlDescribeQuery(BusinessCase businessCase, String query) {
+        return executeSparqlDescribeQuery(businessCase, query, false);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlDescribeQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
+     */
+    @Override
+    public synchronized Model executeSparqlDescribeQuery(BusinessCase businessCase, String query, boolean useReasoner) {
+        validateNotNull(businessCase, "businessCase");
+        validateString(query, "query");
+
+        final Dataset dataset = getDataSet(businessCase);
+        return transactional(dataset, null, () -> getQueryExecution(query, useReasoner, dataset).execDescribe());
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
+     */
+    @Override
+    public synchronized Model executeSparqlConstructQuery(BusinessCase businessCase, String query) {
+        return executeSparqlConstructQuery(businessCase, query, false);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
+     */
+    @Override
+    public synchronized Model executeSparqlConstructQuery(BusinessCase businessCase,
+                                                          String query,
+                                                          boolean useReasoner) {
+        validateNotNull(businessCase, "businessCase");
+        validateString(query, "query");
+
+        final Dataset dataset = getDataSet(businessCase);
+        return transactional(dataset, null, () -> getQueryExecution(query, useReasoner, dataset).execConstruct());
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlAskQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
+     */
+    @Override
+    public synchronized Boolean executeSparqlAskQuery(BusinessCase businessCase, String query) {
+        return executeSparqlAskQuery(businessCase, query, false);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlAskQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
+     */
+    @Override
+    public synchronized Boolean executeSparqlAskQuery(BusinessCase businessCase, String query, boolean useReasoner) {
+        validateNotNull(businessCase, "businessCase");
+        validateString(query, "query");
+
+        final Dataset dataset = getDataSet(businessCase);
+        return transactional(dataset, null, () -> getQueryExecution(query, useReasoner, dataset).execAsk());
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#initializeRepository(de.atb.context.common.util.BusinessCase, java.lang.String)
+     */
+    @Override
+    public synchronized void initializeRepository(BusinessCase businessCase, String modelUri) {
+        validateNotNull(businessCase, "businessCase");
+        validateString(modelUri, "modelUri");
+
+        logger.info("Initializing repository for BusinessCase '{}', loading from url '{}'", businessCase, modelUri);
+        createDefaultModel(OntModel.class, businessCase, modelUri, false);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.context.IContextRepository#getDefaultModel(de.atb.context.common.util.BusinessCase)
+     */
+    @Override
+    public synchronized Model getDefaultModel(BusinessCase businessCase) {
+        validateNotNull(businessCase, "businessCase");
+
+        Dataset dataset = getDataSet(businessCase);
+        return dataset.getDefaultModel();
     }
 
     private ContextRepository() {
@@ -105,226 +401,6 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         }
     }
 
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#getRawContext(de.atb.context.common.util.ApplicationScenario, java.lang.String)
-     */
-    @Override
-    public synchronized ContextContainer getRawContext(ApplicationScenario applicationScenario, String contextId) {
-        if (applicationScenario == null) {
-            throw new NullPointerException("ApplicationScenario may not be null!");
-        }
-        return getRawContext(applicationScenario.getBusinessCase(), contextId);
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#getRawContext(de.atb.context.common.util.BusinessCase, java.lang.String)
-     */
-    @Override
-    public synchronized ContextContainer getRawContext(BusinessCase businessCase, String contextId) {
-        if (contextId == null) {
-            throw new NullPointerException("ContextId may not be null!");
-        }
-        if (contextId.trim().length() == 0) {
-            throw new IllegalArgumentException("ContextId may not be empty!");
-        }
-        if (businessCase == null) {
-            throw new NullPointerException("BusinessCase may not be null!");
-        }
-
-        String fileLocation = getLocationForBusinessCase(businessCase);
-        String fileName = String.format("%s%s%s.owl", fileLocation, File.separator, contextId);
-        File modelFile = new File(fileName);
-        if (modelFile.canRead()) {
-            OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
-            String absPath = String.valueOf(modelFile.toURI());
-            model.read(absPath);
-            ContextContainer context = new ContextContainer(model, false);
-            context.setIdentifier(contextId);
-            return prepareRawContextContainer(context);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#getContext(de.atb.context.common.util.BusinessCase, java.lang.String)
-     */
-    @Override
-    public synchronized ContextContainer getContext(ApplicationScenario applicationScenario, String contextId) {
-        if (contextId == null) {
-            throw new NullPointerException("ContextId may not be null!");
-        }
-        if (contextId.trim().length() == 0) {
-            throw new IllegalArgumentException("ContextId may not be empty!");
-        }
-        if (applicationScenario == null) {
-            throw new NullPointerException("ApplicationScenario may not be null!");
-        }
-        if (applicationScenario.getBusinessCase() == null) {
-            throw new NullPointerException("BusinessCase may not be null!");
-        }
-        return getRawContext(applicationScenario, contextId);
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.services.IContextRepositoryService#getContext(de.atb.context.common.util.BusinessCase, java.lang.String)
-     */
-    @Override
-    public synchronized ContextContainer getContext(BusinessCase businessCase, String contextId) {
-        if (contextId == null) {
-            throw new NullPointerException("ContextId may not be null!");
-        }
-        if (contextId.trim().length() == 0) {
-            throw new IllegalArgumentException("ContextId may not be empty!");
-        }
-        if (businessCase == null) {
-            throw new NullPointerException("BusinessCase may not be null!");
-        }
-
-        Model model = getDataSet(businessCase).getNamedModel(contextId);
-        OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
-        ontModel.add(model);
-
-        ContextContainer context = new ContextContainer(ontModel);
-        context.addDefaultNamespaces();
-        context.setIdentifier(contextId);
-        return prepareRawContextContainer(context);
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlSelectQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
-     */
-    @Override
-    public synchronized ResultSet executeSparqlSelectQuery(BusinessCase businessCase, String query) {
-        return executeSparqlSelectQuery(businessCase, query, false);
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlDescribeQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
-     */
-    @Override
-    public synchronized Model executeSparqlDescribeQuery(BusinessCase businessCase, String query) {
-        return executeSparqlDescribeQuery(businessCase, query, false);
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
-     */
-    @Override
-    public synchronized Model executeSparqlConstructQuery(BusinessCase businessCase, String query) {
-        return executeSparqlConstructQuery(businessCase, query, false);
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlAskQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
-     */
-    @Override
-    public synchronized Boolean executeSparqlAskQuery(BusinessCase businessCase, String query) {
-        return executeSparqlAskQuery(businessCase, query, false);
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlAskQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
-     */
-    @Override
-    public synchronized Boolean executeSparqlAskQuery(BusinessCase businessCase, String query, boolean useReasoner) {
-        return executeSparql(businessCase, query, useReasoner, QueryExecution::execAsk);
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlSelectQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
-     */
-    @Override
-    public synchronized ResultSet executeSparqlSelectQuery(BusinessCase businessCase,
-                                                           String query,
-                                                           boolean useReasoner) {
-        return executeSparql(businessCase, query, useReasoner, QueryExecution::execSelect);
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlDescribeQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
-     */
-    @Override
-    public synchronized Model executeSparqlDescribeQuery(BusinessCase businessCase, String query, boolean useReasoner) {
-        return executeSparql(businessCase, query, useReasoner, QueryExecution::execDescribe);
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#executeSparqlConstructQuery(de.atb.context.common.util.BusinessCase, java.lang.String, boolean)
-     */
-    @Override
-    public synchronized Model executeSparqlConstructQuery(BusinessCase businessCase,
-                                                          String query,
-                                                          boolean useReasoner) {
-        return executeSparql(businessCase, query, useReasoner, QueryExecution::execConstruct);
-    }
-
-    private <R> R executeSparql(BusinessCase businessCase, String query, boolean useReasoner, Function<QueryExecution, R> executioner) {
-        if (businessCase == null) {
-            throw new NullPointerException("BusinessCase may not be null!");
-        }
-        Dataset dataset = getDataSet(businessCase);
-        dataset.begin(ReadWrite.READ);
-        try {
-            QueryExecution queryExecution = getQueryExecution(query, useReasoner, dataset);
-            R result = executioner.apply(queryExecution);
-            dataset.commit();
-            return result;
-        } catch (Exception e) {
-            ContextRepository.logger.error(e.getMessage(), e);
-            dataset.abort();
-            return null;
-        } finally {
-            dataset.end();
-        }
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#initializeRepository(de.atb.context.common.util.BusinessCase, java.lang.String)
-     */
-    @Override
-    public synchronized void initializeRepository(BusinessCase bc, String modelUri) {
-        logger.info("Initializing repository for BusinessCase '{}', loading from url '{}'", bc, modelUri);
-        createDefaultModel(OntModel.class, bc, modelUri, false);
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#getDefaultModel(de.atb.context.common.util.BusinessCase)
-     */
-    @Override
-    public synchronized Model getDefaultModel(BusinessCase businessCase) {
-        Dataset dataset = getDataSet(businessCase);
-        return dataset.getDefaultModel();
-    }
-
     private synchronized ContextContainer prepareRawContextContainer(ContextContainer container) {
         ApplicationScenario applicationScenario = container.inferApplicationScenario();
         container.setApplicationScenario(applicationScenario);
@@ -339,153 +415,8 @@ public final class ContextRepository extends RepositoryTDB<ContextContainer> imp
         return container;
     }
 
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.ApplicationScenario, int)
-     */
-    @Override
-    public synchronized List<String> getLastContextsIds(ApplicationScenario applicationScenario, int count) {
-        String queryString = String.format(
-            "SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x} ORDER BY DESC(?x) LIMIT %6$d",
-            BaseOntologyClasses.Context,
-            BaseDatatypeProperties.Identifier,
-            BaseDatatypeProperties.ApplicationScenarioIdentifier,
-            applicationScenario.toString(),
-            BaseDatatypeProperties.CapturedAt,
-            count
-        );
-
-        return getLastIds(queryString, applicationScenario.getBusinessCase());
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.ApplicationScenario, de.atb.context.common.util.TimeFrame)
-     */
-    @Override
-    public synchronized List<String> getLastContextsIds(ApplicationScenario applicationScenario, TimeFrame timeFrame) {
-        String queryString = String.format(
-            "SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x . ?x <= %6$s . ?x >= %7$s} ORDER BY DESC(?x)",
-            BaseOntologyClasses.Context,
-            BaseDatatypeProperties.Identifier,
-            BaseDatatypeProperties.ApplicationScenarioIdentifier,
-            applicationScenario.toString(),
-            BaseDatatypeProperties.CapturedAt,
-            timeFrame.getXSDLexicalFormForStartTime(),
-            timeFrame.getXSDLexicalFormForEndTime()
-        );
-
-        return getLastIds(queryString, applicationScenario.getBusinessCase());
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.BusinessCase, int)
-     */
-    @Override
-    public synchronized List<String> getLastContextsIds(BusinessCase bc, int count) {
-        String queryString = String.format(
-            "SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x} ORDER BY DESC(?x) LIMIT %6$d",
-            BaseOntologyClasses.Context,
-            BaseDatatypeProperties.Identifier,
-            BaseDatatypeProperties.BusinessCaseIdentifier,
-            bc.toString(),
-            BaseDatatypeProperties.CapturedAt,
-            count
-        );
-
-        return getLastIds(queryString, bc);
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.context.IContextRepository#getLastContextsIds(de.atb.context.common.util.BusinessCase, de.atb.context.common.util.TimeFrame)
-     */
-    @Override
-    public synchronized List<String> getLastContextsIds(BusinessCase bc, TimeFrame timeFrame) {
-        String queryString = String.format(
-            "SELECT ?identifier WHERE {?c rdf:type :%1$s . ?c :%2$s ?identifier . ?c :%3$s \"%4$s\"^^xsd:string . ?c :%5$s ?x . ?x <= %6$s . ?x >= %7$s} ORDER BY DESC(?x)",
-            BaseOntologyClasses.Context,
-            BaseDatatypeProperties.Identifier,
-            BaseDatatypeProperties.BusinessCaseIdentifier,
-            bc.toString(),
-            BaseDatatypeProperties.CapturedAt,
-            timeFrame.getXSDLexicalFormForStartTime(),
-            timeFrame.getXSDLexicalFormForEndTime()
-        );
-
-        return getLastIds(queryString, bc);
-    }
-
-    private synchronized List<String> getLastIds(String queryString, BusinessCase bc) throws QueryException {
-        List<String> ids = new ArrayList<>();
-        try {
-            String finalQuery = prepareSparqlQuery(queryString);
-            Dataset ds = getDataSet(bc);
-            ds.begin(ReadWrite.WRITE);
-            ResultSet set = executeSelectSparqlQuery(finalQuery, ds.getDefaultModel());
-            while (set.hasNext()) {
-                QuerySolution solution = set.nextSolution();
-                Literal literal = solution.getLiteral("identifier");
-                if (literal != null) {
-                    ids.add(literal.getString());
-                }
-            }
-            ds.commit();
-            ds.end();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-        return ids;
-    }
-
-    private ResultSet executeSelectSparqlQuery(String sparqlQuery, Model model) {
-        Query query = QueryFactory.create(sparqlQuery);
-        QueryExecution qexec = QueryExecutionFactory.create(query, model);
-        logger.debug("Executing SparQL select query '" + query + "'");
-        return qexec.execSelect();
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.common.IPersistenceUnit#persist(IApplicationScenarioProvider)
-     */
-    @Override
-    public void persist(ContextContainer context) {
-        if (context == null) {
-            throw new NullPointerException("Context may not be null!");
-        }
-
-        if (context.getApplicationScenario() == null) {
-            throw new NullPointerException("ApplicationScenario for Context may not be null!");
-        }
-
-        if (context.getBusinessCase() == null) {
-            throw new NullPointerException("BusinessCase for Context may not be null!");
-        }
-
-        if (context.getIdentifier() == null) {
-            throw new NullPointerException("Context Identifier may not be null!");
-        }
-
-        if (context.getIdentifier().trim().length() < 1) {
-            throw new IllegalArgumentException("Context Identifier may not be empty!");
-        }
-        logger.debug(
-            "Persisting context '{}' for {} in BC {}",
-            context.getIdentifier(),
-            context.getApplicationScenario(),
-            context.getBusinessCase()
-        );
-        triggerPreProcessors(context.getApplicationScenario(), context);
-        persistRawContext(context);
-        persistReasonableContext(context);
-        persistNamedContext(context);
-        triggerPostProcessors(context.getApplicationScenario(), context);
+    private synchronized List<String> getLastIds(String queryString, BusinessCase businessCase) throws QueryException {
+        final String query = prepareSparqlQuery(queryString);
+        return getIds(businessCase, query, "identifier");
     }
 }

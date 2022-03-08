@@ -14,8 +14,8 @@ package de.atb.context.common.util;
  * #L%
  */
 
-import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.ResourceFactory;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
@@ -24,57 +24,46 @@ import thewebsemantic.RdfType;
  *
  * @author scholze
  * @version $LastChangedRevision: 417 $
- *
  */
 public class SPARQLHelper {
-	private SPARQLHelper() {}
+    private SPARQLHelper() {
+    }
 
-	public static String appendDefaultPrefixes(final String sparqlQuery) {
+    public static String appendDefaultPrefixes(final String sparqlQuery) {
         return SPARQLPrefixMappings.getAllAsPrefixString() + sparqlQuery;
-	}
+    }
 
-	public static synchronized <T> String getRdfNamespace(
-			final Class<T> clazz) {
-		final Namespace namespaceAnnotation = clazz
-				.getAnnotation(Namespace.class);
-		if (namespaceAnnotation == null) {
-			throw new IllegalArgumentException(
-					"Clazz must be annotated with thewebsemantic.Namespace annotation.");
-		}
-		return namespaceAnnotation.value().endsWith("/") ? namespaceAnnotation
-				.value() : namespaceAnnotation.value() + "/";
-	}
+    public static synchronized <T> String getRdfNamespace(final Class<T> clazz) {
+        final Namespace namespaceAnnotation = clazz.getAnnotation(Namespace.class);
+        if (namespaceAnnotation == null) {
+            throw new IllegalArgumentException("Clazz must be annotated with thewebsemantic.Namespace annotation.");
+        }
+        return namespaceAnnotation.value().endsWith("/")
+            ? namespaceAnnotation.value()
+            : namespaceAnnotation.value() + "/";
+    }
 
-	public static synchronized <T> String getRdfType(final Class<T> clazz) {
-		final RdfType typeAnnotation = clazz.getAnnotation(RdfType.class);
-		if (typeAnnotation == null) {
-			throw new IllegalArgumentException(
-					"Clazz must be annotated with thewebsemantic.RdfType annotation.");
-		}
-		return typeAnnotation.value();
-	}
+    public static synchronized <T> String getRdfType(final Class<T> clazz) {
+        final RdfType typeAnnotation = clazz.getAnnotation(RdfType.class);
+        if (typeAnnotation == null) {
+            throw new IllegalArgumentException("Clazz must be annotated with thewebsemantic.RdfType annotation.");
+        }
+        return typeAnnotation.value();
+    }
 
-	public static synchronized <T> String getRdfPropertyQualifier(
-            final Class<T> clazz, final String propertyName) {
-		return String.format("<%s%s>", SPARQLHelper.getRdfNamespace(clazz),
-				propertyName);
-	}
+    public static synchronized <T> String getRdfPropertyQualifier(final Class<T> clazz, final String propertyName) {
+        return String.format("<%s%s>", SPARQLHelper.getRdfNamespace(clazz), propertyName);
+    }
 
-	public static synchronized <T> Property createProperty(
-            final Class<T> clazz, final String propertyName) {
-		return ResourceFactory.createProperty(String.format("%s%s",
-				SPARQLHelper.getRdfNamespace(clazz), propertyName));
-	}
+    public static synchronized <T> Property createProperty(final Class<T> clazz, final String propertyName) {
+        return ResourceFactory.createProperty(String.format("%s%s", SPARQLHelper.getRdfNamespace(clazz), propertyName));
+    }
 
-	public static synchronized <T> String getRdfClassQualifier(
-			final Class<T> clazz) {
-		return String.format("<%s%s>", SPARQLHelper.getRdfNamespace(clazz),
-				SPARQLHelper.getRdfType(clazz));
-	}
+    public static synchronized <T> String getRdfClassQualifier(final Class<T> clazz) {
+        return String.format("<%s%s>", SPARQLHelper.getRdfNamespace(clazz), SPARQLHelper.getRdfType(clazz));
+    }
 
-	public static synchronized <T> String getRdfClassQualifierWithoutBraces(
-			final Class<T> clazz) {
-		return String.format("%s%s", SPARQLHelper.getRdfNamespace(clazz),
-				SPARQLHelper.getRdfType(clazz));
-	}
+    public static synchronized <T> String getRdfClassQualifierWithoutBraces(final Class<T> clazz) {
+        return String.format("%s%s", SPARQLHelper.getRdfNamespace(clazz), SPARQLHelper.getRdfType(clazz));
+    }
 }
