@@ -78,7 +78,6 @@ public abstract class MonitoringDataRepositoryHelper<Type extends IMonitoringDat
      *              prepared before execution.
      * @return the ResultSet as a result of the exeuction of the given SparQL
      * SELECT query.
-     * @see MonitoringDataRepository#prepareSparqlQuery(BusinessCase, String)
      */
     public final ResultSet executeSparqlSelectQuery(final String query) {
         return repos.executeSparqlSelectQuery(businessCase, query);
