@@ -20,7 +20,7 @@ public class GitlabDataSourceTest {
     @Test
     public void configFileShouldBeDeserializedToCorrectGitlabDataSource() {
         final String expectedId = "datasource-gitlab";
-        final String expectedMonitor = "de.atb.context.monitoring.monitors.GitMonitor";
+        final String expectedMonitor = "de.atb.context.monitoring.monitors.GitlabCommitMonitor";
         final String expectedUri = "https://gitlab.example.com/api/v4";
         final String expectedAccessToken = "foobar";
         final String expectedMessageBrokerHost = "localhost";
