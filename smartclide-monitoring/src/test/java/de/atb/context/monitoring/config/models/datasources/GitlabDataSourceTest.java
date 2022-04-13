@@ -5,6 +5,9 @@ import de.atb.context.monitoring.config.models.DataSource;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,8 +30,14 @@ public class GitlabDataSourceTest {
         final String expectedMessageBrokerExchange = "smartclide-monitoring";
         final String expectedMessageBrokerTopicReceive = "monitoring.git.*";
         final String expectedMessageBrokerTopicSend = "dle.git.commits";
+        URI temp = null;
+        try {
+            temp = this.getClass().getResource("/config/gitlab-monitoring").toURI();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
         final String configDirPath =
-                Objects.requireNonNull(this.getClass().getResource("/config/gitlab-monitoring")).getPath();
+                Objects.requireNonNull(Paths.get(temp).toString());
         final String configFileName = "monitoring-config.xml";
 
         final MonitoringConfiguration config = MonitoringConfiguration.getInstance(configFileName, configDirPath);
