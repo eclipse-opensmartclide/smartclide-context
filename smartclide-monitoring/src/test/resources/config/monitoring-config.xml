@@ -12,7 +12,7 @@
                     monitor="de.atb.context.monitoring.monitors.GitMonitor"
                     uri=""
                     options="server=localhost&amp;port=5672&amp;exchange=smartclide-monitoring&amp;topic=monitoring.git.*&amp;dle-topic=dle.git.commits"
-                    class="de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSource"/>
+                    class="de.atb.context.monitoring.config.models.datasources.GitlabDataSource"/>
     </datasources>
 
     <interpreters>
