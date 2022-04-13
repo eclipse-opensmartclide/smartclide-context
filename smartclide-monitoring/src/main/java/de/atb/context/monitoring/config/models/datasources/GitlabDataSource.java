@@ -60,19 +60,15 @@ public class GitlabDataSource extends WebServiceDataSource {
         return this.getOptionValue(MessageBrokerDataSourceOptions.MessageBrokerServer, true);
     }
 
-    public final Integer getMessageBrokerPort() { return this.getOptionValue(MessageBrokerDataSourceOptions.MessageBrokerPort, true);
+    public final Integer getMessageBrokerPort() {
+        return this.getOptionValue(MessageBrokerDataSourceOptions.MessageBrokerPort, true);
     }
 
     public final String getExchange() {
         return this.getOptionValue(MessageBrokerDataSourceOptions.Exchange, true);
     }
 
-    public final String getTopic() {
-        return this.getOptionValue(MessageBrokerDataSourceOptions.Topic, true);
+    public final String getOutTopic() {
+        return this.getOptionValue(MessageBrokerDataSourceOptions.OutTopic, true);
     }
-
-    public final String getDleTopic() {
-        return this.getOptionValue(MessageBrokerDataSourceOptions.DleTopic, true);
-    }
-
 }

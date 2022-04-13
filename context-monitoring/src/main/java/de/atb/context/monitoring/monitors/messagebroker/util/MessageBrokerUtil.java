@@ -14,22 +14,17 @@ package de.atb.context.monitoring.monitors.messagebroker.util;
  * #L%
  */
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
-import java.util.concurrent.TimeoutException;
-
 import com.google.gson.Gson;
-import com.rabbitmq.client.BuiltinExchangeType;
-import com.rabbitmq.client.CancelCallback;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.*;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Helper class wrapping methods for interacting with message broker.
@@ -112,12 +107,12 @@ public class MessageBrokerUtil {
      * @see MessageBrokerUtil#connectToTopicExchange(String, int, String, String, String)
      */
     public static Channel connectToTopicExchange(final MessageBrokerDataSource dataSource)
-            throws IOException, TimeoutException {
+        throws IOException, TimeoutException {
         return connectToTopicExchange(dataSource.getMessageBrokerServer(),
-                                      dataSource.getMessageBrokerPort(),
-                                      dataSource.getUserName(),
-                                      dataSource.getPassword(),
-                                      dataSource.getExchange());
+            dataSource.getMessageBrokerPort(),
+            dataSource.getUserName(),
+            dataSource.getPassword(),
+            dataSource.getExchange());
     }
 
     /**
@@ -166,11 +161,11 @@ public class MessageBrokerUtil {
                                                final DeliverCallback deliverCallback,
                                                final CancelCallback cancelCallback) throws IOException {
         registerListenerOnTopic(channel,
-                                dataSource.getExchange(),
-                                dataSource.getTopic(),
-                                dataSource.getId(),
-                                deliverCallback,
-                                cancelCallback);
+            dataSource.getExchange(),
+            dataSource.getInTopic(),
+            dataSource.getId(),
+            deliverCallback,
+            cancelCallback);
     }
 
     /**

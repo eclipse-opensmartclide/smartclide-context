@@ -36,9 +36,9 @@ public enum MessageBrokerDataSourceOptions implements IDataSourceOptionValue {
 
     Exchange("exchange", String.class),
 
-    Topic("topic", String.class),
+    InTopic("incoming-topic", String.class),
 
-	DleTopic("dle-topic", String.class);
+	OutTopic("outgoing-topic", String.class);
 
 	private final String key;
 	private final Class<? extends Serializable> valueType;

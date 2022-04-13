@@ -12,7 +12,7 @@
                     type="gitlab"
                     monitor="de.atb.context.monitoring.monitors.GitlabCommitMonitor"
                     uri="https://gitlab.example.com/api/v4"
-                    options="token=foobar&amp;server=localhost&amp;port=5672&amp;username=username&amp;password=password&amp;exchange=smartclide-monitoring&amp;topic=monitoring.git.*&amp;dle-topic=dle.git.commits"
+                    options="token=foobar&amp;server=localhost&amp;port=5672&amp;username=username&amp;password=password&amp;exchange=smartclide-monitoring&amp;outgoing-topic=dle.git.commits"
                     class="de.atb.context.monitoring.config.models.datasources.GitlabDataSource"/>
     </datasources>
 

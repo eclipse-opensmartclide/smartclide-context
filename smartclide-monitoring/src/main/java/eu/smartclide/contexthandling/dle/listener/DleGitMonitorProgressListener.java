@@ -43,19 +43,20 @@ public class DleGitMonitorProgressListener implements MonitoringProgressListener
     public DleGitMonitorProgressListener(final MessageBrokerDataSource messageBrokerDataSource)
             throws IOException, TimeoutException {
         exchange = messageBrokerDataSource.getExchange();
-        topic = messageBrokerDataSource.getDleTopic();
+        topic = messageBrokerDataSource.getOutTopic();
         channel = MessageBrokerUtil.connectToTopicExchange(messageBrokerDataSource);
     }
 
-    public DleGitMonitorProgressListener(final GitlabDataSource gitlabDataSource)
-        throws IOException, TimeoutException {
+    public DleGitMonitorProgressListener(final GitlabDataSource gitlabDataSource) throws IOException, TimeoutException {
         exchange = gitlabDataSource.getExchange();
-        topic = gitlabDataSource.getDleTopic();
-        channel = MessageBrokerUtil.connectToTopicExchange(gitlabDataSource.getMessageBrokerServer(),
-                                                            gitlabDataSource.getMessageBrokerPort(),
-                                                            gitlabDataSource.getUserName(),
-                                                            gitlabDataSource.getPassword(),
-                                                            gitlabDataSource.getExchange());
+        topic = gitlabDataSource.getOutTopic();
+        channel = MessageBrokerUtil.connectToTopicExchange(
+                gitlabDataSource.getMessageBrokerServer(),
+                gitlabDataSource.getMessageBrokerPort(),
+                gitlabDataSource.getUserName(),
+                gitlabDataSource.getPassword(),
+                gitlabDataSource.getExchange()
+        );
     }
 
     @Override
@@ -83,10 +84,10 @@ public class DleGitMonitorProgressListener implements MonitoringProgressListener
     private DleMessage convertToDleMessage(final GitMessage gitMessage) {
         return DleMessage.builder()
                 .monitor(CommitMessage.builder()
-                                 .user(gitMessage.getUser())
-                                 .branch(gitMessage.getBranch())
-                                 .files(gitMessage.getNoOfModifiedFiles())
-                                 .build())
+                        .user(gitMessage.getUser())
+                        .branch(gitMessage.getBranch())
+                        .files(gitMessage.getNoOfModifiedFiles())
+                        .build())
                 .build();
     }
 
