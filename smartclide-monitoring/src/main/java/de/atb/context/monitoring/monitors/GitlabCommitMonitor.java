@@ -32,7 +32,6 @@ public class GitlabCommitMonitor extends WebServiceMonitor {
                                final AmIMonitoringConfiguration configuration) throws IOException, TimeoutException {
         super(dataSource, interpreter, monitor, indexer, configuration);
 
-        // FIXME: this is a temporary workaround and should be removed!
-        //addProgressListener(new DleGitMonitorProgressListener((WebServiceDataSource) dataSource));
+        //addProgressListener(new DleGitMonitorProgressListener((GitlabDataSource) dataSource));
     }
 }

@@ -35,8 +35,6 @@ import thewebsemantic.RdfType;
 @Namespace("http://atb-bremen.de/")
 public class MessageBrokerDataSource extends DataSource {
 
-	private static final long serialVersionUID = 3490943354053238739L;
-
 	public MessageBrokerDataSource() {
 	}
 

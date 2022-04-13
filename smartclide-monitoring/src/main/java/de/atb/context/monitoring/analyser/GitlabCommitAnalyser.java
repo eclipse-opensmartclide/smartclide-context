@@ -19,8 +19,8 @@ import de.atb.context.monitoring.analyser.webservice.WebServiceAnalyser;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.InterpreterConfiguration;
 import de.atb.context.monitoring.index.Indexer;
+import de.atb.context.monitoring.models.GitDataModel;
 import de.atb.context.monitoring.models.GitMessage;
-import de.atb.context.monitoring.models.GitlabCommitDataModel;
 import de.atb.context.monitoring.models.IWebService;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import org.apache.lucene.document.Document;
@@ -31,7 +31,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.List;
 
-public class GitlabCommitAnalyser extends WebServiceAnalyser<GitlabCommitDataModel> {
+public class GitlabCommitAnalyser extends WebServiceAnalyser<GitDataModel> {
 
     private static final Logger logger = LoggerFactory.getLogger(GitlabCommitAnalyser.class);
 
@@ -46,9 +46,9 @@ public class GitlabCommitAnalyser extends WebServiceAnalyser<GitlabCommitDataMod
     }
 
     @Override
-    public List<GitlabCommitDataModel> analyseObject(IWebService service) {
+    public List<GitDataModel> analyseObject(IWebService service) {
         try {
-            final GitlabCommitDataModel model = new GitlabCommitDataModel();
+            final GitDataModel model = new GitDataModel();
             URI gitlabEndpoint = service.getURI();
 
             // TODO "NEED TO BE IMPLEMENTED"

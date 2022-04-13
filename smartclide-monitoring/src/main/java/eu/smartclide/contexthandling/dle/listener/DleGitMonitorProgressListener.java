@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.Channel;
+import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSource;
 import de.atb.context.monitoring.events.MonitoringProgressListener;
 import de.atb.context.monitoring.models.GitDataModel;
@@ -44,6 +45,17 @@ public class DleGitMonitorProgressListener implements MonitoringProgressListener
         exchange = messageBrokerDataSource.getExchange();
         topic = messageBrokerDataSource.getDleTopic();
         channel = MessageBrokerUtil.connectToTopicExchange(messageBrokerDataSource);
+    }
+
+    public DleGitMonitorProgressListener(final GitlabDataSource gitlabDataSource)
+        throws IOException, TimeoutException {
+        exchange = gitlabDataSource.getExchange();
+        topic = gitlabDataSource.getDleTopic();
+        channel = MessageBrokerUtil.connectToTopicExchange(gitlabDataSource.getMessageBrokerServer(),
+                                                            gitlabDataSource.getMessageBrokerPort(),
+                                                            gitlabDataSource.getUserName(),
+                                                            gitlabDataSource.getPassword(),
+                                                            gitlabDataSource.getExchange());
     }
 
     @Override

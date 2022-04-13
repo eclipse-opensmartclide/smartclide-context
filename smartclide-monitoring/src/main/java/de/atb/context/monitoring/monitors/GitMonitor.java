@@ -20,6 +20,7 @@ import java.util.concurrent.TimeoutException;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.Interpreter;
 import de.atb.context.monitoring.config.models.Monitor;
+import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSource;
 import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.monitors.messagebroker.MessageBrokerMonitor;
@@ -35,6 +36,6 @@ public class GitMonitor extends MessageBrokerMonitor {
         super(dataSource, interpreter, monitor, indexer, configuration);
 
         // FIXME: this is a temporary workaround and should be removed!
-        addProgressListener(new DleGitMonitorProgressListener((MessageBrokerDataSource) dataSource));
+        addProgressListener(new DleGitMonitorProgressListener((GitlabDataSource) dataSource));
     }
 }
