@@ -14,11 +14,6 @@ package de.atb.context.monitoring.monitors.messagebroker.util;
  * #L%
  */
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
-import java.util.concurrent.TimeoutException;
-
 import com.google.gson.Gson;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.CancelCallback;
@@ -30,6 +25,11 @@ import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSour
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Helper class wrapping methods for interacting with message broker.
@@ -58,22 +58,7 @@ public class MessageBrokerUtil {
                                                  final String userName,
                                                  final String password,
                                                  final String exchange) throws IOException, TimeoutException {
-        LOGGER.info("Connecting to messagebroker {}:{} with user {}", host, port, userName != null ? userName : "<null>");
-        final ConnectionFactory factory = new ConnectionFactory();
-
-        factory.setHost(host);
-        factory.setPort(port);
-
-        if (StringUtils.isNotBlank(userName)) {
-            factory.setUsername(userName);
-        }
-        if (StringUtils.isNotBlank(password)) {
-            factory.setPassword(password);
-        }
-
-        factory.setAutomaticRecoveryEnabled(true);
-
-        final Connection connection = factory.newConnection();
+        final Connection connection = getConnection(host, port, userName, password);
 
         final Channel channel = connection.createChannel();
 
@@ -81,24 +66,6 @@ public class MessageBrokerUtil {
         channel.exchangeDeclare(exchange, BuiltinExchangeType.TOPIC, true);
 
         return channel;
-    }
-
-    /**
-     * Connect to the message broker specified by {@code host} and {@code port}.
-     * Create the given {@code exchange} if it does not exist yet.
-     *
-     * @param host     the host where the message broker is running
-     * @param port     the port where the message broker is listening
-     * @param exchange the topic exchange's name
-     * @return a {@link Channel} object representing the established connection to the message broker
-     * @throws IOException      in case of error
-     * @throws TimeoutException in case of error
-     * @see MessageBrokerUtil#connectToTopicExchange(String, int, String, String, String)
-     */
-    public static Channel connectToTopicExchange(final String host,
-                                                 final int port,
-                                                 final String exchange) throws IOException, TimeoutException {
-        return connectToTopicExchange(host, port, null, null, exchange);
     }
 
     /**
@@ -112,12 +79,43 @@ public class MessageBrokerUtil {
      * @see MessageBrokerUtil#connectToTopicExchange(String, int, String, String, String)
      */
     public static Channel connectToTopicExchange(final MessageBrokerDataSource dataSource)
-            throws IOException, TimeoutException {
-        return connectToTopicExchange(dataSource.getMessageBrokerServer(),
-                                      dataSource.getMessageBrokerPort(),
-                                      dataSource.getUserName(),
-                                      dataSource.getPassword(),
-                                      dataSource.getExchange());
+        throws IOException, TimeoutException {
+        return connectToTopicExchange(
+            dataSource.getMessageBrokerServer(),
+            dataSource.getMessageBrokerPort(),
+            dataSource.getUserName(),
+            dataSource.getPassword(),
+            dataSource.getExchange()
+        );
+    }
+
+    /**
+     * Connect to the message broker specified by {@code host} and {@code port}
+     * with the credentials specified by {@code userName} and {@code password}.
+     * Create the given {@code queue} if it does not exist yet.
+     *
+     * @param host     the host where the message broker is running
+     * @param port     the port where the message broker is listening
+     * @param userName the username to use when connecting to message broker - optional
+     * @param password the password to use when connecting to message broker - optional
+     * @param queue    the queue's name
+     * @return a {@link Channel} object representing the established connection to the message broker
+     * @throws IOException      in case of error
+     * @throws TimeoutException in case of error
+     */
+    public static Channel connectToQueue(final String host,
+                                         final int port,
+                                         final String userName,
+                                         final String password,
+                                         final String queue) throws IOException, TimeoutException {
+        final Connection connection = getConnection(host, port, userName, password);
+
+        final Channel channel = connection.createChannel();
+
+        LOGGER.info("Creating queue {}", queue);
+        channel.queueDeclare(queue, true, false, false, null);
+
+        return channel;
     }
 
     /**
@@ -165,12 +163,14 @@ public class MessageBrokerUtil {
                                                final MessageBrokerDataSource dataSource,
                                                final DeliverCallback deliverCallback,
                                                final CancelCallback cancelCallback) throws IOException {
-        registerListenerOnTopic(channel,
-                                dataSource.getExchange(),
-                                dataSource.getTopic(),
-                                dataSource.getId(),
-                                deliverCallback,
-                                cancelCallback);
+        registerListenerOnTopic(
+            channel,
+            dataSource.getExchange(),
+            dataSource.getTopic(),
+            dataSource.getId(),
+            deliverCallback,
+            cancelCallback
+        );
     }
 
     /**
@@ -191,14 +191,46 @@ public class MessageBrokerUtil {
                                              final String topic,
                                              final Object payload) throws IOException {
         final String jsonMessage = GSON.toJson(payload);
-        sendToTopic(channel, exchange, topic, jsonMessage);
-    }
-
-    private static void sendToTopic(final Channel channel,
-                                    final String exchange,
-                                    final String topic,
-                                    final String jsonMessage) throws IOException {
         LOGGER.info("Publishing message to topic {}/{}: {}", exchange, topic, jsonMessage);
         channel.basicPublish(exchange, topic, null, jsonMessage.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Converts the given {@code payload} object to a JSON string and sends it to the given {@code queue}.
+     * <p>
+     * Use {@link MessageBrokerUtil#connectToQueue(String, int, String, String, String)} to create {@link Channel}.
+     *
+     * @param channel the {@link Channel} object representing the established connection to the message broker
+     * @param queue   the queue's name
+     * @param payload the object to send
+     * @throws IOException in case of error
+     */
+    public static void convertAndSendToQueue(final Channel channel, final String queue, final Object payload)
+        throws IOException {
+        final String jsonMessage = GSON.toJson(payload);
+        LOGGER.info("Publishing message to queue {}: {}", queue, jsonMessage);
+        channel.basicPublish("", queue, null, jsonMessage.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static Connection getConnection(final String host,
+                                            final int port,
+                                            final String userName,
+                                            final String password) throws IOException, TimeoutException {
+        LOGGER.info("Connecting to messagebroker {}:{} with user {}", host, port, userName != null ? userName : "<null>");
+        final ConnectionFactory factory = new ConnectionFactory();
+
+        factory.setHost(host);
+        factory.setPort(port);
+
+        if (StringUtils.isNotBlank(userName)) {
+            factory.setUsername(userName);
+        }
+        if (StringUtils.isNotBlank(password)) {
+            factory.setPassword(password);
+        }
+
+        factory.setAutomaticRecoveryEnabled(true);
+
+        return factory.newConnection();
     }
 }

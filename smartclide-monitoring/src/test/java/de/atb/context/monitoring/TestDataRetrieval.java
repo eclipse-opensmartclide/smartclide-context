@@ -1,15 +1,5 @@
 package de.atb.context.monitoring;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeoutException;
-
 import com.rabbitmq.client.Channel;
 import de.atb.context.common.ContextPathUtils;
 import de.atb.context.common.util.ApplicationScenario;
@@ -31,6 +21,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.RabbitMQContainer;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeoutException;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -44,10 +44,9 @@ public class TestDataRetrieval {
     private static final Logger logger = LoggerFactory.getLogger(TestDataRetrieval.class);
 
     private static final String RABBITMQ_3_ALPINE = "rabbitmq:3-alpine";
-    private static final String EXCHANGE_NAME = "smartclide-monitoring";
+    private static final String EXCHANGE_NAME = "mom";
     private static final String ROUTING_KEY_MONITORING = "monitoring.git.commits";
-    private static final String ROUTING_KEY_DLE = "dle.git.commits";
-    private static final String QUEUE_PREFIX_DLE = "Fake-DLE";
+    private static final String QUEUE_NAME_DLE = "code_repo_recommendation_queue";
     private static final String DATASOURCE_GIT = "datasource-git";
     private static final String MONITORING_CONFIG_FILE_NAME = "monitoring-config.xml";
     private static final String AMI_REPOSITORY_ID = "AmI-repository";
@@ -66,10 +65,16 @@ public class TestDataRetrieval {
         // setup message broker
         final String rabbitMQContainerHost = container.getHost();
         final Integer rabbitMQContainerAmqpPort = container.getAmqpPort();
-        channel = MessageBrokerUtil.connectToTopicExchange(rabbitMQContainerHost, rabbitMQContainerAmqpPort, EXCHANGE_NAME);
+        channel = MessageBrokerUtil.connectToTopicExchange(
+                rabbitMQContainerHost,
+                rabbitMQContainerAmqpPort,
+                null,
+                null,
+                EXCHANGE_NAME
+        );
 
         // setup fake DLE
-        createFakeDleListener();
+        createFakeDleListener(rabbitMQContainerHost, rabbitMQContainerAmqpPort);
 
         // write dynamically allocated message broker host and port to monitoring config file
         final Path monitoringConfigFilePath = ContextPathUtils.getConfigDirPath().resolve(MONITORING_CONFIG_FILE_NAME);
@@ -145,15 +150,20 @@ public class TestDataRetrieval {
         persister.write(config, new File(monitoringConfig.toString()));
     }
 
-    private void createFakeDleListener() throws IOException {
-        MessageBrokerUtil.registerListenerOnTopic(
-                channel,
-                EXCHANGE_NAME,
-                ROUTING_KEY_DLE,
-                QUEUE_PREFIX_DLE,
+    private void createFakeDleListener(final String rabbitMQContainerHost, final Integer rabbitMQContainerAmqpPort)
+            throws IOException, TimeoutException {
+        final Channel channel = MessageBrokerUtil.connectToQueue(
+                rabbitMQContainerHost,
+                rabbitMQContainerAmqpPort,
+                null,
+                null,
+                QUEUE_NAME_DLE
+        );
+        channel.basicConsume(
+                QUEUE_NAME_DLE,
+                true,
                 (t, m) -> logger.info("DLE received message: {}", new String(m.getBody(), StandardCharsets.UTF_8)),
                 (t) -> logger.info("cancelled!")
         );
     }
-
 }

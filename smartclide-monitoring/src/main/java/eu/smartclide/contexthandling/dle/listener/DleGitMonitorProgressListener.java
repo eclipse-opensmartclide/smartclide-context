@@ -14,10 +14,6 @@ package eu.smartclide.contexthandling.dle.listener;
  * #L%
  */
 
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.TimeoutException;
-
 import com.rabbitmq.client.Channel;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSource;
 import de.atb.context.monitoring.events.MonitoringProgressListener;
@@ -31,19 +27,27 @@ import org.apache.lucene.document.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeoutException;
+
 public class DleGitMonitorProgressListener implements MonitoringProgressListener<String, IMonitoringDataModel<?, ?>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DleGitMonitorProgressListener.class);
 
-    private final String topic;
-    private final String exchange;
+    private final String dleQueue;
     private final Channel channel;
 
     public DleGitMonitorProgressListener(final MessageBrokerDataSource messageBrokerDataSource)
             throws IOException, TimeoutException {
-        exchange = messageBrokerDataSource.getExchange();
-        topic = messageBrokerDataSource.getDleTopic();
-        channel = MessageBrokerUtil.connectToTopicExchange(messageBrokerDataSource);
+        dleQueue = messageBrokerDataSource.getDleTopic();
+        channel = MessageBrokerUtil.connectToQueue(
+                messageBrokerDataSource.getMessageBrokerServer(),
+                messageBrokerDataSource.getMessageBrokerPort(),
+                messageBrokerDataSource.getUserName(),
+                messageBrokerDataSource.getPassword(),
+                dleQueue
+        );
     }
 
     @Override
@@ -71,10 +75,10 @@ public class DleGitMonitorProgressListener implements MonitoringProgressListener
     private DleMessage convertToDleMessage(final GitMessage gitMessage) {
         return DleMessage.builder()
                 .monitor(CommitMessage.builder()
-                                 .user(gitMessage.getUser())
-                                 .branch(gitMessage.getBranch())
-                                 .files(gitMessage.getNoOfModifiedFiles())
-                                 .build())
+                        .user(gitMessage.getUser())
+                        .branch(gitMessage.getBranch())
+                        .files(gitMessage.getNoOfModifiedFiles())
+                        .build())
                 .build();
     }
 
@@ -82,9 +86,9 @@ public class DleGitMonitorProgressListener implements MonitoringProgressListener
         try {
             // simulate that actual context-extraction will take some time
             Thread.sleep(1000);
-            MessageBrokerUtil.convertAndSendToTopic(channel, exchange, topic, dleMessage);
+            MessageBrokerUtil.convertAndSendToQueue(channel, dleQueue, dleMessage);
         } catch (Exception e) {
-            LOGGER.error("Failed to send {} to {}/{}", dleMessage, exchange, topic, e);
+            LOGGER.error("Failed to send {} to {}/{}", dleMessage, "", dleQueue, e);
         }
     }
 }
