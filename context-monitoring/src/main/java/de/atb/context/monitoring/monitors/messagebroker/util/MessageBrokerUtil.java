@@ -99,6 +99,7 @@ public class MessageBrokerUtil {
      * @param userName the username to use when connecting to message broker - optional
      * @param password the password to use when connecting to message broker - optional
      * @param queue    the queue's name
+     * @param durable  whether the queue should be durable or not
      * @return a {@link Channel} object representing the established connection to the message broker
      * @throws IOException      in case of error
      * @throws TimeoutException in case of error
@@ -107,13 +108,14 @@ public class MessageBrokerUtil {
                                          final int port,
                                          final String userName,
                                          final String password,
-                                         final String queue) throws IOException, TimeoutException {
+                                         final String queue,
+                                         final boolean durable) throws IOException, TimeoutException {
         final Connection connection = getConnection(host, port, userName, password);
 
         final Channel channel = connection.createChannel();
 
         LOGGER.info("Creating queue {}", queue);
-        channel.queueDeclare(queue, true, false, false, null);
+        channel.queueDeclare(queue, durable, false, false, null);
 
         return channel;
     }
@@ -198,7 +200,8 @@ public class MessageBrokerUtil {
     /**
      * Converts the given {@code payload} object to a JSON string and sends it to the given {@code queue}.
      * <p>
-     * Use {@link MessageBrokerUtil#connectToQueue(String, int, String, String, String)} to create {@link Channel}.
+     * Use {@link MessageBrokerUtil#connectToQueue(String, int, String, String, String, boolean)}
+     * to create {@link Channel}.
      *
      * @param channel the {@link Channel} object representing the established connection to the message broker
      * @param queue   the queue's name

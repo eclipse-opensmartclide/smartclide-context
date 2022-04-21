@@ -46,7 +46,8 @@ public class DleGitMonitorProgressListener implements MonitoringProgressListener
                 messageBrokerDataSource.getMessageBrokerPort(),
                 messageBrokerDataSource.getUserName(),
                 messageBrokerDataSource.getPassword(),
-                dleQueue
+                dleQueue,
+                false
         );
     }
 

@@ -157,7 +157,8 @@ public class TestDataRetrieval {
                 rabbitMQContainerAmqpPort,
                 null,
                 null,
-                QUEUE_NAME_DLE
+                QUEUE_NAME_DLE,
+                false
         );
         channel.basicConsume(
                 QUEUE_NAME_DLE,
