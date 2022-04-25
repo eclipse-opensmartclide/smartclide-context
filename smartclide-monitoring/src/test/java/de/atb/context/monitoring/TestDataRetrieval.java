@@ -1,15 +1,5 @@
 package de.atb.context.monitoring;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeoutException;
-
 import com.rabbitmq.client.Channel;
 import de.atb.context.common.ContextPathUtils;
 import de.atb.context.common.util.ApplicationScenario;
@@ -31,6 +21,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.RabbitMQContainer;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeoutException;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -44,18 +44,17 @@ public class TestDataRetrieval {
     private static final Logger logger = LoggerFactory.getLogger(TestDataRetrieval.class);
 
     private static final String RABBITMQ_3_ALPINE = "rabbitmq:3-alpine";
-    private static final String EXCHANGE_NAME = "smartclide-monitoring";
+    private static final String EXCHANGE_NAME = "mom";
     private static final String ROUTING_KEY_MONITORING = "monitoring.git.commits";
-    private static final String ROUTING_KEY_DLE = "dle.git.commits";
-    private static final String QUEUE_PREFIX_DLE = "Fake-DLE";
+    private static final String QUEUE_NAME_DLE = "code_repo_recommendation_queue";
     private static final String DATASOURCE_GIT = "datasource-git";
-    private static final String DATASOURCE_GITLAB = "datasource-gitlab";
     private static final String MONITORING_CONFIG_FILE_NAME = "monitoring-config.xml";
     private static final String AMI_REPOSITORY_ID = "AmI-repository";
 
     private AmIMonitoringDataRepositoryServiceWrapper<GitDataModel> monitoringDataRepository;
 
-    private Channel channel;
+    private Channel fakeRmvChannel;
+    private Channel fakeDleChannel;
 
     // starts a new rabbitmq message broker in a docker container.
     // @Rule must be final.
@@ -67,15 +66,16 @@ public class TestDataRetrieval {
         // setup message broker
         final String rabbitMQContainerHost = container.getHost();
         final Integer rabbitMQContainerAmqpPort = container.getAmqpPort();
-        channel = MessageBrokerUtil.connectToTopicExchange(rabbitMQContainerHost, rabbitMQContainerAmqpPort, EXCHANGE_NAME);
+
+        // setup fake RMV
+        fakeRmvChannel = createFakeRmvPublisher(rabbitMQContainerHost, rabbitMQContainerAmqpPort);
 
         // setup fake DLE
-        createFakeDleListener();
+        fakeDleChannel = createFakeDleListener(rabbitMQContainerHost, rabbitMQContainerAmqpPort);
 
         // write dynamically allocated message broker host and port to monitoring config file
         final Path monitoringConfigFilePath = ContextPathUtils.getConfigDirPath().resolve(MONITORING_CONFIG_FILE_NAME);
-        updateMessageBrokerDataSource(monitoringConfigFilePath, DATASOURCE_GIT, rabbitMQContainerHost, rabbitMQContainerAmqpPort);
-        updateMessageBrokerDataSource(monitoringConfigFilePath, DATASOURCE_GITLAB, rabbitMQContainerHost, rabbitMQContainerAmqpPort);
+        updateMessageBrokerDataSource(monitoringConfigFilePath, rabbitMQContainerHost, rabbitMQContainerAmqpPort);
 
         // start service
         ServiceMain.startService();
@@ -96,43 +96,29 @@ public class TestDataRetrieval {
     public void tearDown() throws IOException, TimeoutException {
         monitoringDataRepository.shutdown();
 
-        if (channel != null) {
-            channel.close();
+        if (fakeDleChannel != null) {
+            fakeDleChannel.close();
+        }
+        if (fakeRmvChannel != null) {
+            fakeRmvChannel.close();
         }
     }
 
     @Test
-    public void testDataRetrieval() throws IOException, InterruptedException {
+    public void testDataRetrieval() throws InterruptedException {
         // wait for services to start
         Thread.sleep(10000);
 
-        final GitMessage gitMessage = GitMessage.builder()
-                .timestamp(ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
-                .user("user@smartclide.eu")
-                .repository("git@github.com:eclipse-researchlabs/smartclide-context.git")
-                .branch("branch")
-                .noOfCommitsInBranch(42)
-                .noOfModifiedFiles(3)
-                .noOfPushesInBranch(17)
-                .build();
-        MessageBrokerUtil.convertAndSendToTopic(channel, EXCHANGE_NAME, ROUTING_KEY_MONITORING, gitMessage);
+        final GitMessage gitMessage = sendFakeRmvMessage();
 
         Thread.sleep(10000);
 
-        // get the latest two entries of monitored data from the repository, one from each Analyser:
-        // * GitLabCommitAnalyser
-        // * GitAnalyser
+        // get the latest entry of monitored data from the repository
         final List<GitDataModel> data =
-                monitoringDataRepository.getMonitoringData(ApplicationScenario.getInstance(), GitDataModel.class, 2);
+                monitoringDataRepository.getMonitoringData(ApplicationScenario.getInstance(), GitDataModel.class, 1);
 
-        assertEquals(2, data.size());
-        // TODO: GitLabCommitAnalyser stores empty GitMessage in repository.
-        // This is a hack to get the supposedly correct GitMessage, which was stored by GitAnalyser
-        final List<GitMessage> gitMessages = data.stream()
-                .filter(gdm -> gdm.getGitMessages().stream().anyMatch(gm -> gm.getTimestamp() != null))
-                .findAny()
-                .map(GitDataModel::getGitMessages)
-                .orElseThrow(() -> new AssertionError("received data does not contain expected GitMessages"));
+        assertEquals(1, data.size());
+        final List<GitMessage> gitMessages = data.get(0).getGitMessages();
         assertEquals(1, gitMessages.size());
         final GitMessage fromRepo = gitMessages.get(0);
         assertEquals(gitMessage.getTimestamp(), fromRepo.getTimestamp());
@@ -144,28 +130,61 @@ public class TestDataRetrieval {
         assertEquals(gitMessage.getNoOfPushesInBranch(), fromRepo.getNoOfPushesInBranch());
     }
 
+    private GitMessage sendFakeRmvMessage() {
+        final GitMessage gitMessage = GitMessage.builder()
+                .timestamp(ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
+                .user("user@smartclide.eu")
+                .repository("git@github.com:eclipse-researchlabs/smartclide-context.git")
+                .branch("branch")
+                .noOfCommitsInBranch(42)
+                .noOfModifiedFiles(3)
+                .noOfPushesInBranch(17)
+                .build();
+        MessageBrokerUtil.convertAndSendToTopic(fakeRmvChannel, EXCHANGE_NAME, ROUTING_KEY_MONITORING, gitMessage);
+        logger.info("RMV sent message: {}", gitMessage);
+        return gitMessage;
+    }
+
     private void updateMessageBrokerDataSource(final Path monitoringConfig,
-                                               final String dataSourceId,
                                                final String host,
                                                final Integer port) throws Exception {
         final Persister persister = new Persister();
         final Config config = persister.read(Config.class, new File(monitoringConfig.toString()));
-        final Map<String, String> optionsMap = config.getDataSource(dataSourceId).getOptionsMap();
+        final Map<String, String> optionsMap = config.getDataSource(DATASOURCE_GIT).getOptionsMap();
         optionsMap.put(MessageBrokerDataSourceOptions.MessageBrokerServer.getKeyName(), host);
         optionsMap.put(MessageBrokerDataSourceOptions.MessageBrokerPort.getKeyName(), port.toString());
-        config.getDataSource(dataSourceId).setOptions(optionsMap);
+        config.getDataSource(DATASOURCE_GIT).setOptions(optionsMap);
         persister.write(config, new File(monitoringConfig.toString()));
     }
 
-    private void createFakeDleListener() throws IOException {
-        MessageBrokerUtil.registerListenerOnTopic(
-                channel,
+    private Channel createFakeRmvPublisher(final String rabbitMQContainerHost, final Integer rabbitMQContainerAmqpPort)
+            throws IOException, TimeoutException {
+        return MessageBrokerUtil.connectToTopicExchange(
+                rabbitMQContainerHost,
+                rabbitMQContainerAmqpPort,
+                null,
+                null,
                 EXCHANGE_NAME,
-                ROUTING_KEY_DLE,
-                QUEUE_PREFIX_DLE,
-                (t, m) -> logger.info("DLE received message: {}", new String(m.getBody(), StandardCharsets.UTF_8)),
-                (t) -> logger.info("cancelled!")
+                true
         );
     }
 
+    private Channel createFakeDleListener(final String rabbitMQContainerHost, final Integer rabbitMQContainerAmqpPort)
+            throws IOException, TimeoutException {
+        final Channel channel = MessageBrokerUtil.connectToQueue(
+                rabbitMQContainerHost,
+                rabbitMQContainerAmqpPort,
+                null,
+                null,
+                QUEUE_NAME_DLE,
+                false
+        );
+        channel.basicConsume(
+                QUEUE_NAME_DLE,
+                true,
+                (t, m) -> logger.info("DLE received message: {}", new String(m.getBody(), StandardCharsets.UTF_8)),
+                (t) -> logger.info("cancelled!")
+        );
+        return channel;
+    }
 }

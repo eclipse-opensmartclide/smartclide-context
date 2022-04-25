@@ -34,11 +34,19 @@ public enum MessageBrokerDataSourceOptions implements IDataSourceOptionValue {
 
 	Password("password", String.class),
 
-    Exchange("exchange", String.class),
+    IncomingExchange("incoming-exchange", String.class),
 
-    InTopic("incoming-topic", String.class),
+    IncomingTopic("incoming-topic", String.class),
 
-	OutTopic("outgoing-topic", String.class);
+    IncomingDurable("incoming-durable", Boolean.class),
+
+    OutgoingExchange("outgoing-exchange", String.class),
+
+	OutgoingTopic("outgoing-topic", String.class),
+
+    OutgoingQueue("outgoing-queue", String.class),
+
+    OutgoingDurable("outgoing-durable", Boolean.class);
 
 	private final String key;
 	private final Class<? extends Serializable> valueType;

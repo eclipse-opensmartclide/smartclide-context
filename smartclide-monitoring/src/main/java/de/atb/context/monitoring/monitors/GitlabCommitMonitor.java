@@ -21,17 +21,12 @@ import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.monitors.webservice.WebServiceMonitor;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-
 public class GitlabCommitMonitor extends WebServiceMonitor {
     public GitlabCommitMonitor(final DataSource dataSource,
                                final Interpreter interpreter,
                                final Monitor monitor,
                                final Indexer indexer,
-                               final AmIMonitoringConfiguration configuration) throws IOException, TimeoutException {
+                               final AmIMonitoringConfiguration configuration) {
         super(dataSource, interpreter, monitor, indexer, configuration);
-
-        //addProgressListener(new DleGitMonitorProgressListener((GitlabDataSource) dataSource));
     }
 }
