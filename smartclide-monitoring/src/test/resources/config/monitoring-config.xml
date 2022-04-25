@@ -4,30 +4,18 @@
         xsi:schemaLocation="http://www.atb-bremen.de monitoring-config.xsd">
 
     <indexes>
-        <index id="index-gitlab" location="target/test-classes/data/indexes/gitlab"/>
         <index id="index-git" location="target/test-classes/data/indexes/git"/>
     </indexes>
 
     <datasources>
-        <datasource id="datasource-gitlab"
-                    type="gitlab"
-                    monitor="de.atb.context.monitoring.monitors.GitlabCommitMonitor"
-                    uri="https://gitlab.example.com/api/v4"
-                    options="token=foobar&amp;server=localhost&amp;port=5672&amp;username=username&amp;password=password&amp;exchange=smartclide-monitoring&amp;outgoing-topic=dle.git.commits"
-                    class="de.atb.context.monitoring.config.models.datasources.GitlabDataSource"/>
         <datasource id="datasource-git" type="messagebroker"
                     monitor="de.atb.context.monitoring.monitors.GitMonitor"
                     uri=""
-                    options="server=localhost&amp;port=5672&amp;exchange=smartclide-monitoring&amp;incoming-topic=monitoring.git.*&amp;outgoing-topic=dle.git.commits"
+                    options="server=localhost&amp;port=5672&amp;incoming-exchange=mom&amp;incoming-topic=monitoring.git.*&amp;incoming-durable=true&amp;outgoing-queue=code_repo_recommendation_queue"
                     class="de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSource"/>
     </datasources>
 
     <interpreters>
-        <interpreter id="interpreter-gitlab">
-            <configuration type="*"
-                           parser="de.atb.context.monitoring.parser.GitlabCommitParser"
-                           analyser="de.atb.context.monitoring.analyser.GitlabCommitAnalyser"/>
-        </interpreter>
         <interpreter id="interpreter-git">
             <configuration type="*"
                            parser="de.atb.context.monitoring.parser.GitParser"
@@ -36,7 +24,6 @@
     </interpreters>
 
     <monitors>
-        <monitor id="monitor-gitlab" datasource="datasource-gitlab" interpreter="interpreter-gitlab" index="index-gitlab"/>
         <monitor id="monitor-git" datasource="datasource-git" interpreter="interpreter-git" index="index-git"/>
     </monitors>
 

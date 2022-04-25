@@ -14,8 +14,6 @@ package de.atb.context.monitoring.monitors.messagebroker;
  * #L%
  */
 
-import java.nio.charset.StandardCharsets;
-
 import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DeliverCallback;
@@ -33,6 +31,8 @@ import de.atb.context.monitoring.monitors.ScheduledExecutorThreadedMonitor;
 import de.atb.context.monitoring.monitors.messagebroker.util.MessageBrokerUtil;
 import de.atb.context.monitoring.parser.messagebroker.MessageBrokerParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * WebServiceMonitor
@@ -89,16 +89,32 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
                 this.parser = getParser(setting);
             }
 
-            final Channel channel = MessageBrokerUtil.connectToTopicExchange(dataSource);
-            MessageBrokerUtil.registerListenerOnTopic(channel, dataSource, deliverCallback, cancelCallback);
+            final Channel channel = MessageBrokerUtil.connectToTopicExchange(
+                dataSource.getMessageBrokerServer(),
+                dataSource.getMessageBrokerPort(),
+                dataSource.getUserName(),
+                dataSource.getPassword(),
+                dataSource.getIncomingExchange(),
+                dataSource.isIncomingDurable()
+            );
+            MessageBrokerUtil.registerListenerOnTopic(
+                channel,
+                dataSource.getIncomingExchange(),
+                dataSource.getIncomingTopic(),
+                dataSource.getId(),
+                deliverCallback,
+                cancelCallback
+            );
         }
     }
 
     // FIXME: envelope is never used
     protected final void handleMessage(Envelope envelope, String message) {
-        this.logger.info("Handling message from exchange \"{}\" with routing key \"{}\" ...",
-                         envelope.getExchange(),
-                         envelope.getRoutingKey());
+        this.logger.info(
+            "Handling message from exchange \"{}\" with routing key \"{}\" ...",
+            envelope.getExchange(),
+            envelope.getRoutingKey()
+        );
         try {
             if ((this.dataSource.getUri() != null)) {
                 MessageBrokerAnalyser analyser = (MessageBrokerAnalyser) parser.getAnalyser();

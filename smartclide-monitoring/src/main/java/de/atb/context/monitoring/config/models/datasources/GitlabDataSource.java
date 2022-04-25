@@ -64,11 +64,20 @@ public class GitlabDataSource extends WebServiceDataSource {
         return this.getOptionValue(MessageBrokerDataSourceOptions.MessageBrokerPort, true);
     }
 
-    public final String getExchange() {
-        return this.getOptionValue(MessageBrokerDataSourceOptions.Exchange, true);
+    public final String getOutgoingExchange() {
+        return this.getOptionValue(MessageBrokerDataSourceOptions.OutgoingExchange, true);
     }
 
-    public final String getOutTopic() {
-        return this.getOptionValue(MessageBrokerDataSourceOptions.OutTopic, true);
+    public final String getOutgoingTopic() {
+        return this.getOptionValue(MessageBrokerDataSourceOptions.OutgoingTopic, true);
+    }
+
+    public final String getOutgoingQueue() {
+        return this.getOptionValue(MessageBrokerDataSourceOptions.OutgoingQueue, true);
+    }
+
+    public final boolean isOutgoingDurable() {
+        final Serializable value = this.getOptionValue(MessageBrokerDataSourceOptions.OutgoingDurable, false);
+        return value != null && (boolean) value;
     }
 }

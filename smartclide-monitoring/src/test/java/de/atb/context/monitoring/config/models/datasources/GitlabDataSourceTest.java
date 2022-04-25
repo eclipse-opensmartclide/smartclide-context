@@ -24,8 +24,7 @@ public class GitlabDataSourceTest {
         final int expectedMessageBrokerPort = 5672;
         final String expectedUsername = "username";
         final String expectedPassword = "password";
-        final String expectedMessageBrokerExchange = "smartclide-monitoring";
-        final String expectedMessageBrokerTopicSend = "dle.git.commits";
+        final String expectedOutgoingQueue = "code_repo_recommendation_queue";
         final String configDirPath =
                 Objects.requireNonNull(this.getClass().getResource("/config/gitlab-monitoring")).getPath();
         final String configFileName = "monitoring-config.xml";
@@ -46,7 +45,7 @@ public class GitlabDataSourceTest {
         assertThat(gitlabDataSource.getMessageBrokerPort(), equalTo(expectedMessageBrokerPort));
         assertThat(gitlabDataSource.getUserName(), equalTo(expectedUsername));
         assertThat(gitlabDataSource.getPassword(), equalTo(expectedPassword));
-        assertThat(gitlabDataSource.getExchange(), equalTo(expectedMessageBrokerExchange));
-        assertThat(gitlabDataSource.getOutTopic(), equalTo(expectedMessageBrokerTopicSend));
+        assertThat(gitlabDataSource.getOutgoingQueue(), equalTo(expectedOutgoingQueue));
+        assertThat(gitlabDataSource.isOutgoingDurable(), equalTo(false));
     }
 }

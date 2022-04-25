@@ -14,13 +14,10 @@ package eu.smartclide.contexthandling.dle.listener;
  * #L%
  */
 
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.TimeoutException;
-
 import com.rabbitmq.client.Channel;
 import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSource;
+import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSourceOptions;
 import de.atb.context.monitoring.events.MonitoringProgressListener;
 import de.atb.context.monitoring.models.GitDataModel;
 import de.atb.context.monitoring.models.GitMessage;
@@ -28,34 +25,52 @@ import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.monitors.messagebroker.util.MessageBrokerUtil;
 import eu.smartclide.contexthandling.dle.model.CommitMessage;
 import eu.smartclide.contexthandling.dle.model.DleMessage;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 public class DleGitMonitorProgressListener implements MonitoringProgressListener<String, IMonitoringDataModel<?, ?>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DleGitMonitorProgressListener.class);
 
-    private final String topic;
-    private final String exchange;
     private final Channel channel;
+    private final String exchange;
+    private final String topic;
+    private final String queue;
+
+    private boolean useTopic = false;
 
     public DleGitMonitorProgressListener(final MessageBrokerDataSource messageBrokerDataSource)
             throws IOException, TimeoutException {
-        exchange = messageBrokerDataSource.getExchange();
-        topic = messageBrokerDataSource.getOutTopic();
-        channel = MessageBrokerUtil.connectToTopicExchange(messageBrokerDataSource);
+        exchange = messageBrokerDataSource.getOutgoingExchange();
+        topic = messageBrokerDataSource.getOutgoingTopic();
+        queue = messageBrokerDataSource.getOutgoingQueue();
+
+        channel = connectToMessageBroker(
+                messageBrokerDataSource.getMessageBrokerServer(),
+                messageBrokerDataSource.getMessageBrokerPort(),
+                messageBrokerDataSource.getUserName(),
+                messageBrokerDataSource.getPassword(),
+                messageBrokerDataSource.isOutgoingDurable()
+        );
     }
 
     public DleGitMonitorProgressListener(final GitlabDataSource gitlabDataSource) throws IOException, TimeoutException {
-        exchange = gitlabDataSource.getExchange();
-        topic = gitlabDataSource.getOutTopic();
-        channel = MessageBrokerUtil.connectToTopicExchange(
+        exchange = gitlabDataSource.getOutgoingExchange();
+        topic = gitlabDataSource.getOutgoingTopic();
+        queue = gitlabDataSource.getOutgoingQueue();
+
+        channel = connectToMessageBroker(
                 gitlabDataSource.getMessageBrokerServer(),
                 gitlabDataSource.getMessageBrokerPort(),
                 gitlabDataSource.getUserName(),
                 gitlabDataSource.getPassword(),
-                gitlabDataSource.getExchange()
+                gitlabDataSource.isOutgoingDurable()
         );
     }
 
@@ -91,13 +106,39 @@ public class DleGitMonitorProgressListener implements MonitoringProgressListener
                 .build();
     }
 
+    private Channel connectToMessageBroker(final String host,
+                                           final int port,
+                                           final String userName,
+                                           final String password,
+                                           final boolean durable) throws IOException, TimeoutException {
+        if (StringUtils.isBlank(topic) && StringUtils.isBlank(queue)) {
+            throw new IllegalArgumentException(String.format(
+                    "Must specify either %s or %s!",
+                    MessageBrokerDataSourceOptions.OutgoingTopic.getKeyName(),
+                    MessageBrokerDataSourceOptions.OutgoingTopic.getKeyName()
+            ));
+        }
+        if (StringUtils.isNotBlank(topic)) {
+            if (StringUtils.isBlank(exchange)) {
+                throw new IllegalArgumentException(String.format(
+                        "Must specify %s when connecting to topic %s!",
+                        MessageBrokerDataSourceOptions.OutgoingExchange.getKeyName(),
+                        MessageBrokerDataSourceOptions.OutgoingTopic.getKeyName()
+                ));
+            }
+            useTopic = true;
+            return MessageBrokerUtil.connectToTopicExchange(host, port, userName, password, exchange, durable);
+        } else {
+            useTopic = false;
+            return MessageBrokerUtil.connectToQueue(host, port, userName, password, queue, durable);
+        }
+    }
+
     private void send(final DleMessage dleMessage) {
-        try {
-            // simulate that actual context-extraction will take some time
-            Thread.sleep(1000);
+        if (useTopic) {
             MessageBrokerUtil.convertAndSendToTopic(channel, exchange, topic, dleMessage);
-        } catch (Exception e) {
-            LOGGER.error("Failed to send {} to {}/{}", dleMessage, exchange, topic, e);
+        } else {
+            MessageBrokerUtil.convertAndSendToQueue(channel, queue, dleMessage);
         }
     }
 }
