@@ -22,31 +22,85 @@ public class GitRestCallService {
 
     private static final Logger logger = LoggerFactory.getLogger(GitRestCallService.class);
 
-    final String baseUri = "https://gitlab.atb-bremen.de/api/v4/projects/";
-    final String accessToken = "?private_token=YFTwy2E727PbGHaiNx4e";
-    final String membership = "&membership=true";
-    final String uriCommitStatesComponent = "with_stats=yes";
-    final String uriPagination = "&per_page=100";
-    final String uriNormalEndPart = accessToken + uriPagination + membership;
+    private final String accessToken = "private_token=YFTwy2E727PbGHaiNx4e";
+    private final String baseUri = "https://gitlab.atb-bremen.de/api/v4/projects/";
+    private final String membership = "&membership=true";
+    private final String pagination = "&per_page=100";
+    private final String uriNormalEndPart = accessToken + membership + pagination;
 
-    final String uriProjectGetCall = baseUri + uriNormalEndPart;
+    /**
+     * generates gitMessages for given user
+     * creates separate message for the commit in all the branches
+     *
+     * @return
+     */
+    public List<GitMessage> getGitMessages() {
+        // first get all user projects
+        JsonArray projects = getUserProjects();
+        List<GitMessage> gitMessages = new LinkedList<>();
+        for (JsonElement project : projects) {
+            // get project id
+            String projectId = project.getAsJsonObject().get("id").getAsString();
+            // get all branches for given project, create a new GitMessage
+            JsonArray branches = getAllBranchesForGivenProject(projectId);
+            for (JsonElement branch : branches) {
+                String branchName = branch.getAsJsonObject().get("name").getAsString();
+                // get all commits for given branch
+                JsonArray allCommitsInBranch = getAllCommitsForGivenBranch(projectId, branchName);
+                Integer noOfCommitsInBranch = allCommitsInBranch.size();
+                for (JsonElement commit : allCommitsInBranch) {
+                    String commitId = commit.getAsJsonObject().get("id").getAsString();
 
-    final String uriBranchEndPart = "/refs/" +
-         accessToken + uriPagination + membership + "&type=all";
+                    GitMessage gitMessage = new GitMessage();
+                    gitMessage.setTimestamp(commit.getAsJsonObject().get("created_at").getAsString());
+                    gitMessage.setUser(commit.getAsJsonObject().get("author_name").getAsString());
+                    gitMessage.setRepository(project.getAsJsonObject().get("path_with_namespace").getAsString());
+                    gitMessage.setBranch(branchName);
+                    gitMessage.setNoOfCommitsInBranch(noOfCommitsInBranch);
+
+                    JsonArray commitDiff = getCommitDiff(projectId, commitId);
+                    gitMessage.setNoOfModifiedFiles(commitDiff.size());
+
+                    gitMessages.add(gitMessage);
+                }
+            }
+        }
+        return gitMessages;
+    }
+
+    private JsonArray getAllBranchesForGivenProject(String projectId) {
+        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
+                + "/repository/branches/?" + uriNormalEndPart));
+    }
+
+    private JsonArray getAllCommitsForGivenBranch(String projectId, String branchName) {
+        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
+                + "/repository/commits/" + "?ref_name=" + branchName + "&" + uriNormalEndPart));
+    }
+
+    private JsonArray getCommitDiff(String projectId, String commitId) {
+        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
+                + "/repository/commits/" + commitId + "/diff/?" + uriNormalEndPart));
+    }
+
+    private JsonArray getUserProjects() {
+        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + "?" + uriNormalEndPart));
+    }
 
     /**
      * this method makes get call to gitlab server with given uri
+     *
      * @param uri, string as uri for get api endpoint
      * @return, JsonArray as response
      */
-    private JsonArray makeGetCallToGitlab(String uri) {
+    private HttpResponse<String> makeGetCallToGitlab(String uri) {
+
         final HttpClient httpClient = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .connectTimeout(Duration.ofSeconds(10))
+                .version(HttpClient.Version.HTTP_2)
+                .connectTimeout(Duration.ofSeconds(5 * 60))
                 .build();
 
         HttpRequest request = null;
-        JsonArray returnJsonArray = new JsonArray();
 
         try {
             // create a GET request
@@ -62,85 +116,24 @@ public class GitRestCallService {
         try {
             // receive response from Gitlab
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            // parse response to JsonArray
-            JsonParser parser = new JsonParser();
-            try {
-                Object object = (Object) parser.parse(response.body());
-                returnJsonArray = (JsonArray) object;
-            } catch (ParseException e) {
-                logger.error("JSON Parse exception", e);
-            }
+
 
         } catch (IOException | InterruptedException | InvalidPathException e) {
             logger.error("HTTP Client connection interruption exception", e);
         }
-        return returnJsonArray;
+        return response;
     }
 
-    /**
-     * get user projects from Gitlab
-     * @param
-     * @return
-     */
-    public JsonArray getUserProjects() {
-        return makeGetCallToGitlab(uriProjectGetCall);
-    }
+    private JsonArray parseHttpResponseToJsonArray(HttpResponse<String> response) {
+        JsonArray returnJsonArray = new JsonArray();
 
-    /**
-     * generates gitMessages for given user
-     * creates separate message for the commit in all the branches
-     * @return
-     */
-    public List<GitMessage> getGitMessages() {
-        // first get all user projects
-        JsonArray projects = getUserProjects();
-        JsonArray allCommits = new JsonArray();
-        List<GitMessage> gitMessages = new LinkedList<>();
-        // for each project, get commit messages for all branches
-        for (JsonElement project : projects) {
-            // get project id
-            String projectId = project.getAsJsonObject().get("id").getAsString();
-            // get all commits for given project with uri
-            allCommits = makeGetCallToGitlab(baseUri + projectId + "/repository/commits/" + uriNormalEndPart);
-            for (JsonElement commit : allCommits) {
-                String commitId = commit.getAsJsonObject().get("id").getAsString();
-                // get all branches for given commit, create a new GitMessage
-                JsonArray branches = getAllBranchesForGivenCommit(projectId, commitId);
-                 for (JsonElement branch : branches) {
-                    // create a new GitMessage
-                    GitMessage gitMessage = new GitMessage();
-                    // set message time stamp as commit created_at
-                    gitMessage.setTimestamp(commit.getAsJsonObject().get("created_at").getAsString());
-                    // set user as commit author_name
-                    gitMessage.setUser(commit.getAsJsonObject().get("author_name").getAsString());
-                    // set repository for git message as path_with_namespace, e.g. "smartclide/keycloak-client-ng"
-                    gitMessage.setRepository(project.getAsJsonObject().get("path_with_namespace").getAsString());
-                    // set branch name
-                    String branchName = branch.getAsJsonObject().get("name").getAsString();
-                    gitMessage.setBranch(branchName);
-                    // get number of commits in a branch
-                    JsonArray noOfCommitsInBranch = getNoOfCommitsInBranch(projectId, branchName);
-                    gitMessage.setNoOfCommitsInBranch(noOfCommitsInBranch.size());
-                    // get difference as file changed for commit
-                    JsonArray commitDiff = getCommitDiff(projectId, commitId);
-                    gitMessage.setNoOfModifiedFiles(commitDiff.size());
-                    // add GitMessage to list of messages
-                    gitMessages.add(gitMessage);
-                }
-            }
+        JsonParser parser = new JsonParser();
+        try {
+            Object object = (Object) parser.parse(response.body());
+            returnJsonArray = (JsonArray) object;
+        } catch (ParseException e) {
+            logger.error("JSON Parse exception", e);
         }
-        return gitMessages;
-    }
-
-    public JsonArray getAllBranchesForGivenCommit(String projectId, String commitId) {
-        return makeGetCallToGitlab(baseUri + projectId + "/repository/commits/" + commitId + uriBranchEndPart);
-    }
-
-    public JsonArray getCommitDiff(String projectId, String commitId) {
-        return makeGetCallToGitlab(baseUri + projectId + "/repository/commits/" + commitId + "/diff/" + uriNormalEndPart);
-    }
-
-    public JsonArray getNoOfCommitsInBranch(String projectId, String branchName) {
-        return makeGetCallToGitlab(baseUri + projectId + "/repository/commits/" + uriNormalEndPart + "&ref_name=" + branchName);
+        return returnJsonArray;
     }
 }
