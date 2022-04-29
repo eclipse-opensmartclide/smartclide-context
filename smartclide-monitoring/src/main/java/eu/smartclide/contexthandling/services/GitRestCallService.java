@@ -116,7 +116,11 @@ public class GitRestCallService {
                     // set repository for git message as path_with_namespace, e.g. "smartclide/keycloak-client-ng"
                     gitMessage.setRepository(project.getAsJsonObject().get("path_with_namespace").getAsString());
                     // set branch name
-                    gitMessage.setBranch(branch.getAsJsonObject().get("name").getAsString());
+                    String branchName = branch.getAsJsonObject().get("name").getAsString();
+                    gitMessage.setBranch(branchName);
+                    // get number of commits in a branch
+                    JsonArray noOfCommitsInBranch = getNoOfCommitsInBranch(projectId, branchName);
+                    gitMessage.setNoOfCommitsInBranch(noOfCommitsInBranch.size());
                     // get difference as file changed for commit
                     JsonArray commitDiff = getCommitDiff(projectId, commitId);
                     gitMessage.setNoOfModifiedFiles(commitDiff.size());
@@ -134,5 +138,9 @@ public class GitRestCallService {
 
     public JsonArray getCommitDiff(String projectId, String commitId) {
         return makeGetCallToGitlab(baseUri + projectId + "/repository/commits/" + commitId + "/diff/" + uriNormalEndPart);
+    }
+
+    public JsonArray getNoOfCommitsInBranch(String projectId, String branchName) {
+        return makeGetCallToGitlab(baseUri + projectId + "/repository/commits/" + uriNormalEndPart + "&ref_name=" + branchName);
     }
 }
