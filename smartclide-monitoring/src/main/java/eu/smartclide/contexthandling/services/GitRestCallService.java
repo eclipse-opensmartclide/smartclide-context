@@ -22,11 +22,15 @@ public class GitRestCallService {
 
     private static final Logger logger = LoggerFactory.getLogger(GitRestCallService.class);
 
-    private final String accessToken = "private_token=YFTwy2E727PbGHaiNx4e";
+    private final String accessTokenParam = "private_token=YFTwy2E727PbGHaiNx4e";
     private final String baseUri = "https://gitlab.atb-bremen.de/api/v4/projects/";
-    private final String membership = "&membership=true";
-    private final String pagination = "&per_page=100";
-    private final String uriNormalEndPart = accessToken + membership + pagination;
+    private final String membershipParam = "&membership=true";
+    private final String paginationParam = "&per_page=100";
+    private final String refNameParam = "&ref_name=";
+    private final String uriParams = "?" + accessTokenParam + membershipParam + paginationParam;
+    private final String uriPartForBranches = "/repository/branches/";
+    private final String uriPartForCommits = "/repository/commits/";
+    private final String uriPartForDiff = "/diff/";
 
     /**
      * generates gitMessages for given user
@@ -69,22 +73,21 @@ public class GitRestCallService {
     }
 
     private JsonArray getAllBranchesForGivenProject(String projectId) {
-        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
-                + "/repository/branches/?" + uriNormalEndPart));
+        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId + uriPartForBranches + uriParams));
     }
 
     private JsonArray getAllCommitsForGivenBranch(String projectId, String branchName) {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
-                + "/repository/commits/" + "?ref_name=" + branchName + "&" + uriNormalEndPart));
+                + uriPartForCommits + uriParams + refNameParam + branchName));
     }
 
     private JsonArray getCommitDiff(String projectId, String commitId) {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
-                + "/repository/commits/" + commitId + "/diff/?" + uriNormalEndPart));
+                + uriPartForCommits + commitId + uriPartForDiff + uriParams));
     }
 
     private JsonArray getUserProjects() {
-        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + "?" + uriNormalEndPart));
+        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + uriParams));
     }
 
     /**
