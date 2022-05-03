@@ -3,7 +3,6 @@ package eu.smartclide.contexthandling.services;
 import com.google.gson.*;
 import de.atb.context.monitoring.models.GitMessage;
 import de.atb.context.monitoring.models.GitMessageHeader;
-import org.apache.http.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +12,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.InvalidPathException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
@@ -40,7 +40,7 @@ public class GitRestCallService {
      * generates gitMessages for given user
      * creates separate message for the commit in all the branches
      *
-     * @return
+     * @return List<GitMessage>
      */
     public List<GitMessage> getGitMessages() {
         // first get all user projects
@@ -64,11 +64,7 @@ public class GitRestCallService {
                     gitMessage.setUser(newCommit.getAsJsonObject().get("author_name").getAsString());
                     gitMessage.setRepository(project.getAsJsonObject().get("path_with_namespace").getAsString());
                     gitMessage.setBranch(branchName);
-
-                    String lastCommitId = newCommit.getAsJsonObject().get("parent_ids").getAsString();
-                    String newCommitCreation = newCommit.getAsJsonObject().get("created_at").getAsString();
-                    String lastCommitCreation = getLastCommitsCreationDate(projectId, lastCommitId);
-                    gitMessage.setTimeSinceLastCommit(calculateTimeSinceLastCommit(newCommitCreation, lastCommitCreation));
+                    gitMessage.setTimeSinceLastCommit(calculateTimeSinceLastCommit(projectId, newCommit.getAsJsonObject()));
 
                     JsonArray newCommitDiff = getCommitDiff(projectId, newCommitId);
                     gitMessage.setNoOfModifiedFiles(newCommitDiff.size());
@@ -80,33 +76,36 @@ public class GitRestCallService {
         return gitMessages;
     }
 
-    private Integer calculateTimeSinceLastCommit(String newCommitDateStr, String lastCommitDateStr) {
+    private Integer calculateTimeSinceLastCommit(String projectId, JsonObject newCommit) {
         int difference = 0;
+        String lastCommitId = newCommit.get("parent_ids").getAsString();
+        String newCommitCreationDateStr = newCommit.get("created_at").getAsString();
+        JsonObject lastCommit = getCommitById(projectId, lastCommitId);
+        String lastCommitCreationDateStr = lastCommit.getAsJsonObject().get("created_at").getAsString();
+
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         try {
-            Date newCommitDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(newCommitDateStr);
-            Date lastCommitDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(lastCommitDateStr);
-            difference = Math.toIntExact(Math.abs(newCommitDate.getTime() - lastCommitDate.getTime()));
+            Date newCommitCreationDate = formatter.parse(newCommitCreationDateStr);
+            Date lastCommitCreationDate = formatter.parse(lastCommitCreationDateStr);
+            difference = Math.toIntExact(Math.abs(newCommitCreationDate.getTime() - lastCommitCreationDate.getTime()) / 1000);
         } catch (java.text.ParseException e) {
             logger.error("date to string parse error", e);
         }
-        return difference /1000;
+        return difference;
     }
 
     private JsonArray getAllBranchesForGivenProject(String projectId) {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId + uriPartForBranches + uriParams));
     }
 
+    private JsonObject getCommitById(String projectId, String commitId) {
+        return parseHttpResponseToJsonObject(makeGetCallToGitlab(baseUri + projectId
+                + uriPartForCommits + commitId + uriParams));
+    }
+
     private JsonArray getCommitDiff(String projectId, String commitId) {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
                 + uriPartForCommits + commitId + uriPartForDiff + uriParams));
-    }
-
-    private String getLastCommitsCreationDate(String projectId, String commitId) {
-        String lastCommitsCreationDate;
-        JsonObject lastCommit = parseHttpResponseToJsonObject(makeGetCallToGitlab(baseUri + projectId
-            + uriPartForCommits + commitId + uriParams));
-        lastCommitsCreationDate = lastCommit.getAsJsonObject().get("created_at").getAsString();
-        return lastCommitsCreationDate;
     }
 
     private JsonArray getNewCommitsForGivenBranch(String projectId, String branchName) {
@@ -121,8 +120,8 @@ public class GitRestCallService {
     /**
      * this method makes get call to gitlab server with given uri
      *
-     * @param uri, string as uri for get api endpoint
-     * @return, JsonArray as response
+     * @param uri as string
+     * @return HttpResponse<String> as response
      */
     private HttpResponse<String> makeGetCallToGitlab(String uri) {
 
@@ -131,24 +130,12 @@ public class GitRestCallService {
                 .connectTimeout(Duration.ofSeconds(5 * 60))
                 .build();
 
-        HttpRequest request = null;
-
-        try {
-            // create a GET request
-            request = HttpRequest.newBuilder()
-                    .GET()
-                    .uri(URI.create(uri))
-                    .build();
-        } catch (InvalidPathException e) {
-            logger.error("HttpRequest exception", e);
-        }
+        HttpRequest request = HttpRequest.newBuilder().GET().uri(URI.create(uri)).build();
 
         HttpResponse<String> response = null;
         try {
             // receive response from Gitlab
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-
         } catch (IOException | InterruptedException | InvalidPathException e) {
             logger.error("HTTP Client connection interruption exception", e);
         }
@@ -156,26 +143,10 @@ public class GitRestCallService {
     }
 
     private JsonArray parseHttpResponseToJsonArray(HttpResponse<String> response) {
-        JsonArray returnJsonArray = new JsonArray();
-        JsonParser parser = new JsonParser();
-        try {
-            Object object = (Object) parser.parse(response.body());
-            returnJsonArray = (JsonArray) object;
-        } catch (ParseException e) {
-            logger.error("JSON Parse exception", e);
-        }
-        return returnJsonArray;
+        return JsonParser.parseString(response.body()).getAsJsonArray();
     }
 
     private JsonObject parseHttpResponseToJsonObject(HttpResponse<String> response) {
-        JsonObject returnJsonObject = new JsonObject();
-        JsonParser parser = new JsonParser();
-        try {
-            Object object = (Object) parser.parse(response.body());
-            returnJsonObject = (JsonObject) object;
-        } catch (ParseException e) {
-            logger.error("JSON Parse exception", e);
-        }
-        return returnJsonObject;
+        return JsonParser.parseString(response.body()).getAsJsonObject();
     }
 }
