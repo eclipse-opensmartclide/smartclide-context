@@ -30,7 +30,7 @@ public class GitRestCallService {
     private final String membershipParam = "&membership=true";
     private final String paginationParam = "&per_page=100";
     private final String refNameParam = "&ref_name=";
-    private final String sinceParam = "&since=2022-04-25T13:05:00";
+    private final String sinceParam = "&since=2022-04-25T13:05:00"; // TODO change this based on requirement
     private final String uriParams = "?" + accessTokenParam + membershipParam + paginationParam;
     private final String uriPartForBranches = "/repository/branches/";
     private final String uriPartForCommits = "/repository/commits/";
