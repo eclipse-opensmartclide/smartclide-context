@@ -2,6 +2,7 @@ package eu.smartclide.contexthandling.services;
 
 import com.google.gson.*;
 import de.atb.context.monitoring.models.GitMessage;
+import de.atb.context.monitoring.models.GitMessageHeader;
 import org.apache.http.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.InvalidPathException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,6 +30,7 @@ public class GitRestCallService {
     private final String membershipParam = "&membership=true";
     private final String paginationParam = "&per_page=100";
     private final String refNameParam = "&ref_name=";
+    private final String sinceParam = "&since=2022-04-25T13:05:00";
     private final String uriParams = "?" + accessTokenParam + membershipParam + paginationParam;
     private final String uriPartForBranches = "/repository/branches/";
     private final String uriPartForCommits = "/repository/commits/";
@@ -49,21 +53,25 @@ public class GitRestCallService {
             JsonArray branches = getAllBranchesForGivenProject(projectId);
             for (JsonElement branch : branches) {
                 String branchName = branch.getAsJsonObject().get("name").getAsString();
-                // get all commits for given branch
-                JsonArray allCommitsInBranch = getAllCommitsForGivenBranch(projectId, branchName);
-                Integer noOfCommitsInBranch = allCommitsInBranch.size();
-                for (JsonElement commit : allCommitsInBranch) {
-                    String commitId = commit.getAsJsonObject().get("id").getAsString();
+                // get all new commits for given branch
+                JsonArray newCommitsInBranch = getNewCommitsForGivenBranch(projectId, branchName);
+                for (JsonElement newCommit : newCommitsInBranch) {
+                    String newCommitId = newCommit.getAsJsonObject().get("id").getAsString();
 
                     GitMessage gitMessage = new GitMessage();
-                    gitMessage.setTimestamp(commit.getAsJsonObject().get("created_at").getAsString());
-                    gitMessage.setUser(commit.getAsJsonObject().get("author_name").getAsString());
+                    gitMessage.setHeader(GitMessageHeader.NEW_COMMIT.getHeader());
+                    gitMessage.setState("info");
+                    gitMessage.setUser(newCommit.getAsJsonObject().get("author_name").getAsString());
                     gitMessage.setRepository(project.getAsJsonObject().get("path_with_namespace").getAsString());
                     gitMessage.setBranch(branchName);
-                    gitMessage.setNoOfCommitsInBranch(noOfCommitsInBranch);
 
-                    JsonArray commitDiff = getCommitDiff(projectId, commitId);
-                    gitMessage.setNoOfModifiedFiles(commitDiff.size());
+                    String lastCommitId = newCommit.getAsJsonObject().get("parent_ids").getAsString();
+                    String newCommitCreation = newCommit.getAsJsonObject().get("created_at").getAsString();
+                    String lastCommitCreation = getLastCommitsCreationDate(projectId, lastCommitId);
+                    gitMessage.setTimeSinceLastCommit(calculateTimeSinceLastCommit(newCommitCreation, lastCommitCreation));
+
+                    JsonArray newCommitDiff = getCommitDiff(projectId, newCommitId);
+                    gitMessage.setNoOfModifiedFiles(newCommitDiff.size());
 
                     gitMessages.add(gitMessage);
                 }
@@ -72,18 +80,38 @@ public class GitRestCallService {
         return gitMessages;
     }
 
-    private JsonArray getAllBranchesForGivenProject(String projectId) {
-        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId + uriPartForBranches + uriParams));
+    private Integer calculateTimeSinceLastCommit(String newCommitDateStr, String lastCommitDateStr) {
+        int difference = 0;
+        try {
+            Date newCommitDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(newCommitDateStr);
+            Date lastCommitDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(lastCommitDateStr);
+            difference = Math.toIntExact(Math.abs(newCommitDate.getTime() - lastCommitDate.getTime()));
+        } catch (java.text.ParseException e) {
+            logger.error("date to string parse error", e);
+        }
+        return difference /1000;
     }
 
-    private JsonArray getAllCommitsForGivenBranch(String projectId, String branchName) {
-        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
-                + uriPartForCommits + uriParams + refNameParam + branchName));
+    private JsonArray getAllBranchesForGivenProject(String projectId) {
+        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId + uriPartForBranches + uriParams));
     }
 
     private JsonArray getCommitDiff(String projectId, String commitId) {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
                 + uriPartForCommits + commitId + uriPartForDiff + uriParams));
+    }
+
+    private String getLastCommitsCreationDate(String projectId, String commitId) {
+        String lastCommitsCreationDate;
+        JsonObject lastCommit = parseHttpResponseToJsonObject(makeGetCallToGitlab(baseUri + projectId
+            + uriPartForCommits + commitId + uriParams));
+        lastCommitsCreationDate = lastCommit.getAsJsonObject().get("created_at").getAsString();
+        return lastCommitsCreationDate;
+    }
+
+    private JsonArray getNewCommitsForGivenBranch(String projectId, String branchName) {
+        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
+                + uriPartForCommits + uriParams + refNameParam + branchName + sinceParam));
     }
 
     private JsonArray getUserProjects() {
@@ -129,7 +157,6 @@ public class GitRestCallService {
 
     private JsonArray parseHttpResponseToJsonArray(HttpResponse<String> response) {
         JsonArray returnJsonArray = new JsonArray();
-
         JsonParser parser = new JsonParser();
         try {
             Object object = (Object) parser.parse(response.body());
@@ -138,5 +165,17 @@ public class GitRestCallService {
             logger.error("JSON Parse exception", e);
         }
         return returnJsonArray;
+    }
+
+    private JsonObject parseHttpResponseToJsonObject(HttpResponse<String> response) {
+        JsonObject returnJsonObject = new JsonObject();
+        JsonParser parser = new JsonParser();
+        try {
+            Object object = (Object) parser.parse(response.body());
+            returnJsonObject = (JsonObject) object;
+        } catch (ParseException e) {
+            logger.error("JSON Parse exception", e);
+        }
+        return returnJsonObject;
     }
 }

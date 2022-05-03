@@ -37,7 +37,10 @@ public class GitMessage {
     String user;
     String repository;
     String branch;
+    String header;
+    String state;
     Integer noOfCommitsInBranch;
     Integer noOfPushesInBranch;
     Integer noOfModifiedFiles;
+    Integer timeSinceLastCommit;
 }
