@@ -5,14 +5,40 @@ SmartCLIDE Context Handling Component
 
 To build and run Context Handling, the following software is required:#
 
-- Java (at least version ...)
-- ...
+- Java (at least version 11)
+- Apache Maven (min V3.6)
+- Docker [Desktop] (for running Context Handling)
 
 ## How to build Context Handling
 
-1. ... TO DO
+Context Handling can be built using maven with the following command:
 
+  `mvn package`
+
+In order to build a docker container image that can be deployed to a docker host, the following command can be used:
+
+  `mvn clean ...`
+
+Note: Currently the configuration files are packed into the container images, which means that on each configuration change a new container has to be created and deployed.
+
+## How to run Context Handling
+
+There are two possibilites to execute Context Handling. 
+
+1. Building and runnning the locally built Context Handling can be done using the following command:
+   ```
+   buildAndRunCHLocally.sh
+   ```
+
+2. Executing Context Handling using the Docker container image from the ATB container registry:
+   ```
+   docker run ....
+   ```
+   
 ## How to configure Context Handling
+
+The KEES configuration files are store in the following folder:
+`./resources/`
 
 ### Monitoring Config
 
@@ -226,7 +252,3 @@ Each interpreter entry has the following mandatory attributes
 ```
 
 The "services-config.xml" configuration file can also be changed by using the Admin UI.
-
-## How to run Context Handling
-
-1. ... TO DO describe how the docker containers are started
