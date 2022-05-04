@@ -37,7 +37,7 @@ There are two possibilites to execute Context Handling.
    
 ## How to configure Context Handling
 
-The KEES configuration files are store in the following folder:
+The Context Handling configuration files are store in the following folder:
 `./resources/`
 
 ### Monitoring Config
