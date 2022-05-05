@@ -51,6 +51,7 @@ The xsd file can be found here: [monitoring-config.xsd](https://github.com/eclip
 **monitoring-config.xml**
 
 The current monitoring config can be found here: [monitoring-config.xml](https://github.com/eclipse-researchlabs/smartclide-context/blob/main/smartclide-monitoring/src/test/resources/config/monitoring-config.xml)
+
 ### Description
 
 #### indexes
@@ -136,5 +137,3 @@ Each interpreter entry has the following mandatory attributes
    </services>
 </config>
 ```
-
-The "services-config.xml" configuration file can also be changed by using the Admin UI.
