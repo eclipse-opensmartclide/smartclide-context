@@ -6,7 +6,7 @@ SmartCLIDE Context Handling Component
 To build and run Context Handling, the following software is required:#
 
 - Java (at least version 11)
-- Apache Maven (min V3.6)
+- Apache Maven (at least version 3.5.4)
 - Docker [Desktop] (for running Context Handling)
 
 ## How to build Context Handling
