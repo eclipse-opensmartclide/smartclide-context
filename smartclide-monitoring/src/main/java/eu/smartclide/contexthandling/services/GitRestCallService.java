@@ -25,16 +25,21 @@ public class GitRestCallService {
 
     private static final Logger logger = LoggerFactory.getLogger(GitRestCallService.class);
 
-    private final String accessTokenParam = "private_token=YFTwy2E727PbGHaiNx4e";
+    private final String accessTokenParam;
     private final String baseUri = "https://gitlab.atb-bremen.de/api/v4/projects/";
     private final String membershipParam = "&membership=true";
     private final String paginationParam = "&per_page=100";
     private final String refNameParam = "&ref_name=";
     private final String sinceParam = "&since=2022-04-25T13:05:00"; // TODO change this based on requirement
-    private final String uriParams = "?" + accessTokenParam + membershipParam + paginationParam;
+    private final String uriParams;
     private final String uriPartForBranches = "/repository/branches/";
     private final String uriPartForCommits = "/repository/commits/";
     private final String uriPartForDiff = "/diff/";
+
+    public GitRestCallService(String accessTokenParam) {
+        this.accessTokenParam = "private_token=" + accessTokenParam;
+        this.uriParams = "?" + this.accessTokenParam + this.membershipParam + this.paginationParam;
+    }
 
     /**
      * generates gitMessages for given user

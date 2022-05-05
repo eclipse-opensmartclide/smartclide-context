@@ -1,19 +1,13 @@
 package de.atb.context.monitoring.config.models.datasources;
 
-import com.google.gson.JsonArray;
 import de.atb.context.monitoring.config.MonitoringConfiguration;
 import de.atb.context.monitoring.config.models.DataSource;
-import de.atb.context.monitoring.models.GitMessage;
-import eu.smartclide.contexthandling.services.GitRestCallService;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,9 +16,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 
 public class GitlabDataSourceTest {
-
-    private static final GitRestCallService gitRestCallService = new GitRestCallService();
-    private static final Logger logger = LoggerFactory.getLogger(GitlabDataSourceTest.class);
 
     @Test
     public void configFileShouldBeDeserializedToCorrectGitlabDataSource() throws URISyntaxException {
@@ -60,11 +51,5 @@ public class GitlabDataSourceTest {
         assertThat(gitlabDataSource.getPassword(), equalTo(expectedPassword));
         assertThat(gitlabDataSource.getOutgoingQueue(), equalTo(expectedOutgoingQueue));
         assertThat(gitlabDataSource.isOutgoingDurable(), equalTo(false));
-    }
-
-    @Test
-    public void getUserProjects() {
-        List<GitMessage> response = gitRestCallService.getGitMessages();
-        logger.info("response: " + response.size());
     }
 }
