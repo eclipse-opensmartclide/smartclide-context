@@ -3,6 +3,7 @@ package eu.smartclide.contexthandling.services;
 import com.google.gson.*;
 import de.atb.context.monitoring.models.GitMessage;
 import de.atb.context.monitoring.models.GitMessageHeader;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,6 +142,10 @@ public class GitRestCallService {
         try {
             // receive response from Gitlab
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != HttpStatus.SC_OK) {
+                logger.error("Http response error:" + response.statusCode() + response.body());
+            }
         } catch (IOException | InterruptedException | InvalidPathException e) {
             logger.error("HTTP Client connection interruption exception", e);
         }
@@ -148,10 +153,16 @@ public class GitRestCallService {
     }
 
     private JsonArray parseHttpResponseToJsonArray(HttpResponse<String> response) {
-        return JsonParser.parseString(response.body()).getAsJsonArray();
+        if (response != null && response.statusCode() == 200) {
+            return JsonParser.parseString(response.body()).getAsJsonArray();
+        }
+        return new JsonArray();
     }
 
     private JsonObject parseHttpResponseToJsonObject(HttpResponse<String> response) {
-        return JsonParser.parseString(response.body()).getAsJsonObject();
+        if (response != null && response.statusCode() == 200) {
+            return JsonParser.parseString(response.body()).getAsJsonObject();
+        }
+        return new JsonObject();
     }
 }
