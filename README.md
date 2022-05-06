@@ -7,50 +7,45 @@ To build and run Context Handling, the following software is required:
 
 - Java (at least version 11)
 - Apache Maven (at least version 3.5.4)
-- Docker (for deploying Context Handling on the SmartCLIDE cluster)
+- Docker (for running tests and deploying Context Handling on the SmartCLIDE cluster)
+- docker-compose (for running local sample instance only)
 
 ## How to build Context Handling
 
 Context Handling can be built using maven with the following command:
 
-  `mvn package`
+  ```shell
+  mvn install
+  ```
 
-In order to build a docker container image that can be deployed to a docker host, the following command can be used:
+In order to build and push a container image that can be deployed, the following command can be used:
 
-  `mvn clean ...`
-
-Note: Currently the configuration files are packed into the container images, which means that on each configuration change a new container has to be created and deployed.
+  ```shell
+  mvn install
+  mvn jib:build -pl smartclide-monitoring -Djib.to.image="${IMAGE_NAME:IMAGE_TAG}" -Djib.to.auth.username="${CONTAINER_REGISTRY_USERNAME}" -Djib.to.auth.password="${CONTAINER_REGISTRY_TOKEN}"
+  ```
 
 ## How to run Context Handling
 
-There are two possibilites to execute Context Handling. 
+A sample configuration and docker-compose file can be found in the [samples folder](samples).
 
-1. Building and runnning the locally built Context Handling can be done using the following command:
-   ```
-   buildAndRunCHLocally.sh
-   ```
+You can run the sample with the following command: 
 
-2. Executing Context Handling using the Docker container image from the ATB container registry:
-   ```
-   docker run ....
+   ```shell
+   docker-compose -f samples/docker-compose.yml up
    ```
    
 ## How to configure Context Handling
 
-The Context Handling configuration files are store in the following folder:
-`./resources/`
-
 ### Monitoring Config
-
-In the following the xml schema for the monitoring configuration is listed. Below the xsd the configuration elements are described in detail.
-
-**monitoring-config.xsd**
-
-The xsd file can be found here: [monitoring-config.xsd](https://github.com/eclipse-researchlabs/smartclide-context/blob/main/smartclide-monitoring/src/test/resources/config/monitoring-config.xsd)
 
 **monitoring-config.xml**
 
-The current monitoring config can be found here: [monitoring-config.xml](https://github.com/eclipse-researchlabs/smartclide-context/blob/main/smartclide-monitoring/src/test/resources/config/monitoring-config.xml)
+An example monitoring configuration can be found here: [monitoring-config.xml](samples/config/monitoring-config.xml)
+
+**monitoring-config.xsd**
+
+The corresponding XSD file can be found here: [monitoring-config.xsd](samples/config/monitoring-config.xsd)
 
 ### Description
 
@@ -76,7 +71,7 @@ Each datasource entry has the following mandatory attributes
     - package de.atb.context.monitoring.monitors.webservice.WebServiceMonitor
     - package de.atb.context.monitoring.monitors.GitlabCommitMonitor
     - package de.atb.context.monitoring.monitors.GitMonitor
-- options: Options for the datasource can be entered using this value. The options are dependant on the datasource to be used
+- options: Options for the datasource can be entered using this value. The options are dependent on the datasource to be used
 - uri:The uri of the data source to be monitored
 - class:The following datasource implementations are available
     - package de.atb.context.monitoring.config.models.datasources.DatabaseDataSource
@@ -116,7 +111,7 @@ Each interpreter entry has the following mandatory attributes
 
 #### monitors
 
-...
+*t.b.d. ...*
 
 ### service configuration
 
