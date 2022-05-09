@@ -1,20 +1,19 @@
 package de.atb.context.monitoring;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import de.atb.context.monitoring.config.models.datasources.GitlabDataSourceTest;
-import de.atb.context.monitoring.models.GitMessage;
 import eu.smartclide.contexthandling.services.GitRestCallService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class GitRestCallServiceTest {
 
     private GitRestCallService gitRestCallService;
-    private static final Logger logger = LoggerFactory.getLogger(GitlabDataSourceTest.class);
 
     @Before
     public void setup() {
@@ -26,11 +25,32 @@ public class GitRestCallServiceTest {
     }
 
     @Test
-    public void getUserProjects() {
+    public void testGitServices() {
+        final int expectedNumberOfProjects = 5;
+        final String todoProjectId = "233";
+        final int expectedNumberOfBranches = 2;
+        final int expectedNumberOfCommits = 2;
 
-        List<GitMessage> response = gitRestCallService.getGitMessages();
-        // TODO: some assertions here..
+        final String expectedBranchName = "main";
+        final String expectedCommitId = "dc5b9dedf4d1c83ed6ce162196d411aa32e5e08b";
+        final Integer expectedCommitTimeSinceLastCommit = 41996279;
+        final Integer expectedCommitNoOfFilesChanged = 1;
+        final String sinceParam = "&since=2020-01-26T13:05:00";
 
-        logger.info("response: " + response.size());
+        JsonArray projects = gitRestCallService.getUserProjects();
+        assertThat(projects.size(), equalTo(expectedNumberOfProjects));
+
+        JsonArray branches = gitRestCallService.getAllBranchesForGivenProject(todoProjectId);
+        assertThat(branches.size(), equalTo(expectedNumberOfBranches));
+
+        JsonArray commits = gitRestCallService.getCommitsForGivenBranchAndSince(todoProjectId, expectedBranchName, sinceParam);
+        assertThat(commits.size(), equalTo(expectedNumberOfCommits));
+
+        JsonObject commit = gitRestCallService.getCommitById(todoProjectId, expectedCommitId);
+        Integer timeSinceLastCommit = gitRestCallService.calculateTimeSinceLastCommit(todoProjectId, commit);
+        assertThat(timeSinceLastCommit, equalTo(expectedCommitTimeSinceLastCommit));
+
+        JsonArray newCommitDiff = gitRestCallService.getCommitDiff(todoProjectId, expectedCommitId);
+        assertThat(newCommitDiff.size(), equalTo(expectedCommitNoOfFilesChanged));
     }
 }

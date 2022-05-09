@@ -59,20 +59,20 @@ public class GitRestCallService {
             JsonArray branches = getAllBranchesForGivenProject(projectId);
             for (JsonElement branch : branches) {
                 String branchName = branch.getAsJsonObject().get("name").getAsString();
-                // get all new commits for given branch
-                JsonArray newCommitsInBranch = getNewCommitsForGivenBranch(projectId, branchName);
-                for (JsonElement newCommit : newCommitsInBranch) {
-                    String newCommitId = newCommit.getAsJsonObject().get("id").getAsString();
+                // get all commits for given branch and since
+                JsonArray commitsInBranch = getCommitsForGivenBranchAndSince(projectId, branchName, sinceParam);
+                for (JsonElement commit : commitsInBranch) {
+                    String commitId = commit.getAsJsonObject().get("id").getAsString();
 
                     GitMessage gitMessage = new GitMessage();
                     gitMessage.setHeader(GitMessageHeader.NEW_COMMIT.getHeader());
                     gitMessage.setState("info");
-                    gitMessage.setUser(newCommit.getAsJsonObject().get("author_name").getAsString());
+                    gitMessage.setUser(commit.getAsJsonObject().get("author_name").getAsString());
                     gitMessage.setRepository(project.getAsJsonObject().get("path_with_namespace").getAsString());
                     gitMessage.setBranch(branchName);
-                    gitMessage.setTimeSinceLastCommit(calculateTimeSinceLastCommit(projectId, newCommit.getAsJsonObject()));
+                    gitMessage.setTimeSinceLastCommit(calculateTimeSinceLastCommit(projectId, commit.getAsJsonObject()));
 
-                    JsonArray newCommitDiff = getCommitDiff(projectId, newCommitId);
+                    JsonArray newCommitDiff = getCommitDiff(projectId, commitId);
                     gitMessage.setNoOfModifiedFiles(newCommitDiff.size());
 
                     gitMessages.add(gitMessage);
@@ -82,7 +82,7 @@ public class GitRestCallService {
         return gitMessages;
     }
 
-    private Integer calculateTimeSinceLastCommit(String projectId, JsonObject newCommit) {
+    public Integer calculateTimeSinceLastCommit(String projectId, JsonObject newCommit) {
         int difference = 0;
         String lastCommitId = newCommit.get("parent_ids").getAsString();
         String newCommitCreationDateStr = newCommit.get("created_at").getAsString();
@@ -100,26 +100,26 @@ public class GitRestCallService {
         return difference;
     }
 
-    private JsonArray getAllBranchesForGivenProject(String projectId) {
+    public JsonArray getAllBranchesForGivenProject(String projectId) {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId + uriPartForBranches + uriParams));
     }
 
-    private JsonObject getCommitById(String projectId, String commitId) {
+    public JsonObject getCommitById(String projectId, String commitId) {
         return parseHttpResponseToJsonObject(makeGetCallToGitlab(baseUri + projectId
                 + uriPartForCommits + commitId + uriParams));
     }
 
-    private JsonArray getCommitDiff(String projectId, String commitId) {
+    public JsonArray getCommitDiff(String projectId, String commitId) {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
                 + uriPartForCommits + commitId + uriPartForDiff + uriParams));
     }
 
-    private JsonArray getNewCommitsForGivenBranch(String projectId, String branchName) {
+    public JsonArray getCommitsForGivenBranchAndSince(String projectId, String branchName, String sinceParam) {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
                 + uriPartForCommits + uriParams + refNameParam + branchName + sinceParam));
     }
 
-    private JsonArray getUserProjects() {
+    public JsonArray getUserProjects() {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + uriParams));
     }
 
