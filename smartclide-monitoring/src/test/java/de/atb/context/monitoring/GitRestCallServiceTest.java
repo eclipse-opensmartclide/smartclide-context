@@ -27,7 +27,10 @@ public class GitRestCallServiceTest {
 
     @Test
     public void getUserProjects() {
+
         List<GitMessage> response = gitRestCallService.getGitMessages();
+        // TODO: some assertions here..
+
         logger.info("response: " + response.size());
     }
 }

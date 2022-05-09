@@ -145,6 +145,7 @@ public class GitRestCallService {
 
             if (response.statusCode() != HttpStatus.SC_OK) {
                 logger.error("Http response error:" + response.statusCode() + response.body());
+                return null;
             }
         } catch (IOException | InterruptedException | InvalidPathException e) {
             logger.error("HTTP Client connection interruption exception", e);
@@ -153,14 +154,14 @@ public class GitRestCallService {
     }
 
     private JsonArray parseHttpResponseToJsonArray(HttpResponse<String> response) {
-        if (response != null && response.statusCode() == 200) {
+        if (response != null) {
             return JsonParser.parseString(response.body()).getAsJsonArray();
         }
         return new JsonArray();
     }
 
     private JsonObject parseHttpResponseToJsonObject(HttpResponse<String> response) {
-        if (response != null && response.statusCode() == 200) {
+        if (response != null) {
             return JsonParser.parseString(response.body()).getAsJsonObject();
         }
         return new JsonObject();
