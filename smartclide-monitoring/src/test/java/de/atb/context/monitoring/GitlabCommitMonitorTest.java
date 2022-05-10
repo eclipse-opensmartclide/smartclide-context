@@ -107,7 +107,7 @@ public class GitlabCommitMonitorTest {
         // get the latest entry of monitored data from the repository
         List<GitlabCommitDataModel> data = List.of();
         int counter = 0;
-        while (counter <= 5 && data.isEmpty()) {
+        while (counter <= 10 && data.isEmpty()) {
             counter++;
             //noinspection BusyWait
             Thread.sleep(2000);
