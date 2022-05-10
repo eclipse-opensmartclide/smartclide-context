@@ -9,10 +9,10 @@
 
     <datasources>
         <datasource id="datasource-gitlab"
-                    type="gitlab"
+                    type="webservice"
                     monitor="de.atb.context.monitoring.monitors.GitlabCommitMonitor"
                     uri="https://gitlab.example.com/api/v4"
-                    options="token=foobar&amp;server=localhost&amp;port=5672&amp;username=username&amp;password=password&amp;outgoing-queue=code_repo_recommendation_queue"
+                    options="interval=60000&amp;startDelay=3000&amp;token=s3cr3t&amp;server=localhost&amp;port=5672&amp;username=username&amp;password=password&amp;outgoing-queue=code_repo_recommendation_queue&amp;outgoing-durable=false"
                     class="de.atb.context.monitoring.config.models.datasources.GitlabDataSource"/>
     </datasources>
 
@@ -25,7 +25,10 @@
     </interpreters>
 
     <monitors>
-        <monitor id="monitor-gitlab" datasource="datasource-gitlab" interpreter="interpreter-gitlab" index="index-gitlab"/>
+        <monitor id="monitor-gitlab"
+                 datasource="datasource-gitlab"
+                 interpreter="interpreter-gitlab"
+                 index="index-gitlab"/>
     </monitors>
 
 </config>

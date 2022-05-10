@@ -4,14 +4,16 @@ import com.rabbitmq.client.Channel;
 import de.atb.context.common.ContextPathUtils;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.monitoring.config.models.Config;
+import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSourceOptions;
-import de.atb.context.monitoring.models.GitDataModel;
 import de.atb.context.monitoring.models.GitMessage;
+import de.atb.context.monitoring.models.GitlabCommitDataModel;
 import de.atb.context.monitoring.monitors.messagebroker.util.MessageBrokerUtil;
 import de.atb.context.services.IAmIMonitoringDataRepositoryService;
 import de.atb.context.services.manager.ServiceManager;
 import de.atb.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper;
 import eu.smartclide.contexthandling.ServiceMain;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,13 +27,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TestMonitoringService
@@ -39,21 +40,17 @@ import static org.junit.Assert.assertEquals;
  * @author scholze
  * @version $LastChangedRevision: 577 $
  */
-public class TestDataRetrieval {
+public class GitlabCommitMonitorTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(TestDataRetrieval.class);
+    private static final Logger logger = LoggerFactory.getLogger(GitlabCommitMonitorTest.class);
 
     private static final String RABBITMQ_3_ALPINE = "rabbitmq:3-alpine";
-    private static final String EXCHANGE_NAME = "mom";
-    private static final String ROUTING_KEY_MONITORING = "monitoring.git.commits";
     private static final String QUEUE_NAME_DLE = "code_repo_recommendation_queue";
-    private static final String DATASOURCE_GIT = "datasource-git";
+    private static final String DATASOURCE_GITLAB = "datasource-gitlab";
     private static final String MONITORING_CONFIG_FILE_NAME = "monitoring-config.xml";
     private static final String AMI_REPOSITORY_ID = "AmI-repository";
 
-    private AmIMonitoringDataRepositoryServiceWrapper<GitDataModel> monitoringDataRepository;
-
-    private Channel fakeRmvChannel;
+    private AmIMonitoringDataRepositoryServiceWrapper<GitlabCommitDataModel> monitoringDataRepository;
     private Channel fakeDleChannel;
 
     // starts a new rabbitmq message broker in a docker container.
@@ -63,19 +60,21 @@ public class TestDataRetrieval {
 
     @Before
     public void setup() throws Exception {
+        final String gitlabApiToken = System.getenv("SMARTCLIDE_CONTEXT_GITLAB_API_TOKEN");
+        if (StringUtils.isBlank(gitlabApiToken)) {
+            throw new IllegalStateException("Did not find valid GitLab API token in \"SMARTCLIDE_CONTEXT_GITLAB_API_TOKEN\" environment variable!");
+        }
+
         // setup message broker
         final String rabbitMQContainerHost = container.getHost();
         final Integer rabbitMQContainerAmqpPort = container.getAmqpPort();
-
-        // setup fake RMV
-        fakeRmvChannel = createFakeRmvPublisher(rabbitMQContainerHost, rabbitMQContainerAmqpPort);
 
         // setup fake DLE
         fakeDleChannel = createFakeDleListener(rabbitMQContainerHost, rabbitMQContainerAmqpPort);
 
         // write dynamically allocated message broker host and port to monitoring config file
         final Path monitoringConfigFilePath = ContextPathUtils.getConfigDirPath().resolve(MONITORING_CONFIG_FILE_NAME);
-        updateMessageBrokerDataSource(monitoringConfigFilePath, rabbitMQContainerHost, rabbitMQContainerAmqpPort);
+        updateDataSource(monitoringConfigFilePath, rabbitMQContainerHost, rabbitMQContainerAmqpPort, gitlabApiToken);
 
         // start service
         ServiceMain.startService();
@@ -85,7 +84,7 @@ public class TestDataRetrieval {
                 .filter(container -> container.getId().equals(AMI_REPOSITORY_ID))
                 .findFirst()
                 .map(container -> {
-                    final IAmIMonitoringDataRepositoryService<GitDataModel> repositoryService =
+                    final IAmIMonitoringDataRepositoryService<GitlabCommitDataModel> repositoryService =
                             ServiceManager.getWebservice(container);
                     return new AmIMonitoringDataRepositoryServiceWrapper<>(repositoryService);
                 })
@@ -94,79 +93,52 @@ public class TestDataRetrieval {
 
     @After
     public void tearDown() throws IOException, TimeoutException {
-        monitoringDataRepository.shutdown();
+        if (monitoringDataRepository != null) {
+            monitoringDataRepository.shutdown();
+        }
 
         if (fakeDleChannel != null) {
             fakeDleChannel.close();
         }
-        if (fakeRmvChannel != null) {
-            fakeRmvChannel.close();
-        }
     }
 
     @Test
-    public void testDataRetrieval() throws InterruptedException {
-        // wait for services to start
-        Thread.sleep(10000);
-
-        final GitMessage gitMessage = sendFakeRmvMessage();
-
-        Thread.sleep(10000);
-
+    public void testDoMonitor() throws InterruptedException {
         // get the latest entry of monitored data from the repository
-        final List<GitDataModel> data =
-                monitoringDataRepository.getMonitoringData(ApplicationScenario.getInstance(), GitDataModel.class, 1);
+        List<GitlabCommitDataModel> data = List.of();
+        int counter = 0;
+        while (counter <= 5 && data.isEmpty()) {
+            counter++;
+            //noinspection BusyWait
+            Thread.sleep(2000);
+            data = monitoringDataRepository.getMonitoringData(ApplicationScenario.getInstance(), GitlabCommitDataModel.class, 1);
+        }
 
         assertEquals(1, data.size());
         final List<GitMessage> gitMessages = data.get(0).getGitMessages();
-        assertEquals(1, gitMessages.size());
-        final GitMessage fromRepo = gitMessages.get(0);
-        assertEquals(gitMessage.getTimestamp(), fromRepo.getTimestamp());
-        assertEquals(gitMessage.getUser(), fromRepo.getUser());
-        assertEquals(gitMessage.getRepository(), fromRepo.getRepository());
-        assertEquals(gitMessage.getBranch(), fromRepo.getBranch());
-        assertEquals(gitMessage.getNoOfCommitsInBranch(), fromRepo.getNoOfCommitsInBranch());
-        assertEquals(gitMessage.getNoOfModifiedFiles(), fromRepo.getNoOfModifiedFiles());
-        assertEquals(gitMessage.getNoOfPushesInBranch(), fromRepo.getNoOfPushesInBranch());
+        gitMessages.forEach(gitMessage -> {
+            assertEquals("new commit", gitMessage.getHeader());
+            assertEquals("info", gitMessage.getState());
+            assertTrue(StringUtils.isNotBlank(gitMessage.getUser()));
+            assertTrue(StringUtils.isNotBlank(gitMessage.getRepository()));
+            assertTrue(StringUtils.isNotBlank(gitMessage.getBranch()));
+            assertTrue(gitMessage.getTimeSinceLastCommit() > 0);
+            assertTrue(gitMessage.getNoOfModifiedFiles() > 0);
+        });
     }
 
-    private GitMessage sendFakeRmvMessage() {
-        final GitMessage gitMessage = GitMessage.builder()
-                .timestamp(ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
-                .user("user@smartclide.eu")
-                .repository("git@github.com:eclipse-researchlabs/smartclide-context.git")
-                .branch("branch")
-                .noOfCommitsInBranch(42)
-                .noOfModifiedFiles(3)
-                .noOfPushesInBranch(17)
-                .build();
-        MessageBrokerUtil.convertAndSendToTopic(fakeRmvChannel, EXCHANGE_NAME, ROUTING_KEY_MONITORING, gitMessage);
-        logger.info("RMV sent message: {}", gitMessage);
-        return gitMessage;
-    }
-
-    private void updateMessageBrokerDataSource(final Path monitoringConfig,
-                                               final String host,
-                                               final Integer port) throws Exception {
+    private void updateDataSource(final Path monitoringConfig,
+                                  final String messageBrokerHost,
+                                  final Integer messageBrokerPort,
+                                  final String gitlabApiToken) throws Exception {
         final Persister persister = new Persister();
         final Config config = persister.read(Config.class, new File(monitoringConfig.toString()));
-        final Map<String, String> optionsMap = config.getDataSource(DATASOURCE_GIT).getOptionsMap();
-        optionsMap.put(MessageBrokerDataSourceOptions.MessageBrokerServer.getKeyName(), host);
-        optionsMap.put(MessageBrokerDataSourceOptions.MessageBrokerPort.getKeyName(), port.toString());
-        config.getDataSource(DATASOURCE_GIT).setOptions(optionsMap);
+        final Map<String, String> optionsMap = config.getDataSource(DATASOURCE_GITLAB).getOptionsMap();
+        optionsMap.put(MessageBrokerDataSourceOptions.MessageBrokerServer.getKeyName(), messageBrokerHost);
+        optionsMap.put(MessageBrokerDataSourceOptions.MessageBrokerPort.getKeyName(), messageBrokerPort.toString());
+        optionsMap.put(GitlabDataSource.ACCESS_TOKEN_OPTION.getKeyName(), gitlabApiToken);
+        config.getDataSource(DATASOURCE_GITLAB).setOptions(optionsMap);
         persister.write(config, new File(monitoringConfig.toString()));
-    }
-
-    private Channel createFakeRmvPublisher(final String rabbitMQContainerHost, final Integer rabbitMQContainerAmqpPort)
-            throws IOException, TimeoutException {
-        return MessageBrokerUtil.connectToTopicExchange(
-                rabbitMQContainerHost,
-                rabbitMQContainerAmqpPort,
-                null,
-                null,
-                EXCHANGE_NAME,
-                true
-        );
     }
 
     private Channel createFakeDleListener(final String rabbitMQContainerHost, final Integer rabbitMQContainerAmqpPort)

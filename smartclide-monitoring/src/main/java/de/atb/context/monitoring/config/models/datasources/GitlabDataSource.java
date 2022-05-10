@@ -32,7 +32,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class GitlabDataSource extends WebServiceDataSource {
 
-    private static final IDataSourceOptionValue ACCESS_TOKEN_OPTION = new IDataSourceOptionValue() {
+    public static final IDataSourceOptionValue ACCESS_TOKEN_OPTION = new IDataSourceOptionValue() {
         @Override
         public String getKeyName() {
             return "token";
