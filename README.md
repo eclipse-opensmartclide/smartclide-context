@@ -109,7 +109,7 @@ Each interpreter entry has the following mandatory attributes
 
     - type: Currently only used for File analyser and parser. Defines the file extensions to be used.
 
-#### interpreters
+#### monitors
 
 Each monitor entry has the following mandatory attributes
 
