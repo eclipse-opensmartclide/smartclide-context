@@ -16,8 +16,8 @@
     <name>ATB Context Extraction Core Lib</name>
 
     <properties>
-        <cxf.version>3.5.1</cxf.version>
-        <jena.version>4.4.0</jena.version>
+        <cxf.version>3.5.2</cxf.version>
+        <jena.version>4.5.0</jena.version>
     </properties>
 
     <dependencies>
@@ -107,7 +107,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>1.18.24</version>
         </dependency>
 
         <!-- API, java.xml.bind module -->
