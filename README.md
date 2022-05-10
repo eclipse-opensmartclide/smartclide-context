@@ -109,4 +109,11 @@ Each interpreter entry has the following mandatory attributes
 
     - type: Currently only used for File analyser and parser. Defines the file extensions to be used.
 
+#### interpreters
 
+Each monitor entry has the following mandatory attributes
+
+- id: The unique name of the monitor
+- datasource: The id of one previously defined datasource (see above)
+- interpreter: The id of one previously defined interpreter (see above)
+- index: The id of one previously defined index (see above)
