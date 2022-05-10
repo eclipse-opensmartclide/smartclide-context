@@ -15,7 +15,6 @@ package de.atb.context.monitoring.parser.file;
  */
 
 
-import de.atb.context.monitoring.index.FieldTypeFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Store;

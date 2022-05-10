@@ -15,17 +15,17 @@ package de.atb.context.extraction;
  */
 
 
-import com.hp.hpl.jena.ontology.Individual;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.ontology.Individual;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.extraction.util.base.BaseDatatypeProperties;
 import de.atb.context.extraction.util.base.BaseOntologyClasses;
 import de.atb.context.common.util.ApplicationScenario;
 import lombok.Getter;
 import lombok.Setter;
-import org.mindswap.pellet.jena.PelletReasonerFactory;
 
 import java.util.Date;
 
@@ -72,7 +72,7 @@ public class ContextContainerWrapper {
 		wrapper.capturedAt = context.getCapturedAt();
 		wrapper.identifier = context.getIdentifier();
 		wrapper.useReasoner = (context.getSpecification() != null)
-				&& context.getSpecification().equals(PelletReasonerFactory.THE_SPEC);
+				&& context.getSpecification().equals(OntModelSpec.OWL_MEM);
 		wrapper.monitoringDataId = context.getMonitoringDataId();
 		wrapper.applicationScenario = context.getApplicationScenario();
 		wrapper.contextModelString = context.serializeToString();

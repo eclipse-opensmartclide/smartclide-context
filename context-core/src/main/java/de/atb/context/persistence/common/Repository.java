@@ -14,11 +14,7 @@ package de.atb.context.persistence.common;
  * #L%
  */
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import de.atb.context.common.ContextPathUtils;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.IApplicationScenarioProvider;
@@ -26,15 +22,18 @@ import de.atb.context.context.util.OntologyNamespace;
 import de.atb.context.persistence.processors.IPersistencePostProcessor;
 import de.atb.context.persistence.processors.IPersistencePreProcessor;
 import de.atb.context.persistence.processors.IPersistenceProcessor;
-import org.mindswap.pellet.jena.PelletReasonerFactory;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Path;
+import java.util.*;
 
 /**
  * Repository
@@ -43,170 +42,61 @@ import java.util.Map;
  * @author scholze
  * @version $LastChangedRevision: 703 $
  */
-public abstract class Repository<T extends IApplicationScenarioProvider>
-        implements IPersistenceUnit<T> {
+public abstract class Repository<T extends IApplicationScenarioProvider> implements IPersistenceUnit<T> {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(Repository.class);
+    private static final Logger logger = LoggerFactory.getLogger(Repository.class);
 
     protected final String basicLocation;
 
-    protected Map<ApplicationScenario, List<IPersistenceProcessor<T>>> postProcessors = new HashMap<>(
-            0);
-    protected Map<ApplicationScenario, List<IPersistenceProcessor<T>>> preProcessors = new HashMap<>(
-            0);
+    protected Map<ApplicationScenario, List<IPersistenceProcessor<T>>> postProcessors = new HashMap<>(0);
+    protected Map<ApplicationScenario, List<IPersistenceProcessor<T>>> preProcessors = new HashMap<>(0);
 
-    protected Repository(final String baseLocation) {
-        this.basicLocation = baseLocation;
-        createShutdownHook();
-    }
-
-    protected final void createShutdownHook() {
-        final Thread shutdownHook = new Thread(this::shuttingDown, "Shutdown Hook for repository at '" + basicLocation + "'");
-        Runtime.getRuntime().addShutdownHook(shutdownHook);
-    }
-
-    public final synchronized <T extends Model> T createDefaultModel(
-            final Class<T> clazz, final BusinessCase bc, final String modelUri,
-            final boolean useReasoner) {
-        final T model = createDefaultModel(clazz, bc);
+    // FIXME: useReasoner is never used in any of these createDefaultModel methods
+    public final synchronized <M extends Model> M createDefaultModel(final Class<M> clazz,
+                                                                     final BusinessCase bc,
+                                                                     final String modelUri,
+                                                                     final boolean useReasoner) {
+        final M model = createDefaultModel(clazz, bc);
         model.read(modelUri);
         return model;
     }
 
-    public final synchronized <T extends Model> T createDefaultModel(
-            final Class<T> clazz, final BusinessCase bc,
-            final boolean useReasoner) {
+    // FIXME: this method does not seem to be used
+    public final synchronized <M extends Model> M createDefaultModel(final Class<M> clazz,
+                                                                     final BusinessCase bc,
+                                                                     final boolean useReasoner) {
         final String modelUri = OntologyNamespace.getOntologyLocation(bc);
-        final T model = createDefaultModel(clazz, bc);
+        final M model = createDefaultModel(clazz, bc);
         model.read(modelUri);
         return model;
     }
 
-    public final synchronized <T extends Model> T createDefaultModel(
-            final Class<T> clazz, final OntologyNamespace ns,
-            final boolean useReasoner) {
+    // FIXME: this method does not seem to be used
+    public final synchronized <M extends Model> M createDefaultModel(final Class<M> clazz,
+                                                                     final OntologyNamespace ns,
+                                                                     final boolean useReasoner) {
         final BusinessCase bc = ns.getBusinessCase();
         if (bc != null) {
-            final T model = createDefaultModel(clazz, bc);
+            final M model = createDefaultModel(clazz, bc);
             model.read(ns.getAbsoluteUri());
             return model;
         } else {
-            throw new IllegalArgumentException("OntologyNamespace entitiy '"
-                    + ns + "' must provide a BusinessCase, not null!");
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public final synchronized <T extends Model> T createDefaultModel(
-            final BusinessCase bc, final Model model, final boolean useReasoner) {
-        return (T) createDefaultModel((Class<T>) model.getClass(), bc).add(
-                model);
-    }
-
-    public final synchronized <T extends Model> T createDefaultModel(
-            final Class<T> clazz, final BusinessCase bc) {
-        return initializeDefaultModel(clazz, bc, this.basicLocation, false);
-    }
-
-    protected final synchronized boolean implementsInterface(
-            final Class<?> clazz, final Class<?> iface) {
-        for (final Class<?> hasToImplement : clazz.getInterfaces()) {
-            if (hasToImplement == iface) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected final synchronized String getBasicLocation() {
-        return this.basicLocation;
-    }
-
-    protected final synchronized String getLocationForBusinessCase(
-            final BusinessCase bc) {
-        return Repository.getLocationForBusinessCase(this.basicLocation, bc);
-    }
-
-    protected static synchronized String getLocationForBusinessCase(
-            final String baseUri, final BusinessCase bc) {
-        return String.format("%s%s%s%s%s", ".", File.separator, baseUri, File.separator, bc);
-    }
-
-    protected abstract void shuttingDown();
-
-    @SuppressWarnings("unchecked")
-    protected <T extends Model> T initializeDefaultModel(final Class<T> clazz,
-                                                         final BusinessCase bc, final String modelLocation,
-                                                         final boolean useReasoner) { // TODO this should maybe replace by a call to DRM API
-        final String modelDirStr = Repository.getLocationForBusinessCase(
-                modelLocation, bc);
-        final File modelDir = new File(modelDirStr);
-        if (!modelDir.exists() && !modelDir.mkdirs()) {
-            throw new IllegalArgumentException("Directory '" + modelDir
-                    + "' does not exist and cannot be created.");
-        }
-        T toReturn;
-        if ((clazz == OntModel.class)
-                || implementsInterface(clazz, OntModel.class)) {
-            OntModel ontModel = ModelFactory
-                    .createOntologyModel(OntModelSpec.OWL_DL_MEM);
-            if (useReasoner) {
-                ontModel = ModelFactory
-                        .createOntologyModel(PelletReasonerFactory.THE_SPEC);
-                ontModel.prepare();
-            }
-            toReturn = (T) ontModel;
-        } else if ((clazz == Model.class)
-                || implementsInterface(clazz, Model.class)) {
-            toReturn = (T) ModelFactory.createDefaultModel();
-        } else {
             throw new IllegalArgumentException(
-                    "Clazz must be one of com.hp.hpl.jena.ontology.OntModel or com.hp.hpl.jena.rdf.Model!");
+                "OntologyNamespace entitiy '" + ns + "' must provide a BusinessCase, not null!"
+            );
         }
-        return toReturn;
     }
 
-    protected abstract boolean reset(BusinessCase bc);
-
-    protected abstract Dataset getDataSource(BusinessCase bc);
-
-    @Override
-    public final void triggerPreProcessors(
-            final ApplicationScenario appScenario, final T object) {
-        triggerProcessors(appScenario, object,
-                this.preProcessors.get(appScenario), "Pre");
+    // FIXME: return value is never used, so maybe not necessary?
+    @SuppressWarnings("unchecked")
+    public final synchronized <M extends Model> M createDefaultModel(final BusinessCase bc,
+                                                                     final Model model,
+                                                                     final boolean useReasoner) {
+        return (M) createDefaultModel((Class<M>) model.getClass(), bc).add(model);
     }
 
-    @Override
-    public final void triggerPostProcessors(
-            final ApplicationScenario appScenario, final T object) {
-        triggerProcessors(appScenario, object,
-                this.postProcessors.get(appScenario), "Post");
-    }
-
-    protected final void triggerProcessors(
-            final ApplicationScenario appScenario, final T object,
-            final List<IPersistenceProcessor<T>> processors,
-            final String processorType) {
-        final boolean debug = Repository.logger.isDebugEnabled();
-        if (processors != null) {
-            Repository.logger.debug("Triggering Persistence {}-Processors for '{}'", processorType, appScenario);
-            if (debug) {
-                Repository.logger.debug(String.format(
-                        "Triggering %1$d Persistence " + processorType
-                                + "-Processor(s) for '" + appScenario + "'",
-                        processors.size()));
-            }
-            if (!processors.isEmpty()) {
-                for (final IPersistenceProcessor<T> processor : processors) {
-                    if (debug) {
-                        Repository.logger.debug("Triggering Persistence {}-Processor '{}' for '{}'", processorType, processor.getId(), appScenario);
-                    }
-                    processor.process(object);
-                }
-            }
-        }
+    public final synchronized <M extends Model> M createDefaultModel(final Class<M> clazz, final BusinessCase bc) {
+        return initializeDefaultModel(clazz, bc, this.basicLocation, false);
     }
 
     /**
@@ -215,9 +105,8 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
      * @see de.atb.context.persistence.common.IPersistenceUnit#addPersistencePreProcessor(de.atb.context.common.util.ApplicationScenario, de.atb.context.persistence.processors.IPersistencePreProcessor)
      */
     @Override
-    public final synchronized boolean addPersistencePreProcessor(
-            final ApplicationScenario scenario,
-            final IPersistencePreProcessor<T> preProcessor) {
+    public final synchronized boolean addPersistencePreProcessor(final ApplicationScenario scenario,
+                                                                 final IPersistencePreProcessor<T> preProcessor) {
         return addPersistenceProcessor(scenario, preProcessors, preProcessor);
     }
 
@@ -227,16 +116,161 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
      * @see de.atb.context.persistence.common.IPersistenceUnit#addPersistencePostProcessor(de.atb.context.common.util.ApplicationScenario, de.atb.context.persistence.processors.IPersistencePostProcessor)
      */
     @Override
-    public final synchronized boolean addPersistencePostProcessor(
-            final ApplicationScenario scenario,
-            final IPersistencePostProcessor<T> postProcessor) {
+    public final synchronized boolean addPersistencePostProcessor(final ApplicationScenario scenario,
+                                                                  final IPersistencePostProcessor<T> postProcessor) {
         return addPersistenceProcessor(scenario, postProcessors, postProcessor);
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.common.IPersistenceUnit#removePersistencePreProcessor(de.atb.context.common.util.ApplicationScenario, de.atb.context.persistence.processors.IPersistencePreProcessor)
+     */
+    @Override
+    public final synchronized boolean removePersistencePreProcessor(final ApplicationScenario scenario,
+                                                                    final IPersistencePreProcessor<T> preProcessor) {
+        return removePersistenceProcessor(scenario, preProcessors, preProcessor.getId());
+    }
+
+    @Override
+    public final synchronized boolean removePersistencePreProcessor(final ApplicationScenario scenario,
+                                                                    final String id) {
+        return removePersistenceProcessor(scenario, preProcessors, id);
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see de.atb.context.persistence.common.IPersistenceUnit#removePersistencePostProcessor(de.atb.context.common.util.ApplicationScenario, de.atb.context.persistence.processors.IPersistencePostProcessor)
+     */
+    @Override
+    public final synchronized boolean removePersistencePostProcessor(final ApplicationScenario scenario,
+                                                                     final IPersistencePostProcessor<T> postProcessor) {
+        return removePersistenceProcessor(scenario, postProcessors, postProcessor.getId());
+    }
+
+    @Override
+    public final synchronized boolean removePersistencePostProcessor(
+        final ApplicationScenario scenario, final String id) {
+        return removePersistenceProcessor(scenario, postProcessors, id);
+    }
+
+    protected static synchronized String getLocationForBusinessCase(final String baseUri, final BusinessCase bc) {
+        final Path dataDirPath = ContextPathUtils.getDataDirPath();
+        return String.format("%s%s%s%s%s", dataDirPath, File.separator, baseUri, File.separator, bc);
+    }
+
+    protected abstract void shuttingDown();
+
+    protected abstract boolean reset(BusinessCase bc);
+
+    protected abstract Dataset getDataSet(BusinessCase bc);
+
+    protected Repository(final String baseLocation) {
+        validateString(baseLocation, "baseLocation");
+        this.basicLocation = baseLocation;
+        createShutdownHook();
+    }
+
+    protected final void validateNotNull(final Object paramValue, final String paramName) {
+        Objects.requireNonNull(paramValue, paramName + " may not be null!");
+    }
+
+    protected final void validateString(final String paramValue, final String paramName) {
+        validateNotNull(paramValue, paramName);
+        if (StringUtils.isBlank(paramValue)) {
+            throw new IllegalArgumentException(paramName + " may not be empty!");
+        }
+    }
+
+    protected final void createShutdownHook() {
+        final Thread shutdownHook = new Thread(this::shuttingDown, "Shutdown Hook for repository at '" + basicLocation + "'");
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
+    }
+
+    protected final synchronized boolean implementsInterface(final Class<?> clazz, final Class<?> iFace) {
+        for (final Class<?> hasToImplement : clazz.getInterfaces()) {
+            if (hasToImplement == iFace) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected final synchronized String getLocationForBusinessCase(final BusinessCase bc) {
+        return Repository.getLocationForBusinessCase(this.basicLocation, bc);
+    }
+
+    // FIXME:value of useReasoner is always false
+    @SuppressWarnings("unchecked")
+    protected <M extends Model> M initializeDefaultModel(final Class<M> clazz,
+                                                         final BusinessCase bc,
+                                                         final String modelLocation,
+                                                         final boolean useReasoner) { // TODO this should maybe replace by a call to DRM API
+        final String modelDirStr = Repository.getLocationForBusinessCase(modelLocation, bc);
+        final File modelDir = new File(modelDirStr);
+        if (!modelDir.exists() && !modelDir.mkdirs()) {
+            throw new IllegalArgumentException("Directory '" + modelDir + "' does not exist and cannot be created.");
+        }
+        M toReturn;
+        if (clazz == OntModel.class || implementsInterface(clazz, OntModel.class)) {
+            OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
+            if (useReasoner) {
+                ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+                ontModel.prepare();
+            }
+            toReturn = (M) ontModel;
+        } else if (clazz == Model.class || implementsInterface(clazz, Model.class)) {
+            toReturn = (M) ModelFactory.createDefaultModel();
+        } else {
+            throw new IllegalArgumentException(
+                "Clazz must be one of org.apache.jena.ontology.OntModel or org.apache.jena.rdf.Model!"
+            );
+        }
+        return toReturn;
+    }
+
+    @Override
+    public final void triggerPreProcessors(final ApplicationScenario appScenario, final T object) {
+        triggerProcessors(appScenario, object, this.preProcessors.get(appScenario), "Pre");
+    }
+
+    @Override
+    public final void triggerPostProcessors(final ApplicationScenario appScenario, final T object) {
+        triggerProcessors(appScenario, object, this.postProcessors.get(appScenario), "Post");
+    }
+
+    protected final void triggerProcessors(final ApplicationScenario appScenario,
+                                           final T object,
+                                           final List<IPersistenceProcessor<T>> processors,
+                                           final String processorType) {
+        if (processors != null) {
+            logger.info("Triggering Persistence {}-Processors for '{}'", processorType, appScenario);
+            logger.debug(
+                "Triggering {} Persistence {}-Processor(s) for '{}'",
+                processors.size(),
+                processorType,
+                appScenario
+            );
+            if (!processors.isEmpty()) {
+                for (final IPersistenceProcessor<T> processor : processors) {
+                    logger.debug(
+                        "Triggering Persistence {}-Processor '{}' for '{}'",
+                        processorType,
+                        processor.getId(),
+                        appScenario
+                    );
+                    processor.process(object);
+                }
+            }
+        }
+    }
+
     protected final synchronized boolean addPersistenceProcessor(
-            final ApplicationScenario scenario,
-            final Map<ApplicationScenario, List<IPersistenceProcessor<T>>> map,
-            final IPersistenceProcessor<T> processor) {
+        final ApplicationScenario scenario,
+        final Map<ApplicationScenario, List<IPersistenceProcessor<T>>> map,
+        final IPersistenceProcessor<T> processor
+    ) {
         List<IPersistenceProcessor<T>> list = map.get(scenario);
         boolean exists = false;
         if (list == null) {
@@ -257,50 +291,11 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
         return !exists;
     }
 
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.common.IPersistenceUnit#removePersistencePreProcessor(de.atb.context.common.util.ApplicationScenario, de.atb.context.persistence.processors.IPersistencePreProcessor)
-     */
-    @Override
-    public final synchronized boolean removePersistencePreProcessor(
-            final ApplicationScenario scenario,
-            final IPersistencePreProcessor<T> preProcessor) {
-        return removePersistenceProcessor(scenario, preProcessors,
-                preProcessor.getId());
-
-    }
-
-    @Override
-    public final synchronized boolean removePersistencePreProcessor(
-            final ApplicationScenario scenario, final String id) {
-        return removePersistenceProcessor(scenario, preProcessors, id);
-
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see de.atb.context.persistence.common.IPersistenceUnit#removePersistencePostProcessor(de.atb.context.common.util.ApplicationScenario, de.atb.context.persistence.processors.IPersistencePostProcessor)
-     */
-    @Override
-    public final synchronized boolean removePersistencePostProcessor(
-            final ApplicationScenario scenario,
-            final IPersistencePostProcessor<T> postProcessor) {
-        return removePersistenceProcessor(scenario, postProcessors,
-                postProcessor.getId());
-    }
-
-    @Override
-    public final synchronized boolean removePersistencePostProcessor(
-            final ApplicationScenario scenario, final String id) {
-        return removePersistenceProcessor(scenario, postProcessors, id);
-    }
-
     protected final synchronized boolean removePersistenceProcessor(
-            final ApplicationScenario scenario,
-            final Map<ApplicationScenario, List<IPersistenceProcessor<T>>> map,
-            final String id) {
+        final ApplicationScenario scenario,
+        final Map<ApplicationScenario, List<IPersistenceProcessor<T>>> map,
+        final String id
+    ) {
         final List<IPersistenceProcessor<T>> list = map.get(scenario);
         boolean removed = false;
         if (list != null) {
@@ -316,5 +311,4 @@ public abstract class Repository<T extends IApplicationScenarioProvider>
         }
         return removed;
     }
-
 }

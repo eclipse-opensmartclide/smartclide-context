@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 import de.atb.context.common.Version;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
@@ -92,7 +92,7 @@ public class TankRefillingMonitoringData implements IMonitoringDataModel<TankRef
 	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.monitoring.IMonitoringData#fromRdfModel(com.hp.hpl.jena.rdf.model.Model)
+	 * @see de.atb.context.monitoring.IMonitoringData#fromRdfModel(org.apache.jena.rdf.model.Model)
 	 */
 	@Override
 	public TankRefillingMonitoringData fromRdfModel(Model model) {

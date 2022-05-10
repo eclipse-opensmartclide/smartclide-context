@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<config xmlns="http://www.atb-bremen.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<config xmlns="http://www.atb-bremen.de"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.atb-bremen.de services-config.xsd">
 
     <services>
         <service id="AmIMonitoring">

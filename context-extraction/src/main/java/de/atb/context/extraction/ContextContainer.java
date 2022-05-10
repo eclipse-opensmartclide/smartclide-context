@@ -14,13 +14,6 @@ package de.atb.context.extraction;
  * #L%
  */
 
-import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
-import com.hp.hpl.jena.ontology.*;
-import com.hp.hpl.jena.ontology.impl.OntModelImpl;
-import com.hp.hpl.jena.query.*;
-import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.util.iterator.UniqueExtendedIterator;
 import de.atb.context.extraction.util.IOntPropertyProvider;
 import de.atb.context.extraction.util.base.BaseDatatypeProperties;
 import de.atb.context.extraction.util.base.BaseObjectProperties;
@@ -28,12 +21,27 @@ import de.atb.context.extraction.util.base.BaseOntologyClasses;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.IApplicationScenarioProvider;
-import de.atb.context.context.util.IOntologyResource;
 import de.atb.context.context.util.OntologyNamespace;
 import de.atb.context.persistence.ModelOutputLanguage;
 import lombok.Getter;
 import lombok.Setter;
-import org.mindswap.pellet.jena.PelletReasonerFactory;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.ontology.DatatypeProperty;
+import org.apache.jena.ontology.ObjectProperty;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.ontology.OntProperty;
+import org.apache.jena.ontology.impl.OntModelImpl;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.ResIterator;
+import org.apache.jena.rdf.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +50,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.UUID;
 
 /**
  * Context
@@ -66,11 +78,11 @@ public class ContextContainer extends OntModelImpl implements
     protected Date capturedAt;
 
     public ContextContainer() {
-        super(PelletReasonerFactory.THE_SPEC);
+        super(OntModelSpec.OWL_MEM);
     }
 
     public ContextContainer(boolean useReasoner) {
-        super(useReasoner ? PelletReasonerFactory.THE_SPEC
+        super(useReasoner ? OntModelSpec.OWL_MEM
                 : OntModelSpec.OWL_DL_MEM);
     }
 
@@ -79,7 +91,7 @@ public class ContextContainer extends OntModelImpl implements
     }
 
     public ContextContainer(OntModel base, boolean useReasoner) {
-        super(useReasoner ? PelletReasonerFactory.THE_SPEC
+        super(useReasoner ? OntModelSpec.OWL_MEM
                 : OntModelSpec.OWL_DL_MEM, base);
     }
 
@@ -96,14 +108,14 @@ public class ContextContainer extends OntModelImpl implements
 
     public ContextContainer(ApplicationScenario scenario,
                             boolean useReasoner) {
-        super(useReasoner ? PelletReasonerFactory.THE_SPEC
+        super(useReasoner ? OntModelSpec.OWL_MEM
                 : OntModelSpec.OWL_DL_MEM);
         applicationScenario = scenario;
     }
 
     public ContextContainer(ApplicationScenario scenario,
                             OntModel base, boolean useReasoner) {
-        super(useReasoner ? PelletReasonerFactory.THE_SPEC
+        super(useReasoner ? OntModelSpec.OWL_MEM
                 : OntModelSpec.OWL_DL_MEM, base);
         applicationScenario = scenario;
     }
@@ -131,7 +143,7 @@ public class ContextContainer extends OntModelImpl implements
         } else {
             model.read(OntologyNamespace.getInstance().getAbsoluteUri());
         }
-        add(model, true);
+        add(model);
     }
 
     public final BusinessCase getBusinessCase() {
@@ -165,14 +177,6 @@ public class ContextContainer extends OntModelImpl implements
 
     public static ContextContainer readFromFile(String filePath) {
         return ContextContainer.readFromFile(URI.create(filePath));
-    }
-
-    public final ExtendedIterator<Individual> listIndividuals(
-            IOntologyResource resource) {
-        String uri = resource.getURI();
-        OntResource ontRes = getOntResource(uri);
-        return UniqueExtendedIterator.create(findByTypeAs(ontRes,
-                Individual.class));
     }
 
     public final <T extends OntProperty> ResIterator listResourcesWithProperty(

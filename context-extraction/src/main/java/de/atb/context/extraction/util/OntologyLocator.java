@@ -15,8 +15,8 @@ package de.atb.context.extraction.util;
  */
 
 
-import com.hp.hpl.jena.ontology.OntDocumentManager;
-import com.hp.hpl.jena.util.FileManager;
+import org.apache.jena.ontology.OntDocumentManager;
+import org.apache.jena.util.FileManager;
 
 /**
  * OntologyLocator

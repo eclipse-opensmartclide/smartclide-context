@@ -14,20 +14,17 @@ package eu.smartclide.contexthandling;
  * #L%
  */
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.Properties;
 
+import de.atb.context.common.ContextPathUtils;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.services.AmIMonitoringService;
 import de.atb.context.services.IAmIMonitoringDataRepositoryService;
 import de.atb.context.services.IAmIMonitoringService;
 import de.atb.context.services.SWServiceContainer;
-import de.atb.context.services.faults.ContextFault;
 import de.atb.context.services.manager.ServiceManager;
 import de.atb.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
@@ -36,91 +33,55 @@ import org.slf4j.LoggerFactory;
 
 public class ServiceMain {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServiceMain.class);
-    private static IAmIMonitoringService service;
-    // TODO addDataModel as parameter as soon as this is defined for SmartCLIDE
-    private static AmIMonitoringDataRepositoryServiceWrapper monitoringDataRepository;
-    private static IAmIMonitoringDataRepositoryService<IMonitoringDataModel<?, ?>> reposService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceMain.class);
+    private static final String SMARTCLIDE = "SMARTCLIDE";
+    private static final String MONITORING_CONFIG_FILE_NAME = "monitoring-config.xml";
+    private static final String SERVICES_CONFIG_FILE_NAME = "services-config.xml";
+    private static final String AMI_REPOSITORY_ID = "AmI-repository";
 
-    private static void initialize() {
-        Properties props = System.getProperties();
-        props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
-
-        Path smartclideConfigPath = Path.of("resources");
-
-        // Environment Variable
-        String smartclideHome = System.getenv("SMARTCLIDE_HOME");
-        if (smartclideHome != null && Files.isDirectory(Paths.get(smartclideHome))) {
-            smartclideConfigPath = Path.of(smartclideHome, "config");
-            // Linux config directory /var/lib/smartclide
-        } else if (Files.isDirectory(Paths.get("/var/lib/smartclide"))) {
-            smartclideConfigPath = Path.of("/var/lib/smartclide", "config");
-            // Linux config directory /opt/smartclide/config
-        } else if (Files.isDirectory(Paths.get("/opt/smartclide"))) {
-            smartclideConfigPath = Path.of("/opt/smartclide", "config");
-            // Windows Config Directories
-        } else if (Files.isDirectory(Paths.get("C:\\ProgramData\\smartclide"))) {
-            smartclideConfigPath = Path.of("C:\\ProgramData\\smartclide", "config");
-        } else {
-            // check if default folder exist
-            if (!Files.isDirectory(smartclideConfigPath)) {
-                logger.error("The config directory for the SmartCLIDE Context Handling does not exist!");
-                System.exit(1);
-            }
-        }
-
-
-        AmIMonitoringConfiguration amiConfig = new AmIMonitoringConfiguration();
-        amiConfig.setId("SMARTCLIDE");
-        amiConfig.setServiceConfiguration(readFile(smartclideConfigPath.resolve("monitoring-config.xml").toString()));
-
-        SWServiceContainer serviceContainer =
-                new SWServiceContainer("AmI-repository", smartclideConfigPath.resolve("services-config.xml").toString());
-        ServiceManager.getLSWServiceContainer().add(serviceContainer);
-        ServiceManager.registerWebservice(serviceContainer);
-
-        for (SWServiceContainer container : ServiceManager.getLSWServiceContainer()) {
-            if (Objects.requireNonNull(container.getServerClass())
-                    .toString()
-                    .contains("AmIMonitoringDataRepository")) {
-                reposService = ServiceManager.getWebservice(container);
-            }
-        }
-
-        ServiceManager.registerWebservice(AmIMonitoringService.class);
-        service = ServiceManager.getWebservice(IAmIMonitoringService.class);
-        service.configureService(amiConfig);
-    }
-
-    private static String readFile(String filename) {
-        try {
-            return Files.readString(Path.of(filename), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            return "";
-        }
-    }
-
-    private static void startService() {
+    public static void startService() {
         // start monitoring service (the repository is implicitly started from within the monitoring service)
         try {
+            final Properties props = System.getProperties();
+            props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
+
+            final Path configDirPath = ContextPathUtils.getConfigDirPath();
+
+            final Path serviceConfigFilePath = configDirPath.resolve(SERVICES_CONFIG_FILE_NAME);
+            final SWServiceContainer serviceContainer =
+                    new SWServiceContainer(AMI_REPOSITORY_ID, serviceConfigFilePath.toString());
+            ServiceManager.getLSWServiceContainer().add(serviceContainer);
+            ServiceManager.registerWebservice(serviceContainer);
+
+            final SWServiceContainer repositoryServiceContainer = ServiceManager.getLSWServiceContainer().stream()
+                    .filter(container -> container.getId().equals(AMI_REPOSITORY_ID))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Service could not be started, repository service is null"));
+
+            final IAmIMonitoringDataRepositoryService<IMonitoringDataModel<?, ?>> repositoryService =
+                    ServiceManager.getWebservice(repositoryServiceContainer);
+            final AmIMonitoringDataRepositoryServiceWrapper<IMonitoringDataModel<?, ?>> monitoringDataRepository =
+                    new AmIMonitoringDataRepositoryServiceWrapper<>(repositoryService);
+            LOGGER.debug(monitoringDataRepository.ping());
+
+            final Path monitoringConfigFilePath = configDirPath.resolve(MONITORING_CONFIG_FILE_NAME);
+            final String monitoringConfig = Files.readString(monitoringConfigFilePath, StandardCharsets.UTF_8);
+            final AmIMonitoringConfiguration amiConfig = new AmIMonitoringConfiguration();
+            amiConfig.setId(SMARTCLIDE);
+            amiConfig.setServiceConfiguration(monitoringConfig);
+
+            ServiceManager.registerWebservice(AmIMonitoringService.class);
+            final IAmIMonitoringService service = ServiceManager.getWebservice(IAmIMonitoringService.class);
+            service.configureService(amiConfig);
+
+            // TODO: add DleGitMonitorProgressListener as progress listener in GitMonitor
             service.start();
-        } catch (ContextFault e) {
-            logger.error(e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     public static void main(String[] args) {
-        initialize();
-
-        // TODO: add DleGitMonitorProgressListener as progress listener in GitMonitor
-
-        if (reposService != null) {
-            monitoringDataRepository = new AmIMonitoringDataRepositoryServiceWrapper(reposService);
-            logger.debug(monitoringDataRepository.ping());
-            startService();
-        } else {
-            logger.error("Service could not be started, repository service is null");
-        }
+        startService();
     }
 }

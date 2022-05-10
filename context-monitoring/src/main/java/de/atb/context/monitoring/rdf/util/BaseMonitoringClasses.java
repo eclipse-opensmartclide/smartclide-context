@@ -17,8 +17,8 @@ package de.atb.context.monitoring.rdf.util;
 
 import java.util.UUID;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 
 /**
  * BaseMonitoringClasses
@@ -102,7 +102,7 @@ public enum BaseMonitoringClasses implements IMonitoringDataResource {
     /**
      * (non-Javadoc)
      *
-     * @see IMonitoringDataResource#getUri(com.hp.hpl.jena.rdf.model.Model)
+     * @see IMonitoringDataResource#getUri(org.apache.jena.rdf.model.Model)
      */
     @Override
     public String getUri(final Model model) {
@@ -122,7 +122,7 @@ public enum BaseMonitoringClasses implements IMonitoringDataResource {
     /**
      * (non-Javadoc)
      *
-     * @see IMonitoringDataResource#getNameSpace(com.hp.hpl.jena.rdf.model.Model)
+     * @see IMonitoringDataResource#getNameSpace(org.apache.jena.rdf.model.Model)
      */
     @Override
     public String getNameSpace(final Model model) {

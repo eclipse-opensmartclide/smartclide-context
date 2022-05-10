@@ -14,7 +14,7 @@ package de.atb.context.extraction;
  * #L%
  */
 
-import com.hp.hpl.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModel;
 import de.atb.context.monitoring.IMonitoringData;
 
 /**

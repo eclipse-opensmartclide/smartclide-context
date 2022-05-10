@@ -15,8 +15,8 @@ package de.atb.context.extraction.util.base;
  */
 
 
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.OntModel;
+import org.apache.jena.ontology.DatatypeProperty;
+import org.apache.jena.ontology.OntModel;
 import de.atb.context.extraction.util.IOntPropertyProvider;
 import de.atb.context.context.util.IOntologyResource;
 import de.atb.context.context.util.OntologyNamespace;
@@ -168,7 +168,7 @@ public enum BaseDatatypeProperties implements IOntologyResource, IOntPropertyPro
 	/**
 	 * (non-Javadoc)
 	 *
-	 * @see de.atb.context.extraction.util.IOntPropertyProvider#getProperty(com.hp.hpl.jena.ontology.OntModel)
+	 * @see de.atb.context.extraction.util.IOntPropertyProvider#getProperty(org.apache.jena.ontology.OntModel)
 	 */
 	@Override
 	public DatatypeProperty getProperty(final OntModel model) {

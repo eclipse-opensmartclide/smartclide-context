@@ -1,8 +1,8 @@
 package de.atb.context.persistence;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.StmtIterator;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.TimeFrame;
@@ -12,12 +12,15 @@ import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.persistence.monitoring.MonitoringDataRepository;
 import de.atb.context.persistence.processors.DummyMonitoringDataPersistencePostProcessor;
 import de.atb.context.persistence.processors.DummyMonitoringDataPersistencePreProcessor;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.time.ZoneId;
 import java.util.*;
 
 /**

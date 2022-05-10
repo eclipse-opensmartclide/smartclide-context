@@ -23,9 +23,9 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
 
 /**
  * BaseProperties
@@ -76,7 +76,7 @@ public enum BaseMonitoringProperties implements IMonitoringDataResource, IMonito
     /**
      * (non-Javadoc)
      *
-     * @see IMonitoringPropertyProvider#getProperty(com.hp.hpl.jena.rdf.model.Model)
+     * @see IMonitoringPropertyProvider#getProperty(org.apache.jena.rdf.model.Model)
      */
     @Override
     public Property getProperty(final Model model) {
@@ -96,7 +96,7 @@ public enum BaseMonitoringProperties implements IMonitoringDataResource, IMonito
     /**
      * (non-Javadoc)
      *
-     * @see IMonitoringDataResource#getUri(com.hp.hpl.jena.rdf.model.Model)
+     * @see IMonitoringDataResource#getUri(org.apache.jena.rdf.model.Model)
      */
     @Override
     public String getUri(final Model model) {
@@ -116,7 +116,7 @@ public enum BaseMonitoringProperties implements IMonitoringDataResource, IMonito
     /**
      * (non-Javadoc)
      *
-     * @see IMonitoringDataResource#getNameSpace(com.hp.hpl.jena.rdf.model.Model)
+     * @see IMonitoringDataResource#getNameSpace(org.apache.jena.rdf.model.Model)
      */
     @Override
     public String getNameSpace(final Model model) {
@@ -131,7 +131,7 @@ public enum BaseMonitoringProperties implements IMonitoringDataResource, IMonito
     /**
      * (non-Javadoc)
      *
-     * @see IMonitoringPropertyProvider#getValue(com.hp.hpl.jena.rdf.model.Resource)
+     * @see IMonitoringPropertyProvider#getValue(org.apache.jena.rdf.model.Resource)
      */
     @SuppressWarnings("unchecked")
     @Override

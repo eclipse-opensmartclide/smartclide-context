@@ -19,7 +19,6 @@ import de.atb.context.common.util.BusinessCase;
 import de.atb.context.monitoring.IMonitoringData;
 import de.atb.context.monitoring.config.models.DataSource;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**

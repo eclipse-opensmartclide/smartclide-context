@@ -14,29 +14,21 @@ package de.atb.context.services;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
-
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Response;
-
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.TimeFrame;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.persistence.monitoring.MonitoringDataRepository;
 import de.atb.context.services.faults.ContextFault;
-import de.atb.context.services.infrastructure.response.InvokeResponse;
-import de.atb.context.services.interfaces.Input;
-import de.atb.context.services.interfaces.Output;
 import de.atb.context.services.manager.ServiceManager;
 import de.atb.context.tools.datalayer.models.OutputDataModel;
-import de.atb.context.tools.ontology.Configuration;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * MonitoringDataRepositoryService
@@ -45,8 +37,9 @@ import org.slf4j.LoggerFactory;
  * @author scholze
  * @version $LastChangedRevision: 239 $
  */
-public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataModel<?, ?>> extends
-    PersistenceUnitService<Type, MonitoringDataRepository<Type>> implements IAmIMonitoringDataRepositoryService<Type> {
+public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataModel<?, ?>>
+    extends PersistenceUnitService<Type, MonitoringDataRepository<Type>>
+    implements IAmIMonitoringDataRepositoryService<Type> {
 
     private static final Logger logger = LoggerFactory.getLogger(AmIMonitoringDataRepositoryService.class);
 
@@ -57,22 +50,26 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
     }
 
     @Override
-    public void setOutputIds(ArrayList<String> arrayList) throws ContextFault {
-
+    public void setOutputIds(final ArrayList<String> outputIds) throws ContextFault {
     }
 
     @Override
-    public String invokeForData(String s) throws ContextFault {
+    public String invokeForData(final String ElementId) throws ContextFault {
         return null;
     }
 
     @Override
-    public void setOutputModel(OutputDataModel outputDataModel) throws ContextFault {
-
+    public void setOutputModel(final OutputDataModel model) throws ContextFault {
     }
 
     @Override
-    public boolean setupRepos(String s, int i, String s1, String s2, OutputDataModel outputDataModel, ArrayList<String> arrayList, String s3) throws ContextFault {
+    public boolean setupRepos(final String host,
+                              final int port,
+                              final String className,
+                              final String pesId,
+                              final OutputDataModel model,
+                              final ArrayList<String> outIds,
+                              final String serviceId) throws ContextFault {
         return false;
     }
 
@@ -86,17 +83,12 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      *
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#persist(java.lang.String, java.lang.String, de.atb.context.common.util.ApplicationScenario)
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public final synchronized void persist(final String rdfString, final String clazz, final ApplicationScenario applicationScenario) throws ContextFault {
-        Class<Type> clazzP;
-        try {
-            clazzP = (Class<Type>) Class.forName(clazz);
-            this.repos.persist(rdfString, clazzP, applicationScenario);
-        } catch (ClassNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ContextFault(e);
-        }
+    public final synchronized void persist(final String rdfString,
+                                           final String clazz,
+                                           final ApplicationScenario applicationScenario) throws ContextFault {
+        Class<Type> typeClass = getTypeClass(clazz);
+        this.repos.persist(rdfString, typeClass);
     }
 
     /**
@@ -105,20 +97,12 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#getMonitoringData(de.atb.context.common.util.BusinessCase, java.lang.String, java.lang.String)
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public final synchronized String getMonitoringData(final BusinessCase businessCase, final String clazz, final String identifier) throws ContextFault {
-        Class<Type> cl;
-        try {
-            cl = (Class<Type>) Class.forName(clazz);
-            Type model = this.repos.getMonitoringData(businessCase, cl, identifier);
-            if (model != null) {
-                return model.toRdfString();
-            }
-        } catch (ClassNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ContextFault(e);
-        }
-        return "";
+    public final synchronized String getMonitoringData(final BusinessCase businessCase,
+                                                       final String clazz,
+                                                       final String identifier) throws ContextFault {
+        Class<Type> typeClass = getTypeClass(clazz);
+        Type model = this.repos.getMonitoringData(businessCase, typeClass, identifier);
+        return (model != null) ? model.toRdfString() : "";
     }
 
     /**
@@ -126,22 +110,13 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      *
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#getMonitoringData(de.atb.context.common.util.BusinessCase, java.lang.String, int)
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public final synchronized List<String> getMonitoringData(final BusinessCase businessCase, final String clazz, final int count) throws ContextFault {
-        Class<Type> cl;
-        List<String> stringModels = new ArrayList<>();
-        try {
-            cl = (Class<Type>) Class.forName(clazz);
-            List<Type> models = this.repos.getMonitoringData(businessCase, cl, count);
-            for (Type model : models) {
-                stringModels.add(model.toRdfString());
-            }
-        } catch (ClassNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ContextFault(e);
-        }
-        return stringModels;
+    public final synchronized List<String> getMonitoringData(final BusinessCase businessCase,
+                                                             final String clazz,
+                                                             final int count) throws ContextFault {
+        Class<Type> typeClass = getTypeClass(clazz);
+        List<Type> models = this.repos.getMonitoringData(businessCase, typeClass, count);
+        return toStringModels(models);
     }
 
     /**
@@ -149,24 +124,13 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      *
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#getMonitoringData(de.atb.context.common.util.BusinessCase, java.lang.String, de.atb.context.common.util.TimeFrame)
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public final synchronized List<String> getMonitoringData(final BusinessCase businessCase, final String clazz, final TimeFrame timeFrame)
-        throws ContextFault {
-        Class<Type> cl;
-        List<String> stringModels = new ArrayList<>();
-        try {
-            cl = (Class<Type>) Class.forName(clazz);
-            List<Type> models = this.repos.getMonitoringData(businessCase, cl, timeFrame);
-            for (Type model : models) {
-                stringModels.add(model.toRdfString());
-            }
-        } catch (ClassNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ContextFault(e);
-        }
-        return stringModels;
-
+    public final synchronized List<String> getMonitoringData(final BusinessCase businessCase,
+                                                             final String clazz,
+                                                             final TimeFrame timeFrame) throws ContextFault {
+        Class<Type> typeClass = getTypeClass(clazz);
+        List<Type> models = this.repos.getMonitoringData(businessCase, typeClass, timeFrame);
+        return toStringModels(models);
     }
 
     /**
@@ -175,8 +139,9 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#getMonitoringData(de.atb.context.common.util.ApplicationScenario, java.lang.String, int)
      */
     @Override
-    public final synchronized List<String> getMonitoringData(final ApplicationScenario applicationScenario, final String clazz, final int count)
-        throws ContextFault {
+    public final synchronized List<String> getMonitoringData(final ApplicationScenario applicationScenario,
+                                                             final String clazz,
+                                                             final int count) throws ContextFault {
         return getMonitoringData(applicationScenario.getBusinessCase(), clazz, count);
     }
 
@@ -186,8 +151,9 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#getMonitoringData(de.atb.context.common.util.ApplicationScenario, java.lang.String, de.atb.context.common.util.TimeFrame)
      */
     @Override
-    public final synchronized List<String> getMonitoringData(final ApplicationScenario applicationScenario, final String clazz, final TimeFrame timeFrame)
-        throws ContextFault {
+    public final synchronized List<String> getMonitoringData(final ApplicationScenario applicationScenario,
+                                                             final String clazz,
+                                                             final TimeFrame timeFrame) throws ContextFault {
         return getMonitoringData(applicationScenario.getBusinessCase(), clazz, timeFrame);
     }
 
@@ -196,22 +162,13 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      *
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#getMonitoringData(de.atb.context.common.util.ApplicationScenario, java.lang.String, java.lang.String)
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public final synchronized String getMonitoringData(final ApplicationScenario applicationScenario, final String clazz, final String identifier)
-        throws ContextFault {
-        Class<Type> cl;
-        try {
-            cl = (Class<Type>) Class.forName(clazz);
-            Type model = this.repos.getMonitoringData(applicationScenario, cl, identifier);
-            if (model != null) {
-                return model.toRdfString();
-            }
-        } catch (ClassNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ContextFault(e);
-        }
-        return "";
+    public final synchronized String getMonitoringData(final ApplicationScenario applicationScenario,
+                                                       final String clazz,
+                                                       final String identifier) throws ContextFault {
+        Class<Type> typeClass = getTypeClass(clazz);
+        Type model = this.repos.getMonitoringData(applicationScenario, typeClass, identifier);
+        return (model != null) ? model.toRdfString() : "";
     }
 
     /**
@@ -233,7 +190,9 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#getLastIds(de.atb.context.common.util.ApplicationScenario, java.lang.String, int)
      */
     @Override
-    public final synchronized List<String> getLastIds(final ApplicationScenario applicationScenario, final String clazz, final int count) throws ContextFault {
+    public final synchronized List<String> getLastIds(final ApplicationScenario applicationScenario,
+                                                      final String clazz,
+                                                      final int count) throws ContextFault {
         return getLastIds(applicationScenario.getBusinessCase(), clazz, count);
     }
 
@@ -243,8 +202,9 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#getLastIds(de.atb.context.common.util.ApplicationScenario, java.lang.String, de.atb.context.common.util.TimeFrame)
      */
     @Override
-    public final synchronized List<String> getLastIds(final ApplicationScenario applicationScenario, final String clazz, final TimeFrame timeFrame)
-        throws ContextFault {
+    public final synchronized List<String> getLastIds(final ApplicationScenario applicationScenario,
+                                                      final String clazz,
+                                                      final TimeFrame timeFrame) throws ContextFault {
         return getLastIds(applicationScenario.getBusinessCase(), clazz, timeFrame);
     }
 
@@ -254,7 +214,8 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#executeSparqlSelectQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
      */
     @Override
-    public final synchronized String executeSparqlSelectQuery(final BusinessCase businessCase, final String query) throws ContextFault {
+    public final synchronized String executeSparqlSelectQuery(final BusinessCase businessCase,
+                                                              final String query) throws ContextFault {
         ResultSet results = repos.executeSparqlSelectQuery(businessCase, query);
         return ResultSetFormatter.asXMLString(results);
     }
@@ -305,7 +266,8 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#executeSparqlUpdateQuery(de.atb.context.common.util.BusinessCase, java.lang.String)
      */
     @Override
-    public final void executeSparqlUpdateQuery(final BusinessCase businessCase, final String query) throws ContextFault {
+    public final void executeSparqlUpdateQuery(final BusinessCase businessCase,
+                                               final String query) throws ContextFault {
         repos.executeSparqlUpdateQueries(businessCase, query);
     }
 
@@ -315,7 +277,8 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#executeSparqlUpdateQueries(de.atb.context.common.util.BusinessCase, java.lang.String[])
      */
     @Override
-    public final void executeSparqlUpdateQueries(final BusinessCase businessCase, final String... queries) throws ContextFault {
+    public final void executeSparqlUpdateQueries(final BusinessCase businessCase,
+                                                 final String... queries) throws ContextFault {
         repos.executeSparqlUpdateQueries(businessCase, queries);
     }
 
@@ -324,19 +287,12 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      *
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#getLastIds(de.atb.context.common.util.BusinessCase, java.lang.String, int)
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public final List<String> getLastIds(final BusinessCase businessCase, final String clazz, final int count) throws ContextFault {
-        List<String> ids;
-        Class<Type> cl;
-        try {
-            cl = (Class<Type>) Class.forName(clazz);
-            ids = repos.getLastIds(businessCase, cl, count);
-        } catch (ClassNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ContextFault(e);
-        }
-        return ids;
+    public final List<String> getLastIds(final BusinessCase businessCase,
+                                         final String clazz,
+                                         final int count) throws ContextFault {
+        Class<Type> typeClass = getTypeClass(clazz);
+        return repos.getLastIds(businessCase, typeClass, count);
     }
 
     /**
@@ -344,40 +300,12 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
      *
      * @see de.atb.context.services.IAmIMonitoringDataRepositoryService#getLastIds(de.atb.context.common.util.BusinessCase, java.lang.String, de.atb.context.common.util.TimeFrame)
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public final List<String> getLastIds(final BusinessCase businessCase, final String clazz, final TimeFrame timeFrame) throws ContextFault {
-        List<String> ids;
-        Class<Type> cl;
-        try {
-            cl = (Class<Type>) Class.forName(clazz);
-            ids = repos.getLastIds(businessCase, cl, timeFrame);
-        } catch (ClassNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ContextFault(e);
-        }
-        return ids;
-    }
-
-    public final <T extends Configuration> boolean configureService(final T Configuration) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public final Output invokeS(final Input input) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public final Output invokeA(final Input input) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public final Future<?> invokeAAsync(final Input input,
-                                        final AsyncHandler<InvokeResponse> asyncHandler) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public final Response<InvokeResponse> invokeAAsync(final Input input) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public final List<String> getLastIds(final BusinessCase businessCase,
+                                         final String clazz,
+                                         final TimeFrame timeFrame) throws ContextFault {
+        Class<Type> typeClass = getTypeClass(clazz);
+        return repos.getLastIds(businessCase, typeClass, timeFrame);
     }
 
     /**
@@ -405,4 +333,21 @@ public class AmIMonitoringDataRepositoryService<Type extends IMonitoringDataMode
         super.repos.shutdown();
     }
 
+    @SuppressWarnings("unchecked")
+    private Class<Type> getTypeClass(String clazz) {
+        try {
+            return (Class<Type>) Class.forName(clazz);
+        } catch (ClassNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ContextFault(e);
+        }
+    }
+
+    private List<String> toStringModels(List<Type> models) {
+        List<String> stringModels = new ArrayList<>();
+        for (Type model : models) {
+            stringModels.add(model.toRdfString());
+        }
+        return stringModels;
+    }
 }

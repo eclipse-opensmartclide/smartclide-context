@@ -21,9 +21,9 @@ import java.util.concurrent.Future;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
+import org.apache.jena.rdf.model.Model;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
 import de.atb.context.common.util.TimeFrame;
@@ -32,7 +32,6 @@ import de.atb.context.extraction.ContextContainerWrapper;
 import de.atb.context.persistence.ModelOutputLanguage;
 import de.atb.context.persistence.context.ContextRepository;
 import de.atb.context.services.faults.ContextFault;
-import de.atb.context.services.infrastructure.response.InvokeResponse;
 import de.atb.context.services.interfaces.Input;
 import de.atb.context.services.interfaces.Output;
 import de.atb.context.services.manager.ServiceManager;
@@ -114,11 +113,11 @@ public class ContextRepositoryService extends PersistenceUnitService<ContextCont
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public final Future<?> invokeAAsync(final Input input, final AsyncHandler<InvokeResponse> asyncHandler) {
+    public final Future<?> invokeAAsync(final Input input, final AsyncHandler<?> asyncHandler) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public final Response<InvokeResponse> invokeAAsync(final Input input) {
+    public final Response<?> invokeAAsync(final Input input) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -11,12 +11,21 @@ import de.atb.context.persistence.processors.DummyMonitoringDataPersistencePrePr
 import de.atb.context.services.faults.ContextFault;
 import de.atb.context.services.manager.ServiceManager;
 import org.apache.cxf.endpoint.Server;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+import java.util.TimeZone;
 
 /**
  * TestMonitoringDataRepositoryService

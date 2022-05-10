@@ -5,11 +5,9 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.impl.ModelCom;
+import org.apache.jena.rdf.model.Model;
 
 public class ModelOutputLanguageTest {
 
