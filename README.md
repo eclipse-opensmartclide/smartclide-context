@@ -61,7 +61,7 @@ Each index entry has the following mandatory attributes
 Each datasource entry has the following mandatory attributes
 
 - id:The unique name of the datasource
-- type:The type of the datasource. Possible values are: file, webservice, database
+- type:The type of the datasource. Possible values are: filesystem, webservice, database, messageBroker
 - monitor:The class of the monitor to be used. Possible values are:
     - package de.atb.context.monitoring.monitors.database.DatabaseMonitor
     - package de.atb.context.monitoring.monitors.file.FileSystemMonitor
