@@ -29,7 +29,6 @@ public class GitlabApiClientTest {
     public void testGitServices() {
         final int expectedNumberOfProjects = 5;
         final String todoProjectId = "233";
-        final int expectedNumberOfBranches = 2;
         final int expectedNumberOfCommits = 2;
 
         final String expectedBranchName = "main";
