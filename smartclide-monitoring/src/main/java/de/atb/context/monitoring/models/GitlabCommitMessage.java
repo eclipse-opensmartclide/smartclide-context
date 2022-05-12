@@ -32,15 +32,10 @@ import thewebsemantic.RdfType;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class GitMessage {
-    String timestamp;
+public class GitlabCommitMessage {
     String user;
     String repository;
     String branch;
-    String header;
-    String state;
-    Integer noOfCommitsInBranch;
-    Integer noOfPushesInBranch;
     Integer noOfModifiedFiles;
     Integer timeSinceLastCommit;
 }

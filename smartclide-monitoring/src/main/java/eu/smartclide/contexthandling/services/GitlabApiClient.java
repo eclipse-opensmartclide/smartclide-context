@@ -14,9 +14,10 @@ package eu.smartclide.contexthandling.services;
  * #L%
  */
 
-import com.google.gson.*;
-import de.atb.context.monitoring.models.GitMessage;
-import de.atb.context.monitoring.models.GitMessageHeader;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import de.atb.context.monitoring.models.GitlabCommitMessage;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,24 +37,25 @@ import java.util.List;
 
 import com.google.gson.JsonArray;
 
-public class GitRestCallService {
+public class GitlabApiClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(GitRestCallService.class);
+    private static final Logger logger = LoggerFactory.getLogger(GitlabApiClient.class);
 
-    private final String accessTokenParam;
-    private final String baseUri = "https://gitlab.atb-bremen.de/api/v4/projects/";
-    private final String membershipParam = "&membership=true";
-    private final String paginationParam = "&per_page=100";
-    private final String refNameParam = "&ref_name=";
-    private final String sinceParam = "&since=2022-04-25T13:05:00"; // TODO change this based on requirement
+    private static final String membershipParam = "&membership=true";
+    private static final String paginationParam = "&per_page=100";
+    private static final String refNameParam = "&ref_name=";
+    private static final String sinceParam = "&since=2022-04-25T13:05:00"; // TODO change this based on requirement
+    private static final String uriPartForBranches = "/repository/branches/";
+    private static final String uriPartForCommits = "/repository/commits/";
+    private static final String uriPartForDiff = "/diff/";
+    private static final String uriPartForProjects = "/api/v4/projects/";
+    private final String baseUri;
     private final String uriParams;
-    private final String uriPartForBranches = "/repository/branches/";
-    private final String uriPartForCommits = "/repository/commits/";
-    private final String uriPartForDiff = "/diff/";
 
-    public GitRestCallService(String accessTokenParam) {
-        this.accessTokenParam = "private_token=" + accessTokenParam;
-        this.uriParams = "?" + this.accessTokenParam + this.membershipParam + this.paginationParam;
+    public GitlabApiClient(String accessToken, String gitlabBaseUri) {
+        String accessTokenParam = "private_token=" + accessToken;
+        this.uriParams = "?" + accessTokenParam + membershipParam + paginationParam;
+        this.baseUri = gitlabBaseUri + uriPartForProjects;
     }
 
     /**
@@ -62,10 +64,10 @@ public class GitRestCallService {
      *
      * @return List<GitMessage>
      */
-    public List<GitMessage> getGitMessages() {
+    public List<GitlabCommitMessage> getGitlabCommitMessages() {
         // first get all user projects
         JsonArray projects = getUserProjects();
-        List<GitMessage> gitMessages = new LinkedList<>();
+        List<GitlabCommitMessage> gitlabCommitMessages = new LinkedList<>();
         for (JsonElement project : projects) {
             // get project id
             String projectId = project.getAsJsonObject().get("id").getAsString();
@@ -78,22 +80,20 @@ public class GitRestCallService {
                 for (JsonElement commit : commitsInBranch) {
                     String commitId = commit.getAsJsonObject().get("id").getAsString();
 
-                    GitMessage gitMessage = new GitMessage();
-                    gitMessage.setHeader(GitMessageHeader.NEW_COMMIT.getHeader());
-                    gitMessage.setState("info");
-                    gitMessage.setUser(commit.getAsJsonObject().get("author_name").getAsString());
-                    gitMessage.setRepository(project.getAsJsonObject().get("path_with_namespace").getAsString());
-                    gitMessage.setBranch(branchName);
-                    gitMessage.setTimeSinceLastCommit(calculateTimeSinceLastCommit(projectId, commit.getAsJsonObject()));
+                    GitlabCommitMessage gitlabCommitMessage = new GitlabCommitMessage();
+                    gitlabCommitMessage.setUser(commit.getAsJsonObject().get("author_name").getAsString());
+                    gitlabCommitMessage.setRepository(project.getAsJsonObject().get("path_with_namespace").getAsString());
+                    gitlabCommitMessage.setBranch(branchName);
+                    gitlabCommitMessage.setTimeSinceLastCommit(calculateTimeSinceLastCommit(projectId, commit.getAsJsonObject()));
 
                     JsonArray newCommitDiff = getCommitDiff(projectId, commitId);
-                    gitMessage.setNoOfModifiedFiles(newCommitDiff.size());
+                    gitlabCommitMessage.setNoOfModifiedFiles(newCommitDiff.size());
 
-                    gitMessages.add(gitMessage);
+                    gitlabCommitMessages.add(gitlabCommitMessage);
                 }
             }
         }
-        return gitMessages;
+        return gitlabCommitMessages;
     }
 
     public Integer calculateTimeSinceLastCommit(String projectId, JsonObject newCommit) {

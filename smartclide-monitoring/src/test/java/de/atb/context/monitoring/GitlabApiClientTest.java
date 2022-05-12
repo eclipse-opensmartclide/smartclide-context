@@ -2,18 +2,19 @@ package de.atb.context.monitoring;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import de.atb.context.monitoring.config.models.datasources.GitlabDataSourceTest;
-import eu.smartclide.contexthandling.services.GitRestCallService;
+import eu.smartclide.contexthandling.services.GitlabApiClient;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 
-public class GitRestCallServiceTest {
+public class GitlabApiClientTest {
 
-    private GitRestCallService gitRestCallService;
+    private static final String gitlabBaseUri = "https://gitlab.atb-bremen.de";
+    private GitlabApiClient gitlabApiClient;
 
     @Before
     public void setup() {
@@ -21,7 +22,7 @@ public class GitRestCallServiceTest {
         if (StringUtils.isBlank(gitlabApiToken)) {
             throw new IllegalStateException("Did not find valid GitLab API token in \"SMARTCLIDE_CONTEXT_GITLAB_API_TOKEN\" environment variable!");
         }
-        gitRestCallService = new GitRestCallService(gitlabApiToken);
+        gitlabApiClient = new GitlabApiClient(gitlabApiToken, gitlabBaseUri);
     }
 
     @Test
@@ -37,20 +38,20 @@ public class GitRestCallServiceTest {
         final Integer expectedCommitNoOfFilesChanged = 1;
         final String sinceParam = "&since=2020-01-26T13:05:00";
 
-        JsonArray projects = gitRestCallService.getUserProjects();
+        JsonArray projects = gitlabApiClient.getUserProjects();
         assertThat(projects.size(), equalTo(expectedNumberOfProjects));
 
-        JsonArray branches = gitRestCallService.getAllBranchesForGivenProject(todoProjectId);
-        assertThat(branches.size(), equalTo(expectedNumberOfBranches));
+        JsonArray branches = gitlabApiClient.getAllBranchesForGivenProject(todoProjectId);
+        assertTrue(branches.size() > 0);
 
-        JsonArray commits = gitRestCallService.getCommitsForGivenBranchAndSince(todoProjectId, expectedBranchName, sinceParam);
+        JsonArray commits = gitlabApiClient.getCommitsForGivenBranchAndSince(todoProjectId, expectedBranchName, sinceParam);
         assertThat(commits.size(), equalTo(expectedNumberOfCommits));
 
-        JsonObject commit = gitRestCallService.getCommitById(todoProjectId, expectedCommitId);
-        Integer timeSinceLastCommit = gitRestCallService.calculateTimeSinceLastCommit(todoProjectId, commit);
+        JsonObject commit = gitlabApiClient.getCommitById(todoProjectId, expectedCommitId);
+        Integer timeSinceLastCommit = gitlabApiClient.calculateTimeSinceLastCommit(todoProjectId, commit);
         assertThat(timeSinceLastCommit, equalTo(expectedCommitTimeSinceLastCommit));
 
-        JsonArray newCommitDiff = gitRestCallService.getCommitDiff(todoProjectId, expectedCommitId);
+        JsonArray newCommitDiff = gitlabApiClient.getCommitDiff(todoProjectId, expectedCommitId);
         assertThat(newCommitDiff.size(), equalTo(expectedCommitNoOfFilesChanged));
     }
 }

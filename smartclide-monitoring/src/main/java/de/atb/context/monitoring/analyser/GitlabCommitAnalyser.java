@@ -19,11 +19,11 @@ import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.InterpreterConfiguration;
 import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.index.Indexer;
-import de.atb.context.monitoring.models.GitMessage;
+import de.atb.context.monitoring.models.GitlabCommitMessage;
 import de.atb.context.monitoring.models.GitlabCommitDataModel;
 import de.atb.context.monitoring.models.IWebService;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-import eu.smartclide.contexthandling.services.GitRestCallService;
+import eu.smartclide.contexthandling.services.GitlabApiClient;
 import org.apache.lucene.document.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +33,10 @@ import java.util.List;
 
 public class GitlabCommitAnalyser extends WebServiceAnalyser<GitlabCommitDataModel> {
 
+    private static final String gitlabBaseUri = "https://gitlab.atb-bremen.de";
     private static final Logger logger = LoggerFactory.getLogger(GitlabCommitAnalyser.class);
 
-    private final GitRestCallService gitRestCallService;
+    private final GitlabApiClient gitlabApiClient;
 
     public GitlabCommitAnalyser(final DataSource dataSource,
                                 final InterpreterConfiguration interpreterConfiguration,
@@ -46,20 +47,20 @@ public class GitlabCommitAnalyser extends WebServiceAnalyser<GitlabCommitDataMod
         if (!(dataSource instanceof GitlabDataSource)) {
             throw new IllegalArgumentException("Given dataSource must be of type GitlabDataSource!");
         }
-        gitRestCallService = new GitRestCallService(((GitlabDataSource) dataSource).getGitLabAccessToken());
+        gitlabApiClient = new GitlabApiClient(((GitlabDataSource) dataSource).getGitLabAccessToken(), gitlabBaseUri);
     }
 
     @Override
     public List<GitlabCommitDataModel> analyseObject(IWebService service) {
         try {
-            final List<GitMessage> gitMessages = gitRestCallService.getGitMessages();
+            final List<GitlabCommitMessage> gitlabCommitMessages = gitlabApiClient.getGitlabCommitMessages();
 
-            if (gitMessages.isEmpty()) {
+            if (gitlabCommitMessages.isEmpty()) {
                 return List.of();
             }
 
             final GitlabCommitDataModel model = new GitlabCommitDataModel();
-            model.setGitMessages(gitMessages);
+            model.setGitlabCommitMessages(gitlabCommitMessages);
             model.setMonitoredAt(new Date());
             return List.of(model);
         } catch (Exception e) {

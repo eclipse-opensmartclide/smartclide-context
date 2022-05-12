@@ -6,7 +6,7 @@ import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.monitoring.config.models.Config;
 import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSourceOptions;
-import de.atb.context.monitoring.models.GitMessage;
+import de.atb.context.monitoring.models.GitlabCommitMessage;
 import de.atb.context.monitoring.models.GitlabCommitDataModel;
 import de.atb.context.monitoring.monitors.messagebroker.util.MessageBrokerUtil;
 import de.atb.context.services.IAmIMonitoringDataRepositoryService;
@@ -115,15 +115,13 @@ public class GitlabCommitMonitorTest {
         }
 
         assertEquals(1, data.size());
-        final List<GitMessage> gitMessages = data.get(0).getGitMessages();
-        gitMessages.forEach(gitMessage -> {
-            assertEquals("new commit", gitMessage.getHeader());
-            assertEquals("info", gitMessage.getState());
-            assertTrue(StringUtils.isNotBlank(gitMessage.getUser()));
-            assertTrue(StringUtils.isNotBlank(gitMessage.getRepository()));
-            assertTrue(StringUtils.isNotBlank(gitMessage.getBranch()));
-            assertTrue(gitMessage.getTimeSinceLastCommit() > 0);
-            assertTrue(gitMessage.getNoOfModifiedFiles() > 0);
+        final List<GitlabCommitMessage> gitlabCommitMessages = data.get(0).getGitlabCommitMessages();
+        gitlabCommitMessages.forEach(gitlabCommitMessage -> {
+            assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getUser()));
+            assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getRepository()));
+            assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getBranch()));
+            assertTrue(gitlabCommitMessage.getTimeSinceLastCommit() > 0);
+            assertTrue(gitlabCommitMessage.getNoOfModifiedFiles() > 0);
         });
     }
 
