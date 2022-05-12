@@ -53,6 +53,8 @@ public class GitlabCommitMonitorTest {
     private AmIMonitoringDataRepositoryServiceWrapper<GitlabCommitDataModel> monitoringDataRepository;
     private Channel fakeDleChannel;
 
+    private int fakeDleNumberOfReceivedMessages;
+
     // starts a new rabbitmq message broker in a docker container.
     // @Rule must be final.
     @Rule
@@ -70,6 +72,7 @@ public class GitlabCommitMonitorTest {
         final Integer rabbitMQContainerAmqpPort = container.getAmqpPort();
 
         // setup fake DLE
+        fakeDleNumberOfReceivedMessages = 0;
         fakeDleChannel = createFakeDleListener(rabbitMQContainerHost, rabbitMQContainerAmqpPort);
 
         // write dynamically allocated message broker host and port to monitoring config file
@@ -100,6 +103,7 @@ public class GitlabCommitMonitorTest {
         if (fakeDleChannel != null) {
             fakeDleChannel.close();
         }
+        fakeDleNumberOfReceivedMessages = 0;
     }
 
     @Test
@@ -121,8 +125,11 @@ public class GitlabCommitMonitorTest {
             assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getRepository()));
             assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getBranch()));
             assertTrue(gitlabCommitMessage.getTimeSinceLastCommit() > 0);
-            assertTrue(gitlabCommitMessage.getNoOfModifiedFiles() > 0);
+            assertTrue(gitlabCommitMessage.getNoOfModifiedFiles() >= 0);
         });
+        // assert that all GitLabCommitMessages have been received by fake DLE
+        Thread.sleep(10000);
+        assertEquals(gitlabCommitMessages.size(), fakeDleNumberOfReceivedMessages);
     }
 
     private void updateDataSource(final Path monitoringConfig,
@@ -152,7 +159,10 @@ public class GitlabCommitMonitorTest {
         channel.basicConsume(
                 QUEUE_NAME_DLE,
                 true,
-                (t, m) -> logger.info("DLE received message: {}", new String(m.getBody(), StandardCharsets.UTF_8)),
+                (t, m) -> {
+                    logger.info("DLE received message: {}", new String(m.getBody(), StandardCharsets.UTF_8));
+                    fakeDleNumberOfReceivedMessages++;
+                },
                 (t) -> logger.info("cancelled!")
         );
         return channel;

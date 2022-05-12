@@ -21,7 +21,7 @@ public class GitlabDataSourceTest {
     public void configFileShouldBeDeserializedToCorrectGitlabDataSource() throws URISyntaxException {
         final String expectedId = "datasource-gitlab";
         final String expectedMonitor = "de.atb.context.monitoring.monitors.GitlabCommitMonitor";
-        final String expectedUri = "https://gitlab.example.com/api/v4";
+        final String expectedUri = "https://gitlab.example.com";
         final String expectedAccessToken = "s3cr3t";
         final String expectedMessageBrokerHost = "localhost";
         final int expectedMessageBrokerPort = 5672;
