@@ -76,7 +76,7 @@ public class GitlabApiClient {
             for (JsonElement branch : branches) {
                 String branchName = branch.getAsJsonObject().get("name").getAsString();
                 // get all commits for given branch and since
-                JsonArray commitsInBranch = getCommitsForGivenBranchAndSince(projectId, branchName, sinceParam);
+                JsonArray commitsInBranch = getCommitsForGivenBranch(projectId, branchName);
                 for (JsonElement commit : commitsInBranch) {
                     String commitId = commit.getAsJsonObject().get("id").getAsString();
 
@@ -96,7 +96,7 @@ public class GitlabApiClient {
         return gitlabCommitMessages;
     }
 
-    public Integer calculateTimeSinceLastCommit(String projectId, JsonObject newCommit) {
+    private Integer calculateTimeSinceLastCommit(String projectId, JsonObject newCommit) {
         int difference = 0;
         String lastCommitId = newCommit.get("parent_ids").getAsString();
         String newCommitCreationDateStr = newCommit.get("created_at").getAsString();
@@ -114,26 +114,26 @@ public class GitlabApiClient {
         return difference;
     }
 
-    public JsonArray getAllBranchesForGivenProject(String projectId) {
+    private JsonArray getAllBranchesForGivenProject(String projectId) {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId + uriPartForBranches + uriParams));
     }
 
-    public JsonObject getCommitById(String projectId, String commitId) {
+    private JsonObject getCommitById(String projectId, String commitId) {
         return parseHttpResponseToJsonObject(makeGetCallToGitlab(baseUri + projectId
                 + uriPartForCommits + commitId + uriParams));
     }
 
-    public JsonArray getCommitDiff(String projectId, String commitId) {
+    private JsonArray getCommitDiff(String projectId, String commitId) {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
                 + uriPartForCommits + commitId + uriPartForDiff + uriParams));
     }
 
-    public JsonArray getCommitsForGivenBranchAndSince(String projectId, String branchName, String sinceParam) {
+    private JsonArray getCommitsForGivenBranch(String projectId, String branchName) {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
                 + uriPartForCommits + uriParams + refNameParam + branchName + sinceParam));
     }
 
-    public JsonArray getUserProjects() {
+    private JsonArray getUserProjects() {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + uriParams));
     }
 
@@ -147,7 +147,7 @@ public class GitlabApiClient {
 
         final HttpClient httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_2)
-                .connectTimeout(Duration.ofSeconds(5 * 60))
+                .connectTimeout(Duration.ofMinutes(5))
                 .build();
 
         HttpRequest request = HttpRequest.newBuilder().GET().uri(URI.create(uri)).build();

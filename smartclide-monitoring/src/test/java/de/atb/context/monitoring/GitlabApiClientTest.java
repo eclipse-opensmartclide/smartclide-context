@@ -1,14 +1,13 @@
 package de.atb.context.monitoring;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import de.atb.context.monitoring.models.GitlabCommitMessage;
 import eu.smartclide.contexthandling.services.GitlabApiClient;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import java.util.List;
+
 import static org.junit.Assert.assertTrue;
 
 public class GitlabApiClientTest {
@@ -27,30 +26,15 @@ public class GitlabApiClientTest {
 
     @Test
     public void testGitServices() {
-        final int expectedNumberOfProjects = 5;
-        final String todoProjectId = "233";
-        final int expectedNumberOfCommits = 2;
 
-        final String expectedBranchName = "main";
-        final String expectedCommitId = "dc5b9dedf4d1c83ed6ce162196d411aa32e5e08b";
-        final Integer expectedCommitTimeSinceLastCommit = 41996279;
-        final Integer expectedCommitNoOfFilesChanged = 1;
-        final String sinceParam = "&since=2020-01-26T13:05:00";
-
-        JsonArray projects = gitlabApiClient.getUserProjects();
-        assertThat(projects.size(), equalTo(expectedNumberOfProjects));
-
-        JsonArray branches = gitlabApiClient.getAllBranchesForGivenProject(todoProjectId);
-        assertTrue(branches.size() > 0);
-
-        JsonArray commits = gitlabApiClient.getCommitsForGivenBranchAndSince(todoProjectId, expectedBranchName, sinceParam);
-        assertThat(commits.size(), equalTo(expectedNumberOfCommits));
-
-        JsonObject commit = gitlabApiClient.getCommitById(todoProjectId, expectedCommitId);
-        Integer timeSinceLastCommit = gitlabApiClient.calculateTimeSinceLastCommit(todoProjectId, commit);
-        assertThat(timeSinceLastCommit, equalTo(expectedCommitTimeSinceLastCommit));
-
-        JsonArray newCommitDiff = gitlabApiClient.getCommitDiff(todoProjectId, expectedCommitId);
-        assertThat(newCommitDiff.size(), equalTo(expectedCommitNoOfFilesChanged));
+        List<GitlabCommitMessage> gitlabCommitMessages = gitlabApiClient.getGitlabCommitMessages();
+        assertTrue(gitlabCommitMessages.size() > 0);
+        gitlabCommitMessages.forEach(gitlabCommitMessage -> {
+            assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getUser()));
+            assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getRepository()));
+            assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getBranch()));
+            assertTrue(gitlabCommitMessage.getNoOfModifiedFiles() > 0);
+            assertTrue(gitlabCommitMessage.getTimeSinceLastCommit() > 0);
+        });
     }
 }

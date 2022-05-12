@@ -9,7 +9,7 @@ package de.atb.context.monitoring.analyser;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -33,7 +33,6 @@ import java.util.List;
 
 public class GitlabCommitAnalyser extends WebServiceAnalyser<GitlabCommitDataModel> {
 
-    private static final String gitlabBaseUri = "https://gitlab.atb-bremen.de";
     private static final Logger logger = LoggerFactory.getLogger(GitlabCommitAnalyser.class);
 
     private final GitlabApiClient gitlabApiClient;
@@ -47,7 +46,8 @@ public class GitlabCommitAnalyser extends WebServiceAnalyser<GitlabCommitDataMod
         if (!(dataSource instanceof GitlabDataSource)) {
             throw new IllegalArgumentException("Given dataSource must be of type GitlabDataSource!");
         }
-        gitlabApiClient = new GitlabApiClient(((GitlabDataSource) dataSource).getGitLabAccessToken(), gitlabBaseUri);
+        gitlabApiClient = new GitlabApiClient(((GitlabDataSource) dataSource).getGitLabAccessToken(),
+                dataSource.getUri());
     }
 
     @Override
