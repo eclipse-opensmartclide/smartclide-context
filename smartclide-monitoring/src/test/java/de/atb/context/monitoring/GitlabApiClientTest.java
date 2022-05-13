@@ -34,7 +34,7 @@ public class GitlabApiClientTest {
             assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getRepository()));
             assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getBranch()));
             assertTrue(gitlabCommitMessage.getNoOfModifiedFiles() > 0);
-            assertTrue(gitlabCommitMessage.getTimeSinceLastCommit() > 0);
+            assertTrue(gitlabCommitMessage.getTimeSinceLastCommit() >= 0);
         });
     }
 }

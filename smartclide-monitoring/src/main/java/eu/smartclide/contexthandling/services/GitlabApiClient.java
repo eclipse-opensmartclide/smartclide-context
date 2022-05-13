@@ -27,7 +27,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.InvalidPathException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -39,12 +38,14 @@ import com.google.gson.JsonArray;
 
 public class GitlabApiClient {
 
+    private static final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     private static final Logger logger = LoggerFactory.getLogger(GitlabApiClient.class);
 
     private static final String membershipParam = "&membership=true";
     private static final String paginationParam = "&per_page=100";
     private static final String refNameParam = "&ref_name=";
-    private static final String sinceParam = "&since=2022-04-25T13:05:00"; // TODO change this based on requirement
+    private static final String sinceDate = "2022-04-25T13:05:00"; // TODO change this based on requirement
+    private static final String sinceParam = "&since=" + sinceDate; // TODO change this based on requirement
     private static final String uriPartForBranches = "/repository/branches/";
     private static final String uriPartForCommits = "/repository/commits/";
     private static final String uriPartForDiff = "/diff/";
@@ -67,49 +68,61 @@ public class GitlabApiClient {
     public List<GitlabCommitMessage> getGitlabCommitMessages() {
         // first get all user projects
         JsonArray projects = getUserProjects();
+        logger.info("Total {} user projects are found", projects.size());
         List<GitlabCommitMessage> gitlabCommitMessages = new LinkedList<>();
         for (JsonElement project : projects) {
+            JsonObject projectJsonObject = project.getAsJsonObject();
             // get project id
-            String projectId = project.getAsJsonObject().get("id").getAsString();
+            String projectId = projectJsonObject.get("id").getAsString();
             // get all branches for given project, create a new GitMessage
             JsonArray branches = getAllBranchesForGivenProject(projectId);
+            logger.info("Total {} branches for project with given ID {} are found", branches.size(), projectId);
+
             for (JsonElement branch : branches) {
                 String branchName = branch.getAsJsonObject().get("name").getAsString();
-                // get all commits for given branch and since
+                // get all commits for given branch
                 JsonArray commitsInBranch = getCommitsForGivenBranch(projectId, branchName);
+                logger.info("Total {} commits are found in a given branch with name '{}' since {}",
+                        commitsInBranch.size(), branchName, sinceDate);
+
                 for (JsonElement commit : commitsInBranch) {
-                    String commitId = commit.getAsJsonObject().get("id").getAsString();
+                    JsonObject commitJsonObject = commit.getAsJsonObject();
+                    String commitId = commitJsonObject.get("id").getAsString();
 
                     GitlabCommitMessage gitlabCommitMessage = new GitlabCommitMessage();
-                    gitlabCommitMessage.setUser(commit.getAsJsonObject().get("author_name").getAsString());
-                    gitlabCommitMessage.setRepository(project.getAsJsonObject().get("path_with_namespace").getAsString());
+                    gitlabCommitMessage.setUser(commitJsonObject.get("author_name").getAsString());
+                    gitlabCommitMessage.setRepository(projectJsonObject.get("path_with_namespace").getAsString());
                     gitlabCommitMessage.setBranch(branchName);
-                    gitlabCommitMessage.setTimeSinceLastCommit(calculateTimeSinceLastCommit(projectId, commit.getAsJsonObject()));
-
+                    gitlabCommitMessage.setTimeSinceLastCommit(calculateTimeSinceLastCommit(projectId, commitJsonObject));
                     JsonArray newCommitDiff = getCommitDiff(projectId, commitId);
                     gitlabCommitMessage.setNoOfModifiedFiles(newCommitDiff.size());
-
                     gitlabCommitMessages.add(gitlabCommitMessage);
+                    logger.info("Git commit message: " + gitlabCommitMessage);
                 }
             }
         }
         return gitlabCommitMessages;
     }
 
-    private Integer calculateTimeSinceLastCommit(String projectId, JsonObject newCommit) {
+    private Integer calculateTimeSinceLastCommit(String projectId, JsonObject commit) {
         int difference = 0;
-        String lastCommitId = newCommit.get("parent_ids").getAsString();
-        String newCommitCreationDateStr = newCommit.get("created_at").getAsString();
-        JsonObject lastCommit = getCommitById(projectId, lastCommitId);
-        String lastCommitCreationDateStr = lastCommit.getAsJsonObject().get("created_at").getAsString();
+        // check if parent id exists for given commit
+        if (commit.get("parent_ids").getAsJsonArray().size() > 0) {
+            String parentCommitId = commit.get("parent_ids").getAsString();
+            String commitCreationDateStr = commit.get("created_at").getAsString();
+            JsonObject parentCommit = getCommitById(projectId, parentCommitId);
+            String parentCommitCreationDateStr = parentCommit.getAsJsonObject().get("created_at").getAsString();
 
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-        try {
-            Date newCommitCreationDate = formatter.parse(newCommitCreationDateStr);
-            Date lastCommitCreationDate = formatter.parse(lastCommitCreationDateStr);
-            difference = Math.toIntExact(Math.abs(newCommitCreationDate.getTime() - lastCommitCreationDate.getTime()) / 1000);
-        } catch (java.text.ParseException e) {
-            logger.error("date to string parse error", e);
+            try {
+                Date commitCreationDate = formatter.parse(commitCreationDateStr);
+                Date parentCommitCreationDate = formatter.parse(parentCommitCreationDateStr);
+                difference = Math.toIntExact(
+                        Math.abs(commitCreationDate.getTime() - parentCommitCreationDate.getTime()) / 1000);
+            } catch (java.text.ParseException e) {
+                logger.error("date to string parse error", e);
+            }
+        } else {
+            logger.info("No previous commit exist for given commit with ID: " + commit.get("id").getAsString());
         }
         return difference;
     }
@@ -145,15 +158,15 @@ public class GitlabApiClient {
      */
     private HttpResponse<String> makeGetCallToGitlab(String uri) {
 
-        final HttpClient httpClient = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_2)
-                .connectTimeout(Duration.ofMinutes(5))
-                .build();
-
-        HttpRequest request = HttpRequest.newBuilder().GET().uri(URI.create(uri)).build();
-
         HttpResponse<String> response = null;
         try {
+            final HttpClient httpClient = HttpClient.newBuilder()
+                    .version(HttpClient.Version.HTTP_2)
+                    .connectTimeout(Duration.ofMinutes(5))
+                    .build();
+
+            HttpRequest request = HttpRequest.newBuilder().GET().uri(URI.create(uri)).build();
+
             // receive response from Gitlab
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -161,7 +174,7 @@ public class GitlabApiClient {
                 logger.error("Http response error:" + response.statusCode() + response.body());
                 return null;
             }
-        } catch (IOException | InterruptedException | InvalidPathException e) {
+        } catch (IOException | InterruptedException e) {
             logger.error("HTTP Client connection interruption exception", e);
         }
         return response;
