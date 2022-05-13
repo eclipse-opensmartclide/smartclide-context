@@ -9,7 +9,7 @@ package de.atb.context.monitoring.analyser;
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
@@ -19,8 +19,8 @@ import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.InterpreterConfiguration;
 import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.index.Indexer;
-import de.atb.context.monitoring.models.GitlabCommitMessage;
 import de.atb.context.monitoring.models.GitlabCommitDataModel;
+import de.atb.context.monitoring.models.GitlabCommitMessage;
 import de.atb.context.monitoring.models.IWebService;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import eu.smartclide.contexthandling.services.GitlabApiClient;
@@ -46,8 +46,10 @@ public class GitlabCommitAnalyser extends WebServiceAnalyser<GitlabCommitDataMod
         if (!(dataSource instanceof GitlabDataSource)) {
             throw new IllegalArgumentException("Given dataSource must be of type GitlabDataSource!");
         }
-        gitlabApiClient = new GitlabApiClient(((GitlabDataSource) dataSource).getGitLabAccessToken(),
-                dataSource.getUri());
+        gitlabApiClient = new GitlabApiClient(
+                ((GitlabDataSource) dataSource).getGitLabAccessToken(),
+                dataSource.getUri()
+        );
     }
 
     @Override
@@ -62,6 +64,7 @@ public class GitlabCommitAnalyser extends WebServiceAnalyser<GitlabCommitDataMod
             final GitlabCommitDataModel model = new GitlabCommitDataModel();
             model.setGitlabCommitMessages(gitlabCommitMessages);
             model.setMonitoredAt(new Date());
+            logger.info("Analysed {} GitlabCommitMessages", gitlabCommitMessages.size());
             return List.of(model);
         } catch (Exception e) {
             logger.error("Error analysing service: {}", service);
