@@ -124,7 +124,7 @@ public class GitlabCommitMonitorTest {
             assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getUser()));
             assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getRepository()));
             assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getBranch()));
-            assertTrue(gitlabCommitMessage.getTimeSinceLastCommit() > 0);
+            assertTrue(gitlabCommitMessage.getTimeSinceLastCommit() >= 0);
             assertTrue(gitlabCommitMessage.getNoOfModifiedFiles() >= 0);
         });
         // assert that all GitLabCommitMessages have been received by fake DLE
