@@ -48,7 +48,7 @@ public class GitlabCommitAnalyser extends WebServiceAnalyser<GitlabCommitDataMod
         }
         gitlabApiClient = new GitlabApiClient(
                 ((GitlabDataSource) dataSource).getGitLabAccessToken(),
-                dataSource.getUri()
+                dataSource.getUri(), ((GitlabDataSource) dataSource).getInterval()
         );
     }
 

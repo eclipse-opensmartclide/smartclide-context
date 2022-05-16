@@ -44,19 +44,22 @@ public class GitlabApiClient {
     private static final String membershipParam = "&membership=true";
     private static final String paginationParam = "&per_page=100";
     private static final String refNameParam = "&ref_name=";
-    private static final String sinceDate = "2022-04-25T13:05:00"; // TODO change this based on requirement
-    private static final String sinceParam = "&since=" + sinceDate; // TODO change this based on requirement
+    private static final String sinceParam = "&since=";
     private static final String uriPartForBranches = "/repository/branches/";
     private static final String uriPartForCommits = "/repository/commits/";
     private static final String uriPartForDiff = "/diff/";
     private static final String uriPartForProjects = "/api/v4/projects/";
     private final String baseUri;
+    private final Long interval;
     private final String uriParams;
+    private boolean isRunningFirstTimeFlag = true;
+    private String sinceDate = "2022-01-01T00:00:00";
 
-    public GitlabApiClient(String accessToken, String gitlabBaseUri) {
+    public GitlabApiClient(String accessToken, String gitlabBaseUri, Long interval) {
         String accessTokenParam = "private_token=" + accessToken;
         this.uriParams = "?" + accessTokenParam + membershipParam + paginationParam;
         this.baseUri = gitlabBaseUri + uriPartForProjects;
+        this.interval = interval;
     }
 
     /**
@@ -66,6 +69,9 @@ public class GitlabApiClient {
      * @return List<GitMessage>
      */
     public List<GitlabCommitMessage> getGitlabCommitMessages() {
+        // set a sinceDate for retrieving commits from repository
+        setSinceDate();
+
         // first get all user projects
         JsonArray projects = getUserProjects();
         logger.info("Total {} user projects are found", projects.size());
@@ -111,15 +117,19 @@ public class GitlabApiClient {
             String parentCommitId = commit.get("parent_ids").getAsString();
             String commitCreationDateStr = commit.get("created_at").getAsString();
             JsonObject parentCommit = getCommitById(projectId, parentCommitId);
-            String parentCommitCreationDateStr = parentCommit.getAsJsonObject().get("created_at").getAsString();
+            if (parentCommit.getAsJsonObject().has("created_at")) {
+                String parentCommitCreationDateStr = parentCommit.getAsJsonObject().get("created_at").getAsString();
 
-            try {
-                Date commitCreationDate = formatter.parse(commitCreationDateStr);
-                Date parentCommitCreationDate = formatter.parse(parentCommitCreationDateStr);
-                difference = Math.toIntExact(
-                        Math.abs(commitCreationDate.getTime() - parentCommitCreationDate.getTime()) / 1000);
-            } catch (java.text.ParseException e) {
-                logger.error("date to string parse error", e);
+                try {
+                    Date commitCreationDate = formatter.parse(commitCreationDateStr);
+                    Date parentCommitCreationDate = formatter.parse(parentCommitCreationDateStr);
+                    difference = Math.toIntExact(
+                            Math.abs(commitCreationDate.getTime() - parentCommitCreationDate.getTime()) / 1000);
+                } catch (java.text.ParseException e) {
+                    logger.error("date to string parse error", e);
+                }
+            } else {
+                logger.info("Can not find previous commit at the moment!");
             }
         } else {
             logger.info("No previous commit exist for given commit with ID: " + commit.get("id").getAsString());
@@ -143,7 +153,7 @@ public class GitlabApiClient {
 
     private JsonArray getCommitsForGivenBranch(String projectId, String branchName) {
         return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
-                + uriPartForCommits + uriParams + refNameParam + branchName + sinceParam));
+                + uriPartForCommits + uriParams + refNameParam + branchName + sinceParam + sinceDate));
     }
 
     private JsonArray getUserProjects() {
@@ -192,5 +202,16 @@ public class GitlabApiClient {
             return JsonParser.parseString(response.body()).getAsJsonObject();
         }
         return new JsonObject();
+    }
+
+    private void setSinceDate() {
+        if (isRunningFirstTimeFlag) {
+            // at the start of API calls we assume that the flag is set to true
+            isRunningFirstTimeFlag = false;
+        } else {
+            // after the flag has been set as false, set sinceDate to every interval
+            Date date = new Date(System.currentTimeMillis() - interval);
+            sinceDate = formatter.format(date);
+        }
     }
 }

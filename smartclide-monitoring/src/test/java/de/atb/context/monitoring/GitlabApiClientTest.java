@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 public class GitlabApiClientTest {
 
     private static final String gitlabBaseUri = "https://gitlab.atb-bremen.de";
+    private static final Long interval = 60000L;
     private GitlabApiClient gitlabApiClient;
 
     @Before
@@ -21,7 +22,7 @@ public class GitlabApiClientTest {
         if (StringUtils.isBlank(gitlabApiToken)) {
             throw new IllegalStateException("Did not find valid GitLab API token in \"SMARTCLIDE_CONTEXT_GITLAB_API_TOKEN\" environment variable!");
         }
-        gitlabApiClient = new GitlabApiClient(gitlabApiToken, gitlabBaseUri);
+        gitlabApiClient = new GitlabApiClient(gitlabApiToken, gitlabBaseUri, interval);
     }
 
     @Test
