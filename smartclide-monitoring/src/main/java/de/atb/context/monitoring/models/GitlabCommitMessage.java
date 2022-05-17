@@ -17,6 +17,7 @@ package de.atb.context.monitoring.models;
 import de.atb.context.common.util.BusinessCase;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +33,7 @@ import thewebsemantic.RdfType;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class GitlabCommitMessage {
     String user;
     String repository;

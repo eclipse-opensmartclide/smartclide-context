@@ -11,8 +11,8 @@
         <datasource id="datasource-gitlab"
                     type="webservice"
                     monitor="de.atb.context.monitoring.monitors.GitlabCommitMonitor"
-                    uri="https://gitlab.atb-bremen.de"
-                    options="interval=60000&amp;startDelay=3000&amp;token=s3cr3t&amp;server=localhost&amp;port=5672&amp;outgoing-queue=code_repo_recommendation_queue&amp;outgoing-durable=false"
+                    uri="https://gitlab.example.com"
+                    options="interval=60000&amp;startDelay=5000&amp;token=s3cr3t&amp;server=localhost&amp;port=5672&amp;outgoing-queue=code_repo_recommendation_queue&amp;outgoing-durable=false"
                     class="de.atb.context.monitoring.config.models.datasources.GitlabDataSource"/>
     </datasources>
 
@@ -20,7 +20,7 @@
         <interpreter id="interpreter-gitlab">
             <configuration type="*"
                            parser="de.atb.context.monitoring.parser.GitlabCommitParser"
-                           analyser="de.atb.context.monitoring.analyser.GitlabCommitAnalyser"/>
+                           analyser="de.atb.context.monitoring.analyser.FakeGitlabCommitAnalyser"/>
         </interpreter>
     </interpreters>
 

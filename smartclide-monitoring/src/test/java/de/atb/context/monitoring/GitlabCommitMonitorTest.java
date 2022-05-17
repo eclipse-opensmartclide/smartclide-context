@@ -3,6 +3,7 @@ package de.atb.context.monitoring;
 import com.rabbitmq.client.Channel;
 import de.atb.context.common.ContextPathUtils;
 import de.atb.context.common.util.ApplicationScenario;
+import de.atb.context.monitoring.analyser.FakeGitlabCommitAnalyser;
 import de.atb.context.monitoring.config.models.Config;
 import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSourceOptions;
@@ -31,8 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * TestMonitoringService
@@ -108,7 +108,8 @@ public class GitlabCommitMonitorTest {
 
     @Test
     public void testDoMonitor() throws InterruptedException {
-        Thread.sleep(30000);
+        // give services some time to start up and run monitor once
+        Thread.sleep(15000);
 
         // get the latest entry of monitored data from the repository
         List<GitlabCommitDataModel> data = monitoringDataRepository.getMonitoringData(
@@ -119,13 +120,10 @@ public class GitlabCommitMonitorTest {
         assertEquals(1, data.size());
 
         final List<GitlabCommitMessage> gitlabCommitMessages = data.get(0).getGitlabCommitMessages();
-        gitlabCommitMessages.forEach(gitlabCommitMessage -> {
-            assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getUser()));
-            assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getRepository()));
-            assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getBranch()));
-            assertTrue(gitlabCommitMessage.getTimeSinceLastCommit() >= 0);
-            assertTrue(gitlabCommitMessage.getNoOfModifiedFiles() >= 0);
-        });
+        assertArrayEquals(
+                FakeGitlabCommitAnalyser.FAKE_GITLAB_COMMIT_MESSAGES.toArray(),
+                gitlabCommitMessages.toArray()
+        );
 
         // assert that all GitLabCommitMessages have been received by fake DLE
         assertEquals(gitlabCommitMessages.size(), fakeDleNumberOfReceivedMessages);
