@@ -8,12 +8,12 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class GitlabApiClientTest {
 
     private static final String gitlabBaseUri = "https://gitlab.atb-bremen.de";
-    private static final Long interval = 60000L;
     private GitlabApiClient gitlabApiClient;
 
     @Before
@@ -22,14 +22,14 @@ public class GitlabApiClientTest {
         if (StringUtils.isBlank(gitlabApiToken)) {
             throw new IllegalStateException("Did not find valid GitLab API token in \"SMARTCLIDE_CONTEXT_GITLAB_API_TOKEN\" environment variable!");
         }
-        gitlabApiClient = new GitlabApiClient(gitlabApiToken, gitlabBaseUri, interval);
+        gitlabApiClient = new GitlabApiClient(gitlabApiToken, gitlabBaseUri);
     }
 
     @Test
-    public void testGitServices() {
-
+    public void testGetGitlabCommitMessages() {
         List<GitlabCommitMessage> gitlabCommitMessages = gitlabApiClient.getGitlabCommitMessages();
-        assertTrue(gitlabCommitMessages.size() > 0);
+
+        assertFalse(gitlabCommitMessages.isEmpty());
         gitlabCommitMessages.forEach(gitlabCommitMessage -> {
             assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getUser()));
             assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getRepository()));
@@ -37,5 +37,9 @@ public class GitlabApiClientTest {
             assertTrue(gitlabCommitMessage.getNoOfModifiedFiles() > 0);
             assertTrue(gitlabCommitMessage.getTimeSinceLastCommit() >= 0);
         });
+
+        // run a second time, which should not produce any results
+        gitlabCommitMessages = gitlabApiClient.getGitlabCommitMessages();
+        assertTrue(gitlabCommitMessages.isEmpty());
     }
 }

@@ -37,5 +37,5 @@ public class GitlabCommitMessage {
     String repository;
     String branch;
     Integer noOfModifiedFiles;
-    Integer timeSinceLastCommit;
+    Long timeSinceLastCommit;
 }
