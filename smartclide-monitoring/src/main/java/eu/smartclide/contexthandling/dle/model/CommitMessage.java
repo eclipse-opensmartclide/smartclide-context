@@ -38,7 +38,7 @@ public class CommitMessage {
     String user;
     String branch;
     @SerializedName("time_since_last_commit")
-    Long timeSinceLastCommit;
+    Integer timeSinceLastCommit;
     @SerializedName("number_of_files_modified")
     Integer numberOfFilesModified;
 }

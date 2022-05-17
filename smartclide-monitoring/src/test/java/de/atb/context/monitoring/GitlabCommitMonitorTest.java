@@ -6,8 +6,8 @@ import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.monitoring.config.models.Config;
 import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSourceOptions;
-import de.atb.context.monitoring.models.GitlabCommitMessage;
 import de.atb.context.monitoring.models.GitlabCommitDataModel;
+import de.atb.context.monitoring.models.GitlabCommitMessage;
 import de.atb.context.monitoring.monitors.messagebroker.util.MessageBrokerUtil;
 import de.atb.context.services.IAmIMonitoringDataRepositoryService;
 import de.atb.context.services.manager.ServiceManager;
@@ -108,17 +108,16 @@ public class GitlabCommitMonitorTest {
 
     @Test
     public void testDoMonitor() throws InterruptedException {
-        // get the latest entry of monitored data from the repository
-        List<GitlabCommitDataModel> data = List.of();
-        int counter = 0;
-        while (counter <= 30 && data.isEmpty()) {
-            counter++;
-            //noinspection BusyWait
-            Thread.sleep(2000);
-            data = monitoringDataRepository.getMonitoringData(ApplicationScenario.getInstance(), GitlabCommitDataModel.class, 1);
-        }
+        Thread.sleep(30000);
 
+        // get the latest entry of monitored data from the repository
+        List<GitlabCommitDataModel> data = monitoringDataRepository.getMonitoringData(
+                ApplicationScenario.getInstance(),
+                GitlabCommitDataModel.class,
+                1
+        );
         assertEquals(1, data.size());
+
         final List<GitlabCommitMessage> gitlabCommitMessages = data.get(0).getGitlabCommitMessages();
         gitlabCommitMessages.forEach(gitlabCommitMessage -> {
             assertTrue(StringUtils.isNotBlank(gitlabCommitMessage.getUser()));
@@ -127,8 +126,8 @@ public class GitlabCommitMonitorTest {
             assertTrue(gitlabCommitMessage.getTimeSinceLastCommit() >= 0);
             assertTrue(gitlabCommitMessage.getNoOfModifiedFiles() >= 0);
         });
+
         // assert that all GitLabCommitMessages have been received by fake DLE
-        Thread.sleep(10000);
         assertEquals(gitlabCommitMessages.size(), fakeDleNumberOfReceivedMessages);
     }
 

@@ -24,7 +24,7 @@ import lombok.ToString;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
-@RdfType("GitMessage")
+@RdfType("GitlabCommitMessage")
 @Namespace(BusinessCase.NS_DUMMY_URL)
 @Getter
 @Setter
@@ -37,5 +37,8 @@ public class GitlabCommitMessage {
     String repository;
     String branch;
     Integer noOfModifiedFiles;
-    Long timeSinceLastCommit;
+    // Has to be Integer because
+    // de.atb.context.persistence.monitoring.MonitoringDataRepository.persist(java.lang.String, java.lang.Class<Type>)
+    // cannot persist long values for some reason.
+    Integer timeSinceLastCommit;
 }

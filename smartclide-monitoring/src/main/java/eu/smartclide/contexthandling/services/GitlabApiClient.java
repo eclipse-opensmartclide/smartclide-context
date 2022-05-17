@@ -102,7 +102,8 @@ public class GitlabApiClient {
                     gitlabCommitMessage.setUser(commitJsonObject.get("author_name").getAsString());
                     gitlabCommitMessage.setRepository(projectJsonObject.get("path_with_namespace").getAsString());
                     gitlabCommitMessage.setBranch(branchName);
-                    gitlabCommitMessage.setTimeSinceLastCommit(calculateTimeSinceLastCommit(projectId, commitJsonObject));
+                    final int timeSinceLastCommit = calculateTimeSinceLastCommit(projectId, commitJsonObject);
+                    gitlabCommitMessage.setTimeSinceLastCommit(timeSinceLastCommit);
                     JsonArray newCommitDiff = getCommitDiff(projectId, commitId);
                     gitlabCommitMessage.setNoOfModifiedFiles(newCommitDiff.size());
                     gitlabCommitMessages.add(gitlabCommitMessage);
@@ -113,8 +114,8 @@ public class GitlabApiClient {
         return gitlabCommitMessages;
     }
 
-    private long calculateTimeSinceLastCommit(String projectId, JsonObject commit) {
-        long difference = 0;
+    private int calculateTimeSinceLastCommit(String projectId, JsonObject commit) {
+        int difference = 0;
         // check if parent id exists for given commit
         if (commit.get("parent_ids").getAsJsonArray().size() > 0) {
             String parentCommitId = commit.get("parent_ids").getAsString();
@@ -126,8 +127,11 @@ public class GitlabApiClient {
                 try {
                     ZonedDateTime commitCreationDate = ZonedDateTime.parse(commitCreationDateStr, formatter);
                     ZonedDateTime parentCommitCreationDate = ZonedDateTime.parse(parentCommitCreationDateStr, formatter);
-                    difference = commitCreationDate.toInstant().getEpochSecond() -
+                    long longDifference = commitCreationDate.toInstant().getEpochSecond() -
                             parentCommitCreationDate.toInstant().getEpochSecond();
+                    if (longDifference <= (long) Integer.MAX_VALUE) {
+                        difference = (int) longDifference;
+                    }
                 } catch (DateTimeParseException e) {
                     logger.error("Failed to parse commit creation date", e);
                 }
