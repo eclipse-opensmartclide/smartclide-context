@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config xmlns="http://www.atb-bremen.de"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.atb-bremen.de monitoring-config.xsd">
+        xsi:schemaLocation="http://www.atb-bremen.de ../monitoring-config.xsd">
 
     <indexes>
         <index id="index-gitlab" location="target/test-classes/data/indexes/gitlab"/>
@@ -12,7 +12,7 @@
                     type="webservice"
                     monitor="de.atb.context.monitoring.monitors.GitlabCommitMonitor"
                     uri="https://gitlab.example.com"
-                    options="interval=60000&amp;startDelay=5000&amp;token=s3cr3t&amp;server=localhost&amp;port=5672&amp;outgoing-queue=code_repo_recommendation_queue&amp;outgoing-durable=false"
+                    options="interval=60000&amp;startDelay=3000&amp;token=s3cr3t&amp;server=localhost&amp;port=5672&amp;username=username&amp;password=password&amp;outgoing-queue=code_repo_recommendation_queue&amp;outgoing-durable=false"
                     class="de.atb.context.monitoring.config.models.datasources.GitlabDataSource"/>
     </datasources>
 
@@ -20,7 +20,7 @@
         <interpreter id="interpreter-gitlab">
             <configuration type="*"
                            parser="de.atb.context.monitoring.parser.GitlabCommitParser"
-                           analyser="de.atb.context.monitoring.analyser.FakeGitlabCommitAnalyser"/>
+                           analyser="de.atb.context.monitoring.analyser.GitlabCommitAnalyser"/>
         </interpreter>
     </interpreters>
 
@@ -30,4 +30,5 @@
                  interpreter="interpreter-gitlab"
                  index="index-gitlab"/>
     </monitors>
+
 </config>

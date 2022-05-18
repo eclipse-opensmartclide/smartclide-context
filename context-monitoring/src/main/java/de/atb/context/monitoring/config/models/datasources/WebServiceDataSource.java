@@ -15,14 +15,14 @@ package de.atb.context.monitoring.config.models.datasources;
  */
 
 
-import java.net.URI;
-
+import de.atb.context.common.authentication.Credentials;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.DataSourceType;
 import de.atb.context.monitoring.models.IWebService;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
-import de.atb.context.common.authentication.Credentials;
+
+import java.net.URI;
 
 /**
  * WebServiceDataSource
@@ -68,6 +68,10 @@ public class WebServiceDataSource extends DataSource {
         return this.getOptionValue(WebServiceDataSourceOptions.Password, true);
     }
 
+    public final Long getStartDelay() {
+        return this.getOptionValue(WebServiceDataSourceOptions.StartDelay, true);
+    }
+
     public final String getMachineId() {
         return this.getOptionValue(WebServiceDataSourceOptions.MachineId, true);
     }
@@ -76,10 +80,6 @@ public class WebServiceDataSource extends DataSource {
         String userName = this.getUserName();
         String password = this.getPassword();
         return new Credentials(userName, password);
-    }
-
-    public final Long getStartDelay() {
-        return this.getOptionValue(WebServiceDataSourceOptions.StartDelay, true);
     }
 
     public final IWebService toWebService() {

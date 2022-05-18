@@ -16,6 +16,7 @@ package de.atb.context.monitoring.parser;
 
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.InterpreterConfiguration;
+import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.IWebService;
 import de.atb.context.monitoring.parser.webservice.WebServiceParser;
@@ -28,6 +29,9 @@ public class GitlabCommitParser extends WebServiceParser {
                               final Indexer indexer,
                               final AmIMonitoringConfiguration amiConfiguration) {
         super(dataSource, interpreterConfiguration, indexer, amiConfiguration);
+        if (!(dataSource instanceof GitlabDataSource)) {
+            throw new IllegalArgumentException("Given dataSource must be of type GitlabDataSource!");
+        }
     }
 
     @Override

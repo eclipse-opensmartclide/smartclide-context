@@ -29,3 +29,5 @@ jobs:
 
     - name: Run Tests
       run: mvn --file pom.xml --batch-mode test
+      env:
+        SMARTCLIDE_CONTEXT_GITLAB_API_TOKEN: ${{ secrets.SMARTCLIDE_CONTEXT_GITLAB_API_TOKEN }}

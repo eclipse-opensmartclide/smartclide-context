@@ -17,9 +17,11 @@ package de.atb.context.monitoring.monitors;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.Interpreter;
 import de.atb.context.monitoring.config.models.Monitor;
+import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.monitors.webservice.WebServiceMonitor;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
+import eu.smartclide.contexthandling.dle.listener.DleGitlabCommitMonitorProgressListener;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -31,8 +33,10 @@ public class GitlabCommitMonitor extends WebServiceMonitor {
                                final Indexer indexer,
                                final AmIMonitoringConfiguration configuration) throws IOException, TimeoutException {
         super(dataSource, interpreter, monitor, indexer, configuration);
-
-        // FIXME: this is a temporary workaround and should be removed!
-        //addProgressListener(new DleGitMonitorProgressListener((WebServiceDataSource) dataSource));
+        if (!(dataSource instanceof GitlabDataSource)) {
+            throw new IllegalArgumentException("Given dataSource must be of type GitlabDataSource!");
+        }
+        this.addProgressListener(new DleGitlabCommitMonitorProgressListener((GitlabDataSource) dataSource));
+        this.logger.info("Initialized GitlabCommitMonitor for uri: " + dataSource.getUri());
     }
 }

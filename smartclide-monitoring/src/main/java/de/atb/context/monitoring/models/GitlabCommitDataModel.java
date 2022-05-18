@@ -17,7 +17,6 @@ package de.atb.context.monitoring.models;
 import de.atb.context.common.Version;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.common.util.BusinessCase;
-import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSource;
 import de.atb.context.monitoring.config.models.datasources.WebServiceDataSource;
 import de.atb.context.monitoring.rdf.RdfHelper;
 import de.atb.context.persistence.ModelOutputLanguage;
@@ -45,18 +44,18 @@ public class GitlabCommitDataModel implements IMonitoringDataModel<GitlabCommitD
     private String documentUri;
     @Id
     private String identifier;
-    private MessageBrokerDataSource dataSource;
+    private WebServiceDataSource dataSource;
     private String implementingClassName = GitlabCommitDataModel.class.getName();
     private String monitoringDataVersion = Version.MONITORING_DATA.getVersionString();
-    private List<GitMessage> gitMessages = new ArrayList<>();
+    private List<GitlabCommitMessage> gitlabCommitMessages = new ArrayList<>();
 
     public GitlabCommitDataModel() {
         this.identifier = UUID.randomUUID().toString();
     }
 
-    public void addGitMessage(GitMessage gitMessage) {
-        if (!this.gitMessages.contains(gitMessage)) {
-            this.gitMessages.add(gitMessage);
+    public void addGitMessage(GitlabCommitMessage gitlabCommitMessage) {
+        if (!this.gitlabCommitMessages.contains(gitlabCommitMessage)) {
+            this.gitlabCommitMessages.add(gitlabCommitMessage);
         }
     }
 
