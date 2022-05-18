@@ -15,24 +15,18 @@ package de.atb.context.monitoring.config;
  */
 
 
+import de.atb.context.common.Configuration;
+import de.atb.context.common.exceptions.ConfigurationException;
+import de.atb.context.monitoring.config.models.*;
+import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
+import org.simpleframework.xml.core.Persister;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import de.atb.context.monitoring.config.models.IMonitoringConfiguration;
-import de.atb.context.monitoring.config.models.Index;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
-import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
-import de.atb.context.common.Configuration;
-import de.atb.context.common.exceptions.ConfigurationException;
-import de.atb.context.monitoring.config.models.Config;
-import de.atb.context.monitoring.config.models.DataSource;
-import de.atb.context.monitoring.config.models.Interpreter;
-import de.atb.context.monitoring.config.models.Monitor;
 
 /**
  * Settings
@@ -42,35 +36,35 @@ import de.atb.context.monitoring.config.models.Monitor;
  */
 public final class MonitoringConfiguration extends Configuration<Config> implements IMonitoringConfiguration {
 
-    private static volatile Map<String, MonitoringConfiguration> settings = new HashMap<>();
-    private static final String DefaultFileName = "monitoring-config.xml";
+    private static final Map<String, MonitoringConfiguration> SETTINGS = new HashMap<>();
+    private static final String DEFAULT_FILE_NAME = "monitoring-config.xml";
 
     public static MonitoringConfiguration getInstance() {
-        if (settings.get(DefaultFileName) == null) {
-            settings.put(DefaultFileName, new MonitoringConfiguration(DefaultFileName));
+        if (SETTINGS.get(DEFAULT_FILE_NAME) == null) {
+            SETTINGS.put(DEFAULT_FILE_NAME, new MonitoringConfiguration(DEFAULT_FILE_NAME));
         }
-        return settings.get(DefaultFileName);
+        return SETTINGS.get(DEFAULT_FILE_NAME);
     }
 
     public static MonitoringConfiguration getInstance(final AmIMonitoringConfiguration config) {
-        if (settings.get(config) == null) {
-            settings.put(config.getId(), new MonitoringConfiguration(config));
+        if (SETTINGS.get(config) == null) {
+            SETTINGS.put(config.getId(), new MonitoringConfiguration(config));
         }
-        return settings.get(config.getId());
+        return SETTINGS.get(config.getId());
     }
 
     public static MonitoringConfiguration getInstance(final String configFileName) {
-        if (settings.get(configFileName) == null) {
-            settings.put(configFileName, new MonitoringConfiguration(configFileName));
+        if (SETTINGS.get(configFileName) == null) {
+            SETTINGS.put(configFileName, new MonitoringConfiguration(configFileName));
         }
-        return settings.get(configFileName);
+        return SETTINGS.get(configFileName);
     }
 
     public static MonitoringConfiguration getInstance(final String configFileName, final String configFilePath) {
-        if (settings.get(configFileName) == null) {
-            settings.put(configFileName, new MonitoringConfiguration(configFileName, configFilePath));
+        if (SETTINGS.get(configFileName) == null) {
+            SETTINGS.put(configFileName, new MonitoringConfiguration(configFileName, configFilePath));
         }
-        return settings.get(configFileName);
+        return SETTINGS.get(configFileName);
     }
 
     private MonitoringConfiguration(final String givenName, final String givenPath) {
@@ -88,23 +82,19 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
     protected void readConfigurationFile() {
         InputStream is = null;
         try {
-            final Serializer serializer = new Persister();
-
-            String drmHandle = sysCaller.openDRMobject("monitoring-config.xml", configurationLookupPath,"read");
+            final String drmHandle = sysCaller.openDRMobject(configurationFileName, configurationLookupPath, "read");
             if (drmHandle != null) {
-                byte[] readConfig = sysCaller.getDRMobject("monitoring-config.xml", configurationLookupPath);
+                final byte[] readConfig = sysCaller.getDRMobject(configurationFileName, configurationLookupPath);
                 if (readConfig != null) {
                     is = new ByteArrayInputStream(readConfig);
-                    this.configurationBean = serializer.read(
-                        this.configurationClass, is);
+                    this.configurationBean = new Persister().read(this.configurationClass, is);
                     is.close();
-                    logger.info("" + this.configurationFileName + " loaded!");
+                    logger.info("{} loaded!", configurationFileName);
                 }
                 sysCaller.closeDRMobject(drmHandle);
             }
         } catch (final Exception e) {
-            logger.error("Could not serialize the " + configurationName
-                + " file: " + this.configurationFileName, e);
+            logger.error("Could not serialize the {} file {}", configurationName, configurationFileName, e);
         } finally {
             if (is != null) {
                 try {
@@ -170,15 +160,25 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
             }
 
             if (getDataSource(monitor.getDataSourceId()) == null) {
-                throw new ConfigurationException("DataSource '%s' for Monitor '%s' is not configured", monitor.getDataSourceId(),
-                    monitor.getId());
+                throw new ConfigurationException(
+                    "DataSource '%s' for Monitor '%s' is not configured",
+                    monitor.getDataSourceId(),
+                    monitor.getId()
+                );
             }
             if (getInterpreter(monitor.getInterpreterId()) == null) {
-                throw new ConfigurationException("Interpreter '%s' for Monitor '%s' is not configured", monitor.getInterpreterId(),
-                    monitor.getId());
+                throw new ConfigurationException(
+                    "Interpreter '%s' for Monitor '%s' is not configured",
+                    monitor.getInterpreterId(),
+                    monitor.getId()
+                );
             }
             if (getIndex(monitor.getIndexId()) == null) {
-                throw new ConfigurationException("Index '%s' for Monitor '%s' is not configured", monitor.getIndexId(), monitor.getId());
+                throw new ConfigurationException(
+                    "Index '%s' for Monitor '%s' is not configured",
+                    monitor.getIndexId(),
+                    monitor.getId()
+                );
             }
         }
     }

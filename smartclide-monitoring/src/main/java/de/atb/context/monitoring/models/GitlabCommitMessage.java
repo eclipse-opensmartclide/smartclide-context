@@ -17,6 +17,7 @@ package de.atb.context.monitoring.models;
 import de.atb.context.common.util.BusinessCase;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,7 +25,7 @@ import lombok.ToString;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 
-@RdfType("GitMessage")
+@RdfType("GitlabCommitMessage")
 @Namespace(BusinessCase.NS_DUMMY_URL)
 @Getter
 @Setter
@@ -32,12 +33,14 @@ import thewebsemantic.RdfType;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class GitMessage {
-    String timestamp;
+@EqualsAndHashCode
+public class GitlabCommitMessage {
     String user;
     String repository;
     String branch;
-    Integer noOfCommitsInBranch;
-    Integer noOfPushesInBranch;
     Integer noOfModifiedFiles;
+    // Has to be Integer because
+    // de.atb.context.persistence.monitoring.MonitoringDataRepository.persist(java.lang.String, java.lang.Class<Type>)
+    // cannot persist long values for some reason.
+    Integer timeSinceLastCommit;
 }

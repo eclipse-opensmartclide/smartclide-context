@@ -16,21 +16,26 @@ package de.atb.context.monitoring.parser;
 
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.InterpreterConfiguration;
+import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.index.Indexer;
-import de.atb.context.monitoring.parser.messagebroker.MessageBrokerParser;
+import de.atb.context.monitoring.models.IWebService;
+import de.atb.context.monitoring.parser.webservice.WebServiceParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import org.apache.lucene.document.Document;
 
-public class GitParser extends MessageBrokerParser {
-    public GitParser(final DataSource dataSource,
-                     final InterpreterConfiguration interpreterConfiguration,
-                     final Indexer indexer,
-                     final AmIMonitoringConfiguration amiConfiguration) {
+public class GitlabCommitParser extends WebServiceParser {
+    public GitlabCommitParser(final DataSource dataSource,
+                              final InterpreterConfiguration interpreterConfiguration,
+                              final Indexer indexer,
+                              final AmIMonitoringConfiguration amiConfiguration) {
         super(dataSource, interpreterConfiguration, indexer, amiConfiguration);
+        if (!(dataSource instanceof GitlabDataSource)) {
+            throw new IllegalArgumentException("Given dataSource must be of type GitlabDataSource!");
+        }
     }
 
     @Override
-    protected boolean parseObject(final String message, final Document document) {
+    protected boolean parseObject(IWebService service, Document document) {
         return true;
     }
 }

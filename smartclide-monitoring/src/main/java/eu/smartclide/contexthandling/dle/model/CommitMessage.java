@@ -14,6 +14,7 @@ package eu.smartclide.contexthandling.dle.model;
  * #L%
  */
 
+import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,7 +33,12 @@ public class CommitMessage {
     final String header = "new commit";
     @Builder.Default
     final String state = "info";
+    @SerializedName("repo_id")
+    String repoId;
     String user;
     String branch;
-    Integer files;
+    @SerializedName("time_since_last_commit")
+    Integer timeSinceLastCommit;
+    @SerializedName("number_of_files_modified")
+    Integer numberOfFilesModified;
 }

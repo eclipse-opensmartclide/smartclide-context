@@ -39,9 +39,10 @@ public class TestFilePairSystemMonitor {
 
 	@BeforeClass
 	public static void beforeClass() throws ConfigurationException {
-        String absolutefilePath = Path.of("src", "test", "resources").toAbsolutePath().toString();
+        String absoluteFilePath =
+            Path.of("src", "test", "resources", "filepairmonitor").toAbsolutePath().toString();
 
-		config = MonitoringConfiguration.getInstance("monitoring-filepair-config.xml", absolutefilePath);
+		config = MonitoringConfiguration.getInstance("monitoring-config.xml", absoluteFilePath);
 
 		monitor = config.getMonitor("monitor-dummy");
 		Assert.assertTrue("No monitors 'monitor-dummy' specified!", config.getMonitor("monitor-dummy") != null);
