@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  # rabbitmq - this is the datasource configured in config/monitoring-config.xml
+  rabbitmq:
+    image: rabbitmq:3.10.0-alpine
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+    networks:
+      - smartclide-monitoring
+  # smartclide-monitoring
+  smartclide-monitoring:
+    image: ghcr.io/eclipse-researchlabs/smartclide/smartclide-monitoring:latest
+    depends_on:
+      - rabbitmq
+    volumes:
+      # configuration files are mounted to '/opt/smartclide/config'
+      # see eu.smartclide.contexthandling.ServiceMain for other options
+      - ./config:/opt/smartclide/config
+    # waits for rabbitmq datasource to be available before starting smartclide-monitoring
+    entrypoint:
+      [
+        "/entrypoint.d/wait-for-it.sh",
+        "rabbitmq:5672",
+        "--strict",
+        "-t",
+        "30",
+        "--",
+        "java",
+        "-Djava.security.egd=file:/dev/./urandom",
+        "-cp",
+        "app/libs/*:app/resources:app/classes",
+        "eu.smartclide.contexthandling.ServiceMain",
+      ]
+    networks:
+      - smartclide-monitoring
+
+networks:
+  smartclide-monitoring:
+    name: smartclide-monitoring
