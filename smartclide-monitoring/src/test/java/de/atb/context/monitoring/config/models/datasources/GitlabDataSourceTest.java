@@ -25,10 +25,10 @@ public class GitlabDataSourceTest {
         final String expectedAccessToken = "s3cr3t";
         final String expectedMessageBrokerHost = "localhost";
         final int expectedMessageBrokerPort = 5672;
-        final String expectedUsername = "username";
-        final String expectedPassword = "password";
+        final String expectedUsername = "guest";
+        final String expectedPassword = "guest";
         final String expectedOutgoingQueue = "code_repo_recommendation_queue";
-        final URI uri = Objects.requireNonNull(this.getClass().getResource("/config/gitlab-monitoring")).toURI();
+        final URI uri = Objects.requireNonNull(this.getClass().getResource("/config")).toURI();
         final String configDirPath = Path.of(uri).toAbsolutePath().toString();
 
         final String configFileName = "monitoring-config.xml";

@@ -12,7 +12,7 @@
                     type="webservice"
                     monitor="de.atb.context.monitoring.monitors.GitlabCommitMonitor"
                     uri="https://gitlab.example.com"
-                    options="interval=60000&amp;startDelay=5000&amp;token=s3cr3t&amp;server=localhost&amp;port=5672&amp;outgoing-queue=code_repo_recommendation_queue&amp;outgoing-durable=false"
+                    options="interval=60000&amp;startDelay=5000&amp;token=s3cr3t&amp;server=localhost&amp;port=5672&amp;username=guest&amp;password=guest&amp;outgoing-queue=code_repo_recommendation_queue&amp;outgoing-durable=false"
                     class="de.atb.context.monitoring.config.models.datasources.GitlabDataSource"/>
     </datasources>
 
@@ -30,4 +30,5 @@
                  interpreter="interpreter-gitlab"
                  index="index-gitlab"/>
     </monitors>
+
 </config>

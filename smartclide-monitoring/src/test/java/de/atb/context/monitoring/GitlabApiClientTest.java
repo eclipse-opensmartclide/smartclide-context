@@ -37,9 +37,5 @@ public class GitlabApiClientTest {
             assertTrue(gitlabCommitMessage.getNoOfModifiedFiles() > 0);
             assertTrue(gitlabCommitMessage.getTimeSinceLastCommit() >= 0);
         });
-
-        // run a second time, which should not produce any results
-        gitlabCommitMessages = gitlabApiClient.getGitlabCommitMessages();
-        assertTrue(gitlabCommitMessages.isEmpty());
     }
 }
