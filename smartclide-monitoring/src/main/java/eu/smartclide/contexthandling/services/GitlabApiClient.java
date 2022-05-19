@@ -118,8 +118,7 @@ public class GitlabApiClient {
         int difference = 0;
         // check if parent id exists for given commit
         if (commit.get("parent_ids").getAsJsonArray().size() > 0) {
-            String parentCommitId;
-            parentCommitId = commit.get("parent_ids").getAsJsonArray().get(0).getAsString();
+            String parentCommitId = commit.get("parent_ids").getAsJsonArray().get(0).getAsString();
             String commitCreationDateStr = commit.get("created_at").getAsString();
             JsonObject parentCommit = getCommitById(projectId, parentCommitId);
             if (parentCommit.getAsJsonObject().has("created_at")) {
@@ -129,7 +128,7 @@ public class GitlabApiClient {
                     ZonedDateTime commitCreationDate = ZonedDateTime.parse(commitCreationDateStr, formatter);
                     ZonedDateTime parentCommitCreationDate = ZonedDateTime.parse(parentCommitCreationDateStr, formatter);
                     long longDifference = commitCreationDate.toInstant().getEpochSecond() -
-                        parentCommitCreationDate.toInstant().getEpochSecond();
+                            parentCommitCreationDate.toInstant().getEpochSecond();
                     if (longDifference <= (long) Integer.MAX_VALUE) {
                         difference = (int) longDifference;
                     }
