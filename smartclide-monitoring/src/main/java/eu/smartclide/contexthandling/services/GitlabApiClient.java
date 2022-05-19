@@ -118,7 +118,7 @@ public class GitlabApiClient {
         int difference = 0;
         // check if parent id exists for given commit
         if (commit.get("parent_ids").getAsJsonArray().size() > 0) {
-            String parentCommitId = commit.get("parent_ids").getAsString();
+            String parentCommitId = commit.get("parent_ids").getAsJsonArray().get(0).getAsString();
             String commitCreationDateStr = commit.get("created_at").getAsString();
             JsonObject parentCommit = getCommitById(projectId, parentCommitId);
             if (parentCommit.getAsJsonObject().has("created_at")) {
