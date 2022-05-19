@@ -61,7 +61,7 @@ Each index entry has the following mandatory attributes
 Each datasource entry has the following mandatory attributes
 
 - id:The unique name of the datasource
-- type:The type of the datasource. Possible values are: file, webservice, database
+- type:The type of the datasource. Possible values are: filesystem, webservice, database, messageBroker
 - monitor:The class of the monitor to be used. Possible values are:
     - package de.atb.context.monitoring.monitors.database.DatabaseMonitor
     - package de.atb.context.monitoring.monitors.file.FileSystemMonitor
@@ -111,36 +111,9 @@ Each interpreter entry has the following mandatory attributes
 
 #### monitors
 
-*t.b.d. ...*
+Each monitor entry has the following mandatory attributes
 
-### service configuration
-
-**services-config.xml**
-```
-<?xml version="1.0" encoding="utf-8"?>
-<config xmlns="http://www.atb-bremen.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-   <services>
-      <service id="AmIMonitoring">
-         <host>localhost</host>
-         <location>http://localhost:19001</location>
-         <name>AmIMonitoringService</name>
-         <server>de.atb.context.services.AmIMonitoringService</server>
-         <proxy>de.atb.context.services.IAmIMonitoringService</proxy>
-      </service>
-      <service id="AmI-repository">
-         <host>localhost</host>
-         <location>http://localhost:19002</location>
-         <name>AmIMonitoringDataRepositoryService</name>
-         <server>de.atb.context.services.AmIMonitoringDataRepositoryService</server>
-         <proxy>de.atb.context.services.IAmIMonitoringDataRepositoryService</proxy>
-      </service>
-      <service id="PersistenceUnitService">
-         <host>localhost</host>
-         <location>http://localhost:19004</location>
-         <name>PersistenceUnitService</name>
-         <server>de.atb.context.services.PersistenceUnitService</server>
-         <proxy>de.atb.core.services.IPersistenceUnitService</proxy>
-      </service>
-   </services>
-</config>
-```
+- id: The unique name of the monitor
+- datasource: The id of one previously defined datasource (see above)
+- interpreter: The id of one previously defined interpreter (see above)
+- index: The id of one previously defined index (see above)
