@@ -10,31 +10,31 @@ services:
     networks:
       - smartclide-monitoring
   # smartclide-monitoring
-  smartclide-monitoring:
-    image: ghcr.io/eclipse-researchlabs/smartclide/smartclide-monitoring:latest
-    depends_on:
-      - rabbitmq
-    volumes:
+#  smartclide-monitoring:
+#    image: ghcr.io/eclipse-researchlabs/smartclide/smartclide-monitoring:latest
+#    depends_on:
+#      - rabbitmq
+#    volumes:
       # configuration files are mounted to '/opt/smartclide/config'
       # see eu.smartclide.contexthandling.ServiceMain for other options
-      - ./config:/opt/smartclide/config
+#      - ./config:/opt/smartclide/config
     # waits for rabbitmq datasource to be available before starting smartclide-monitoring
-    entrypoint:
-      [
-        "/entrypoint.d/wait-for-it.sh",
-        "rabbitmq:5672",
-        "--strict",
-        "-t",
-        "30",
-        "--",
-        "java",
-        "-Djava.security.egd=file:/dev/./urandom",
-        "-cp",
-        "app/libs/*:app/resources:app/classes",
-        "eu.smartclide.contexthandling.ServiceMain",
-      ]
-    networks:
-      - smartclide-monitoring
+#    entrypoint:
+#      [
+#        "/entrypoint.d/wait-for-it.sh",
+#        "rabbitmq:5672",
+#        "--strict",
+#        "-t",
+#        "30",
+#        "--",
+#        "java",
+#        "-Djava.security.egd=file:/dev/./urandom",
+#        "-cp",
+#        "app/libs/*:app/resources:app/classes",
+#        "eu.smartclide.contexthandling.ServiceMain",
+#      ]
+#    networks:
+#      - smartclide-monitoring
 
 networks:
   smartclide-monitoring:

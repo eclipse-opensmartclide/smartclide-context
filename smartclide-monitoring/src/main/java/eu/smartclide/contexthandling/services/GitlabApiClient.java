@@ -119,31 +119,26 @@ public class GitlabApiClient {
         // check if parent id exists for given commit
         if (commit.get("parent_ids").getAsJsonArray().size() > 0) {
             String parentCommitId;
-            try {
-                parentCommitId = commit.get("parent_ids").getAsString();
-            } catch (IllegalStateException e) {
-                logger.error("array found, taking first entry: {}", commit.get("parent_ids"));
-                parentCommitId = commit.get("parent_ids").getAsJsonArray().get(0).getAsString();
-            }
-                String commitCreationDateStr = commit.get("created_at").getAsString();
-                JsonObject parentCommit = getCommitById(projectId, parentCommitId);
-                if (parentCommit.getAsJsonObject().has("created_at")) {
-                    String parentCommitCreationDateStr = parentCommit.getAsJsonObject().get("created_at").getAsString();
+            parentCommitId = commit.get("parent_ids").getAsJsonArray().get(0).getAsString();
+            String commitCreationDateStr = commit.get("created_at").getAsString();
+            JsonObject parentCommit = getCommitById(projectId, parentCommitId);
+            if (parentCommit.getAsJsonObject().has("created_at")) {
+                String parentCommitCreationDateStr = parentCommit.getAsJsonObject().get("created_at").getAsString();
 
-                    try {
-                        ZonedDateTime commitCreationDate = ZonedDateTime.parse(commitCreationDateStr, formatter);
-                        ZonedDateTime parentCommitCreationDate = ZonedDateTime.parse(parentCommitCreationDateStr, formatter);
-                        long longDifference = commitCreationDate.toInstant().getEpochSecond() -
-                            parentCommitCreationDate.toInstant().getEpochSecond();
-                        if (longDifference <= (long) Integer.MAX_VALUE) {
-                            difference = (int) longDifference;
-                        }
-                    } catch (DateTimeParseException e) {
-                        logger.error("Failed to parse commit creation date", e);
+                try {
+                    ZonedDateTime commitCreationDate = ZonedDateTime.parse(commitCreationDateStr, formatter);
+                    ZonedDateTime parentCommitCreationDate = ZonedDateTime.parse(parentCommitCreationDateStr, formatter);
+                    long longDifference = commitCreationDate.toInstant().getEpochSecond() -
+                        parentCommitCreationDate.toInstant().getEpochSecond();
+                    if (longDifference <= (long) Integer.MAX_VALUE) {
+                        difference = (int) longDifference;
                     }
-                } else {
-                    logger.info("Could not get parent commit with ID: {}", parentCommitId);
+                } catch (DateTimeParseException e) {
+                    logger.error("Failed to parse commit creation date", e);
                 }
+            } else {
+                logger.info("Could not get parent commit with ID: {}", parentCommitId);
+            }
         } else {
             logger.info("No parent commit exist for commit with ID: {}", commit.get("id").getAsString());
         }
