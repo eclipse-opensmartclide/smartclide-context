@@ -5,7 +5,6 @@ import de.atb.context.common.ContextPathUtils;
 import de.atb.context.common.util.ApplicationScenario;
 import de.atb.context.monitoring.analyser.FakeGitlabCommitAnalyser;
 import de.atb.context.monitoring.config.models.Config;
-import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSourceOptions;
 import de.atb.context.monitoring.models.GitlabCommitDataModel;
 import de.atb.context.monitoring.models.GitlabCommitMessage;
@@ -14,7 +13,6 @@ import de.atb.context.services.IAmIMonitoringDataRepositoryService;
 import de.atb.context.services.manager.ServiceManager;
 import de.atb.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper;
 import eu.smartclide.contexthandling.ServiceMain;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,7 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * TestMonitoringService
@@ -62,11 +61,6 @@ public class GitlabCommitMonitorTest {
 
     @Before
     public void setup() throws Exception {
-        final String gitlabApiToken = System.getenv("SMARTCLIDE_CONTEXT_GITLAB_API_TOKEN");
-        if (StringUtils.isBlank(gitlabApiToken)) {
-            throw new IllegalStateException("Did not find valid GitLab API token in \"SMARTCLIDE_CONTEXT_GITLAB_API_TOKEN\" environment variable!");
-        }
-
         // setup message broker
         final String rabbitMQContainerHost = container.getHost();
         final Integer rabbitMQContainerAmqpPort = container.getAmqpPort();
@@ -77,7 +71,7 @@ public class GitlabCommitMonitorTest {
 
         // write dynamically allocated message broker host and port to monitoring config file
         final Path monitoringConfigFilePath = ContextPathUtils.getConfigDirPath().resolve(MONITORING_CONFIG_FILE_NAME);
-        updateDataSource(monitoringConfigFilePath, rabbitMQContainerHost, rabbitMQContainerAmqpPort, gitlabApiToken);
+        updateDataSource(monitoringConfigFilePath, rabbitMQContainerHost, rabbitMQContainerAmqpPort);
 
         // start service
         ServiceMain.startService();
@@ -131,14 +125,12 @@ public class GitlabCommitMonitorTest {
 
     private void updateDataSource(final Path monitoringConfig,
                                   final String messageBrokerHost,
-                                  final Integer messageBrokerPort,
-                                  final String gitlabApiToken) throws Exception {
+                                  final Integer messageBrokerPort) throws Exception {
         final Persister persister = new Persister();
         final Config config = persister.read(Config.class, new File(monitoringConfig.toString()));
         final Map<String, String> optionsMap = config.getDataSource(DATASOURCE_GITLAB).getOptionsMap();
         optionsMap.put(MessageBrokerDataSourceOptions.MessageBrokerServer.getKeyName(), messageBrokerHost);
         optionsMap.put(MessageBrokerDataSourceOptions.MessageBrokerPort.getKeyName(), messageBrokerPort.toString());
-        optionsMap.put(GitlabDataSource.ACCESS_TOKEN_OPTION.getKeyName(), gitlabApiToken);
         config.getDataSource(DATASOURCE_GITLAB).setOptions(optionsMap);
         persister.write(config, new File(monitoringConfig.toString()));
     }
