@@ -23,5 +23,8 @@
         <Root level="INFO">
             <AppenderRef ref="Console"/>
         </Root>
+        <Logger name="org.apache.cxf" level="WARN">
+            <Appender-ref ref="Console"/>
+        </Logger>
     </Loggers>
 </Configuration>

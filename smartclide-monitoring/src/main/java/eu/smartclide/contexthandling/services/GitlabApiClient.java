@@ -97,6 +97,7 @@ public class GitlabApiClient {
                 for (JsonElement commit : commitsInBranch) {
                     JsonObject commitJsonObject = commit.getAsJsonObject();
                     String commitId = commitJsonObject.get("id").getAsString();
+                    logger.info("Git commit ID: {}", commitId);
 
                     GitlabCommitMessage gitlabCommitMessage = new GitlabCommitMessage();
                     gitlabCommitMessage.setUser(commitJsonObject.get("author_name").getAsString());
@@ -107,7 +108,7 @@ public class GitlabApiClient {
                     JsonArray newCommitDiff = getCommitDiff(projectId, commitId);
                     gitlabCommitMessage.setNoOfModifiedFiles(newCommitDiff.size());
                     gitlabCommitMessages.add(gitlabCommitMessage);
-                    logger.info("Git commit message: " + gitlabCommitMessage);
+                    logger.info("Git commit message: {}", gitlabCommitMessage);
                 }
             }
         }
