@@ -1,5 +1,9 @@
 package eu.smartclide.contexthandling.dle.listener;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeoutException;
+
 /*-
  * #%L
  * SmartCLIDE Monitoring
@@ -15,6 +19,10 @@ package eu.smartclide.contexthandling.dle.listener;
  */
 
 import com.rabbitmq.client.Channel;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.document.Document;
+
 import de.atb.context.monitoring.config.models.datasources.GitlabDataSource;
 import de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSourceOptions;
 import de.atb.context.monitoring.events.MonitoringProgressListener;
@@ -24,13 +32,6 @@ import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.models.IWebService;
 import de.atb.context.monitoring.monitors.messagebroker.util.MessageBrokerUtil;
 import eu.smartclide.contexthandling.dle.model.CommitMessage;
-import eu.smartclide.contexthandling.dle.model.DleMessage;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.document.Document;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 public class DleGitlabCommitMonitorProgressListener
         implements MonitoringProgressListener<IWebService, IMonitoringDataModel<?, ?>> {
@@ -74,27 +75,25 @@ public class DleGitlabCommitMonitorProgressListener
                 .filter(iMonitoringDataModel -> iMonitoringDataModel instanceof GitlabCommitDataModel)
                 .map(iMonitoringDataModel -> (GitlabCommitDataModel) iMonitoringDataModel)
                 .flatMap(gitlabCommitDataModel -> gitlabCommitDataModel.getGitlabCommitMessages().stream())
-                .map(this::convertToDleMessage)
+                .map(this::convertToCommitMessage)
                 .forEach(this::send);
     }
 
-    private DleMessage convertToDleMessage(final GitlabCommitMessage gitlabCommitMessage) {
-        return DleMessage.builder()
-                .monitor(CommitMessage.builder()
+    private CommitMessage convertToCommitMessage(final GitlabCommitMessage gitlabCommitMessage) {
+        return CommitMessage.builder()
                         .repoId(gitlabCommitMessage.getRepository())
                         .user(gitlabCommitMessage.getUser())
                         .branch(gitlabCommitMessage.getBranch())
                         .timeSinceLastCommit(gitlabCommitMessage.getTimeSinceLastCommit())
-                        .numberOfFilesModified(gitlabCommitMessage.getNoOfModifiedFiles())
-                        .build())
+                .numberOfFilesModified(gitlabCommitMessage.getNoOfModifiedFiles())
                 .build();
     }
 
-    private void send(final DleMessage dleMessage) {
+    private void send(final CommitMessage commitMessage) {
         if (useTopic) {
-            MessageBrokerUtil.convertAndSendToTopic(channel, exchange, topic, dleMessage);
+            MessageBrokerUtil.convertAndSendToTopic(channel, exchange, topic, commitMessage);
         } else {
-            MessageBrokerUtil.convertAndSendToQueue(channel, queue, dleMessage);
+            MessageBrokerUtil.convertAndSendToQueue(channel, queue, commitMessage);
         }
     }
 
