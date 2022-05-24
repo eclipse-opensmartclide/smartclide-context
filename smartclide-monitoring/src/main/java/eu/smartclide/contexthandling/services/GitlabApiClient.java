@@ -40,8 +40,7 @@ public class GitlabApiClient {
 
     private static final Logger logger = LoggerFactory.getLogger(GitlabApiClient.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-    private static final ZonedDateTime initialSinceDate = ZonedDateTime.of(
-            2022, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
+    private static final ZonedDateTime initialSinceDate = ZonedDateTime.of(2022, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
     private static final String membershipParam = "&membership=true";
     private static final String paginationParam = "&per_page=100";
     private static final String refNameParam = "&ref_name=";
@@ -50,21 +49,27 @@ public class GitlabApiClient {
     private static final String uriPartForCommits = "/repository/commits/";
     private static final String uriPartForDiff = "/diff/";
     private static final String uriPartForProjects = "/api/v4/projects/";
+
     private final String baseUri;
-    private final HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2)
-            .connectTimeout(Duration.ofMinutes(5)).build();
+    private final HttpClient httpClient;
     private final String uriParams;
+
     private ZonedDateTime lastRun = null;
 
     public GitlabApiClient(String accessToken, String gitlabBaseUri) {
-        String accessTokenParam = "private_token=" + accessToken;
+        logger.info("Creating new {} for {}", this.getClass().getSimpleName(), gitlabBaseUri);
+        final String accessTokenParam = "private_token=" + accessToken;
         this.uriParams = "?" + accessTokenParam + membershipParam + paginationParam;
         this.baseUri = gitlabBaseUri + uriPartForProjects;
+        this.httpClient = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_2)
+                .connectTimeout(Duration.ofMinutes(5))
+                .build();
     }
 
     /**
-     * generates gitMessages for given user
-     * creates separate message for the commit in all the branches
+     * Generates a list of {@link GitlabCommitMessage}s for user identified by the access token passed to constructor.
+     * Creates separate message for each commit in all branches of all projects the user has access to.
      *
      * @return List<GitMessage>
      */
@@ -72,15 +77,13 @@ public class GitlabApiClient {
         // if we are running for the first time get all commits since `initialSinceDate`
         // otherwise get all commits since last run
         final ZonedDateTime nowAtUtc = ZonedDateTime.now(ZoneOffset.UTC);
-        final String sinceDateTime = (lastRun == null)
-                ? initialSinceDate.format(formatter)
-                : lastRun.format(formatter);
+        final String sinceDateTime = (lastRun == null) ? initialSinceDate.format(formatter) : lastRun.format(formatter);
         // adjust the time of last run
         lastRun = nowAtUtc;
 
         // first get all user projects
         JsonArray projects = getUserProjects();
-        logger.info("Total {} user projects are found", projects.size());
+        logger.info("Found {} user projects", projects.size());
         List<GitlabCommitMessage> gitlabCommitMessages = new LinkedList<>();
         for (JsonElement project : projects) {
             JsonObject projectJsonObject = project.getAsJsonObject();
@@ -88,14 +91,13 @@ public class GitlabApiClient {
             String projectId = projectJsonObject.get("id").getAsString();
             // get all branches for given project, create a new GitMessage
             JsonArray branches = getAllBranchesForGivenProject(projectId);
-            logger.info("Total {} branches for project with given ID {} are found", branches.size(), projectId);
+            logger.info("Found {} branches for project with ID {}", branches.size(), projectId);
 
             for (JsonElement branch : branches) {
                 String branchName = branch.getAsJsonObject().get("name").getAsString();
                 // get all commits for given branch
                 JsonArray commitsInBranch = getCommitsForGivenBranch(projectId, branchName, sinceDateTime);
-                logger.info("Total {} commits are found in a given branch with name '{}' since {}",
-                        commitsInBranch.size(), branchName, sinceDateTime);
+                logger.info("Found {} commits in branch '{}' since {}", commitsInBranch.size(), branchName, sinceDateTime);
 
                 for (JsonElement commit : commitsInBranch) {
                     JsonObject commitJsonObject = commit.getAsJsonObject();
@@ -131,8 +133,8 @@ public class GitlabApiClient {
                 try {
                     ZonedDateTime commitCreationDate = ZonedDateTime.parse(commitCreationDateStr, formatter);
                     ZonedDateTime parentCommitCreationDate = ZonedDateTime.parse(parentCommitCreationDateStr, formatter);
-                    long longDifference = commitCreationDate.toInstant().getEpochSecond() -
-                            parentCommitCreationDate.toInstant().getEpochSecond();
+                    long longDifference = commitCreationDate.toInstant().getEpochSecond()
+                            - parentCommitCreationDate.toInstant().getEpochSecond();
                     if (longDifference <= (long) Integer.MAX_VALUE) {
                         difference = (int) longDifference;
                     }
@@ -149,26 +151,29 @@ public class GitlabApiClient {
     }
 
     private JsonArray getAllBranchesForGivenProject(String projectId) {
-        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId + uriPartForBranches + uriParams));
+        final String uri = baseUri + projectId + uriPartForBranches + uriParams;
+        return parseHttpResponseToJsonArray(makeGetCallToGitlab(uri));
     }
 
     private JsonObject getCommitById(String projectId, String commitId) {
-        return parseHttpResponseToJsonObject(makeGetCallToGitlab(baseUri + projectId
-                + uriPartForCommits + commitId + uriParams));
+        final String uri = baseUri + projectId + uriPartForCommits + commitId + uriParams;
+        return parseHttpResponseToJsonObject(makeGetCallToGitlab(uri));
     }
 
     private JsonArray getCommitDiff(String projectId, String commitId) {
-        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
-                + uriPartForCommits + commitId + uriPartForDiff + uriParams));
+        final String uri = baseUri + projectId + uriPartForCommits + commitId + uriPartForDiff + uriParams;
+        return parseHttpResponseToJsonArray(makeGetCallToGitlab(uri));
     }
 
     private JsonArray getCommitsForGivenBranch(String projectId, String branchName, String sinceDateTime) {
-        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + projectId
-                + uriPartForCommits + uriParams + refNameParam + branchName + sinceParam + sinceDateTime));
+        final String uri =
+                baseUri + projectId + uriPartForCommits + uriParams + refNameParam + branchName + sinceParam + sinceDateTime;
+        return parseHttpResponseToJsonArray(makeGetCallToGitlab(uri));
     }
 
     private JsonArray getUserProjects() {
-        return parseHttpResponseToJsonArray(makeGetCallToGitlab(baseUri + uriParams));
+        final String uri = baseUri + uriParams;
+        return parseHttpResponseToJsonArray(makeGetCallToGitlab(uri));
     }
 
     /**
