@@ -40,16 +40,19 @@ public class GitlabApiClient {
 
     private static final Logger logger = LoggerFactory.getLogger(GitlabApiClient.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+    private static final ZonedDateTime initialSinceDate = ZonedDateTime.of(
+            2022, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
     private static final String membershipParam = "&membership=true";
     private static final String paginationParam = "&per_page=100";
     private static final String refNameParam = "&ref_name=";
     private static final String sinceParam = "&since=";
-    private static final ZonedDateTime initialSinceDate = ZonedDateTime.of(2022, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
     private static final String uriPartForBranches = "/repository/branches/";
     private static final String uriPartForCommits = "/repository/commits/";
     private static final String uriPartForDiff = "/diff/";
     private static final String uriPartForProjects = "/api/v4/projects/";
     private final String baseUri;
+    private final HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2)
+            .connectTimeout(Duration.ofMinutes(5)).build();
     private final String uriParams;
     private ZonedDateTime lastRun = null;
 
@@ -178,11 +181,6 @@ public class GitlabApiClient {
 
         HttpResponse<String> response = null;
         try {
-            final HttpClient httpClient = HttpClient.newBuilder()
-                    .version(HttpClient.Version.HTTP_2)
-                    .connectTimeout(Duration.ofMinutes(5))
-                    .build();
-
             HttpRequest request = HttpRequest.newBuilder().GET().uri(URI.create(uri)).build();
 
             // receive response from Gitlab
