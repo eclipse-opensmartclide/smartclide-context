@@ -43,7 +43,7 @@ import de.atb.context.common.util.Hashing;
  */
 public abstract class FilePairParser extends IndexingParser<Pair<File, File>> {
 
-    protected IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, Pair<File, File>> filePairAnalyser;
+    protected IndexingAnalyser<IMonitoringDataModel<?, ?>, Pair<File, File>> filePairAnalyser;
 
     public FilePairParser(final DataSource dataSource,
                           final InterpreterConfiguration interpreterConfiguration,
@@ -105,7 +105,7 @@ public abstract class FilePairParser extends IndexingParser<Pair<File, File>> {
      * @see IndexingParser#getAnalyser()
      */
     @Override
-    public final IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, Pair<File, File>> getAnalyser() {
+    public final IndexingAnalyser<IMonitoringDataModel<?, ?>, Pair<File, File>> getAnalyser() {
         return this.filePairAnalyser;
     }
 

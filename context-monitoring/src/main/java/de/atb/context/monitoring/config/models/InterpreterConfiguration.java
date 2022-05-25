@@ -146,26 +146,26 @@ public class InterpreterConfiguration {
         this.analyser = analyser;
     }
 
-    public final FileAnalyser<? extends IMonitoringDataModel<?, ?>> createFileAnalyser(
+    public final FileAnalyser<IMonitoringDataModel<?, ?>> createFileAnalyser(
         final DataSource ds, final Indexer indexer,
         final Document document, final AmIMonitoringConfiguration amiConfiguration) {
         return this.createAnalyser(ds, indexer, document, amiConfiguration);
     }
 
-    public final WebServiceAnalyser<? extends IMonitoringDataModel<?, ?>> createWebServiceAnalyser(
+    public final WebServiceAnalyser<IMonitoringDataModel<?, ?>> createWebServiceAnalyser(
         final DataSource ds, final Indexer indexer,
         final Document document, final AmIMonitoringConfiguration amiConfiguration) {
         return this.createAnalyser(ds, indexer, document, amiConfiguration);
     }
 
-    public final DatabaseAnalyser<? extends IMonitoringDataModel<?, ?>> createDatabaseAnalyser(
+    public final DatabaseAnalyser<IMonitoringDataModel<?, ?>> createDatabaseAnalyser(
         final DataSource ds, final Indexer indexer,
         final Document document, final AmIMonitoringConfiguration amiConfiguration) {
         return this.createAnalyser(ds, indexer, document, amiConfiguration);
     }
 
     @SuppressWarnings("unchecked")
-    public final <T extends IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, ?>> T createAnalyser(
+    public final <T extends IndexingAnalyser<IMonitoringDataModel<?, ?>, ?>> T createAnalyser(
         final DataSource ds, final Indexer indexer,
         final Document document, final AmIMonitoringConfiguration amiConfiguration) {
         if ((this.analyser == null) || (this.analyser.trim().length() == 0)) {

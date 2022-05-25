@@ -41,7 +41,7 @@ import static de.atb.context.monitoring.parser.IndexedFields.Uri;
  */
 public abstract class DatabaseParser extends IndexingParser<IDatabase> {
 
-    protected IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, IDatabase> serviceAnalyser;
+    protected IndexingAnalyser<IMonitoringDataModel<?, ?>, IDatabase> serviceAnalyser;
 
     public DatabaseParser(final DataSource dataSource,
                           final InterpreterConfiguration interpreterConfiguration,
@@ -65,7 +65,7 @@ public abstract class DatabaseParser extends IndexingParser<IDatabase> {
     }
 
     @Override
-    public final synchronized IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, IDatabase> getAnalyser() {
+    public final synchronized IndexingAnalyser<IMonitoringDataModel<?, ?>, IDatabase> getAnalyser() {
         return this.serviceAnalyser;
     }
 

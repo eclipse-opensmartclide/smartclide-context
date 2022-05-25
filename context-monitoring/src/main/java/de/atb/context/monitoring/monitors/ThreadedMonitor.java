@@ -14,10 +14,6 @@ package de.atb.context.monitoring.monitors;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import de.atb.context.monitoring.analyser.IndexingAnalyser;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.Index;
@@ -30,6 +26,10 @@ import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.parser.IndexingParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import org.apache.lucene.document.Document;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * ThreadedMonitor
@@ -48,6 +48,8 @@ public abstract class ThreadedMonitor<P, A extends IMonitoringDataModel<?, ?>> e
     protected final List<MonitoringProgressListener<P, A>> progressListeners = new ArrayList<>();
 
     private Thread thread;
+
+    private IndexingParser<P> parser;
 
     protected ThreadedMonitor(final DataSource dataSource,
                               final Interpreter interpreter,
@@ -99,8 +101,6 @@ public abstract class ThreadedMonitor<P, A extends IMonitoringDataModel<?, ?>> e
 
     public abstract void monitor() throws Exception;
 
-    protected abstract IndexingParser<P> getParser(final InterpreterConfiguration setting);
-
     public final void stop() {
         // if (this.isRunning()) {
         this.shutdown();
@@ -147,9 +147,16 @@ public abstract class ThreadedMonitor<P, A extends IMonitoringDataModel<?, ?>> e
         }
     }
 
-    protected void parseAndAnalyse(final P objectToParse,
-                                   final IndexingParser<P> parser,
-                                   final IndexingAnalyser<A, P> analyser) {
+    protected final IndexingParser<P> getParser(final InterpreterConfiguration setting) {
+        if (parser == null) {
+            parser = setting.createParser(this.dataSource, this.indexer, this.amiConfiguration);
+        }
+        return parser;
+    }
+
+    protected final void parseAndAnalyse(final P objectToParse,
+                                         final IndexingParser<P> parser,
+                                         final IndexingAnalyser<A, P> analyser) {
         if (parser.parse(objectToParse)) {
             final Document document = parser.getDocument();
             this.raiseParsedEvent(objectToParse, document);

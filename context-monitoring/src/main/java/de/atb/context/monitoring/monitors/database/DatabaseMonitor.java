@@ -15,7 +15,7 @@ package de.atb.context.monitoring.monitors.database;
  */
 
 
-import de.atb.context.monitoring.analyser.database.DatabaseAnalyser;
+import de.atb.context.monitoring.analyser.IndexingAnalyser;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.DataSourceType;
 import de.atb.context.monitoring.config.models.Interpreter;
@@ -26,7 +26,7 @@ import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.IDatabase;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.monitors.PeriodicScheduledExecutorThreadedMonitor;
-import de.atb.context.monitoring.parser.database.DatabaseParser;
+import de.atb.context.monitoring.parser.IndexingParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 
 /**
@@ -55,11 +55,6 @@ public class DatabaseMonitor extends PeriodicScheduledExecutorThreadedMonitor<ID
     }
 
     @Override
-    protected DatabaseParser getParser(final InterpreterConfiguration setting) {
-        return setting.createParser(this.dataSource, this.indexer, this.amiConfiguration);
-    }
-
-    @Override
     protected long getSchedulePeriod() {
         return this.dataSource.getInterval() != null ? this.dataSource.getInterval() : 15000L;
     }
@@ -75,12 +70,12 @@ public class DatabaseMonitor extends PeriodicScheduledExecutorThreadedMonitor<ID
     }
 
     @Override
-    protected void doMonitor(final InterpreterConfiguration setting) throws Exception {
+    protected void doMonitor(final InterpreterConfiguration setting) {
         if (setting != null) {
             this.logger.debug("Handling URI " + this.dataSource.getUri() + "...");
             if ((this.dataSource.getUri() != null)) {
-                DatabaseParser parser = getParser(setting);
-                DatabaseAnalyser analyser = (DatabaseAnalyser) parser.getAnalyser();
+                final IndexingParser<IDatabase> parser = getParser(setting);
+                final IndexingAnalyser<IMonitoringDataModel<?, ?>, IDatabase> analyser = parser.getAnalyser();
                 final IDatabase database = this.dataSource.toDatabase();
 
                 parseAndAnalyse(database, parser, analyser);
