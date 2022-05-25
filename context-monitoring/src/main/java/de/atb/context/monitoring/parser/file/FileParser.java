@@ -45,7 +45,7 @@ import de.atb.context.monitoring.parser.IndexedFields;
  */
 public abstract class FileParser extends IndexingParser<File> {
 
-    protected FileAnalyser<? extends IMonitoringDataModel<?, ?>> fileAnalyser;
+    protected FileAnalyser<IMonitoringDataModel<?, ?>> fileAnalyser;
 
     public FileParser(final DataSource dataSource,
                       final InterpreterConfiguration interpreterConfiguration,
@@ -99,7 +99,7 @@ public abstract class FileParser extends IndexingParser<File> {
      * @see IndexingParser#getAnalyser()
      */
     @Override
-    public final synchronized IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, File> getAnalyser() {
+    public final synchronized IndexingAnalyser<IMonitoringDataModel<?, ?>, File> getAnalyser() {
         return this.fileAnalyser;
     }
 

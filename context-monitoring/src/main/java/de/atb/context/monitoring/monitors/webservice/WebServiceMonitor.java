@@ -15,7 +15,7 @@ package de.atb.context.monitoring.monitors.webservice;
  */
 
 
-import de.atb.context.monitoring.analyser.webservice.WebServiceAnalyser;
+import de.atb.context.monitoring.analyser.IndexingAnalyser;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.DataSourceType;
 import de.atb.context.monitoring.config.models.Interpreter;
@@ -26,7 +26,7 @@ import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.models.IWebService;
 import de.atb.context.monitoring.monitors.PeriodicScheduledExecutorThreadedMonitor;
-import de.atb.context.monitoring.parser.webservice.WebServiceParser;
+import de.atb.context.monitoring.parser.IndexingParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 
 /**
@@ -55,11 +55,6 @@ public class WebServiceMonitor extends PeriodicScheduledExecutorThreadedMonitor<
     }
 
     @Override
-    protected WebServiceParser getParser(final InterpreterConfiguration setting) {
-        return setting.createParser(this.dataSource, this.indexer, this.amiConfiguration);
-    }
-
-    @Override
     protected long getSchedulePeriod() {
         return this.dataSource.getInterval() != null ? this.dataSource.getInterval() : 15000L;
     }
@@ -75,12 +70,12 @@ public class WebServiceMonitor extends PeriodicScheduledExecutorThreadedMonitor<
     }
 
     @Override
-    protected void doMonitor(final InterpreterConfiguration setting) throws Exception {
+    protected void doMonitor(final InterpreterConfiguration setting) {
         if (setting != null) {
             this.logger.debug("Handling URI " + this.dataSource.getUri() + "...");
             if ((this.dataSource.getUri() != null)) {
-                WebServiceParser parser = getParser(setting);
-                WebServiceAnalyser analyser = (WebServiceAnalyser) parser.getAnalyser();
+                final IndexingParser<IWebService> parser = getParser(setting);
+                final IndexingAnalyser<IMonitoringDataModel<?, ?>, IWebService> analyser = parser.getAnalyser();
                 final IWebService webService = this.dataSource.toWebService();
 
                 parseAndAnalyse(webService, parser, analyser);

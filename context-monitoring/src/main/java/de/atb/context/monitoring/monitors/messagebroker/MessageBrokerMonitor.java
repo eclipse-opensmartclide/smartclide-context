@@ -18,7 +18,7 @@ import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DeliverCallback;
 import com.rabbitmq.client.Envelope;
-import de.atb.context.monitoring.analyser.messagebroker.MessageBrokerAnalyser;
+import de.atb.context.monitoring.analyser.IndexingAnalyser;
 import de.atb.context.monitoring.config.models.DataSource;
 import de.atb.context.monitoring.config.models.DataSourceType;
 import de.atb.context.monitoring.config.models.Interpreter;
@@ -29,7 +29,7 @@ import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.monitors.ScheduledExecutorThreadedMonitor;
 import de.atb.context.monitoring.monitors.messagebroker.util.MessageBrokerUtil;
-import de.atb.context.monitoring.parser.messagebroker.MessageBrokerParser;
+import de.atb.context.monitoring.parser.IndexingParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 
 import java.nio.charset.StandardCharsets;
@@ -44,7 +44,7 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
 
     private final MessageBrokerDataSource dataSource;
 
-    private MessageBrokerParser parser;
+    private IndexingParser<String> parser;
 
     private final DeliverCallback deliverCallback = (consumerTag, delivery) -> {
         String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
@@ -65,11 +65,6 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
             throw new IllegalArgumentException("Given dataSource must be of type MessageBrokerDataSource!");
         }
         this.logger.info("Initializing MessageBrokerMonitor for uri: " + dataSource.getUri());
-    }
-
-    @Override
-    protected MessageBrokerParser getParser(final InterpreterConfiguration setting) {
-        return setting.createParser(this.dataSource, this.indexer, this.amiConfiguration);
     }
 
     @Override
@@ -108,7 +103,6 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
         }
     }
 
-    // FIXME: envelope is never used
     protected final void handleMessage(Envelope envelope, String message) {
         this.logger.info(
             "Handling message from exchange \"{}\" with routing key \"{}\" ...",
@@ -117,13 +111,14 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
         );
         try {
             if ((this.dataSource.getUri() != null)) {
-                MessageBrokerAnalyser analyser = (MessageBrokerAnalyser) parser.getAnalyser();
+                final IndexingAnalyser<IMonitoringDataModel<?, ?>, String> analyser = parser.getAnalyser();
 
                 parseAndAnalyse(message, parser, analyser);
+
+                // clean up indexed document and remove all stuff already used
+                parser.getDocument().removeFields("content");
+                parser.getDocument().removeFields("monitoredAt");
             }
-            // clean up indexed document and remove all stuff already used
-            parser.getDocument().removeFields("content");
-            parser.getDocument().removeFields("monitoredAt");
         } catch (Exception e) {
             logger.error("Unknown error in MessageBrokerMonitor.handleMessageBroker()", e);
         }

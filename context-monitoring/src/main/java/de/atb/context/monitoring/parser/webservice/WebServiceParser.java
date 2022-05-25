@@ -42,7 +42,7 @@ import de.atb.context.monitoring.parser.IndexedFields;
  */
 public abstract class WebServiceParser extends IndexingParser<IWebService> {
 
-    protected IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, IWebService> serviceAnalyser;
+    protected IndexingAnalyser<IMonitoringDataModel<?, ?>, IWebService> serviceAnalyser;
 
     public WebServiceParser(final DataSource dataSource,
                             final InterpreterConfiguration interpreterConfiguration,
@@ -70,7 +70,7 @@ public abstract class WebServiceParser extends IndexingParser<IWebService> {
     }
 
     @Override
-    public final synchronized IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, IWebService> getAnalyser() {
+    public final synchronized IndexingAnalyser<IMonitoringDataModel<?, ?>, IWebService> getAnalyser() {
         return this.serviceAnalyser;
     }
 

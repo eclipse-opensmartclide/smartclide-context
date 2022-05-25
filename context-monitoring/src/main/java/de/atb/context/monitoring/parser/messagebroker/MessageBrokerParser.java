@@ -37,7 +37,7 @@ import java.util.Date;
  */
 public abstract class MessageBrokerParser extends IndexingParser<String> {
 
-	protected IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, String> serviceAnalyser;
+	protected IndexingAnalyser<IMonitoringDataModel<?, ?>, String> serviceAnalyser;
 
 	public MessageBrokerParser(final DataSource dataSource,
                                final InterpreterConfiguration interpreterConfiguration,
@@ -56,7 +56,7 @@ public abstract class MessageBrokerParser extends IndexingParser<String> {
 	}
 
 	@Override
-	public final synchronized IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, String> getAnalyser() {
+	public final synchronized IndexingAnalyser<IMonitoringDataModel<?, ?>, String> getAnalyser() {
 		return this.serviceAnalyser;
 	}
 

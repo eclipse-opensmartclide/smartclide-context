@@ -21,7 +21,6 @@ import de.atb.context.monitoring.config.models.Monitor;
 import de.atb.context.monitoring.index.Indexer;
 import de.atb.context.monitoring.models.IMonitoringDataModel;
 import de.atb.context.monitoring.monitors.ThreadedMonitor;
-import de.atb.context.monitoring.parser.IndexingParser;
 import de.atb.context.tools.ontology.AmIMonitoringConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -195,10 +194,6 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
 
     protected abstract void handleFile(final String fileName, final Long time,
                                     final InterpreterConfiguration setting);
-
-    protected IndexingParser<P> getParser(final InterpreterConfiguration setting) {
-        return setting.createParser(this.dataSource, this.indexer, this.amiConfiguration);
-    }
 
     protected final void fileExisting(final String file, final Long time,
                                       final InterpreterConfiguration setting) {

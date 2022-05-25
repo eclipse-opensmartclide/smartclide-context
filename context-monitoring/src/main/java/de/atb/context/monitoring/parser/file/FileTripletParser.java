@@ -44,7 +44,7 @@ import de.atb.context.common.util.Hashing;
 public abstract class FileTripletParser extends
     IndexingParser<Triplet<File, File, File>> {
 
-    protected IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, Triplet<File, File, File>> fileTripletAnalyser;
+    protected IndexingAnalyser<IMonitoringDataModel<?, ?>, Triplet<File, File, File>> fileTripletAnalyser;
 
     public FileTripletParser(final DataSource dataSource,
                              final InterpreterConfiguration interpreterConfiguration,
@@ -106,7 +106,7 @@ public abstract class FileTripletParser extends
      * @see IndexingParser#getAnalyser()
      */
     @Override
-    public final IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, Triplet<File, File, File>> getAnalyser() {
+    public final IndexingAnalyser<IMonitoringDataModel<?, ?>, Triplet<File, File, File>> getAnalyser() {
         return this.fileTripletAnalyser;
     }
 

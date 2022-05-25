@@ -109,7 +109,7 @@ public abstract class IndexingParser<T> {
      */
     public abstract boolean parse(T object);
 
-    public abstract IndexingAnalyser<? extends IMonitoringDataModel<?, ?>, T> getAnalyser();
+    public abstract IndexingAnalyser<IMonitoringDataModel<?, ?>, T> getAnalyser();
 
     /**
      * Returns whether a document with the given URI is already indexed and up
