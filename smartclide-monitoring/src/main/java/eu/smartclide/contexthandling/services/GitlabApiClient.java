@@ -123,8 +123,11 @@ public class GitlabApiClient {
     private int calculateTimeSinceLastCommit(String projectId, JsonObject commit) {
         int difference = 0;
         // check if parent id exists for given commit
-        if (commit.get("parent_ids").getAsJsonArray().size() > 0) {
-            String parentCommitId = commit.get("parent_ids").getAsJsonArray().get(0).getAsString();
+        JsonArray parentIds = commit.get("parent_ids").getAsJsonArray();
+        if (parentIds.size() > 0) {
+            logger.info("-----------------Found {} parent_ids with commit id {}", parentIds.size(), commit.get("id").getAsString());
+            String parentCommitId = parentIds.get(0).getAsString();
+            logger.info("parent id: {}", parentCommitId);
             String commitCreationDateStr = commit.get("created_at").getAsString();
             JsonObject parentCommit = getCommitById(projectId, parentCommitId);
             if (parentCommit.getAsJsonObject().has("created_at")) {
