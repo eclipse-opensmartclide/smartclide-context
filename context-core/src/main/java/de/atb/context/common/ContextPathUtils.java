@@ -14,21 +14,21 @@ package de.atb.context.common;
  * #L%
  */
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class ContextPathUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContextPathUtils.class);
 
-    private static final String BASE_DIR_LINUX = "/var/lib/smartclide";
-    private static final String BASE_DIR_LINUX_ALTERNATIVE = "/opt/smartclide";
-    private static final String BASE_DIR_WINDOWS = "C:\\ProgramData\\smartclide";
+    private static final Path BASE_DIR_LINUX = Path.of("/var/lib/smartclide");
+    private static final Path BASE_DIR_LINUX_ALTERNATIVE = Path.of("/opt/smartclide");
+    private static final Path BASE_DIR_WINDOWS = Path.of("C:\\ProgramData\\smartclide");
+    private static final Path BASE_DIR_TEST_CLASSES = Path.of("", "target", "test-classes");
     private static final String SMARTCLIDE_HOME_VAR_NAME = "SMARTCLIDE_HOME";
     private static final String CONFIG_DIR_NAME = "config";
     private static final String DATA_DIR_NAME = "data";
@@ -49,20 +49,24 @@ public final class ContextPathUtils {
         final Path baseDirPath;
         // Environment Variable
         final String smartclideHome = System.getenv(SMARTCLIDE_HOME_VAR_NAME);
-        if (smartclideHome != null && Files.isDirectory(Paths.get(smartclideHome))) {
-            baseDirPath = Path.of(smartclideHome);
-        } else if (Files.isDirectory(Paths.get(BASE_DIR_LINUX))) {
+        Path smartclideHomePath = null;
+        if (smartclideHome != null) {
+            smartclideHomePath = Path.of(smartclideHome);
+        }
+        if (null != smartclideHomePath && Files.isDirectory(smartclideHomePath)) {
+            baseDirPath = smartclideHomePath;
+        } else if (Files.isDirectory(BASE_DIR_LINUX)) {
             // Linux config directory
-            baseDirPath = Path.of(BASE_DIR_LINUX);
-        } else if (Files.isDirectory(Paths.get(BASE_DIR_LINUX_ALTERNATIVE))) {
+            baseDirPath = BASE_DIR_LINUX;
+        } else if (Files.isDirectory(BASE_DIR_LINUX_ALTERNATIVE)) {
             // alternative Linux config directory
-            baseDirPath = Path.of(BASE_DIR_LINUX_ALTERNATIVE);
-        } else if (Files.isDirectory(Paths.get(BASE_DIR_WINDOWS))) {
+            baseDirPath = BASE_DIR_LINUX_ALTERNATIVE;
+        } else if (Files.isDirectory(BASE_DIR_WINDOWS)) {
             // Windows Config Directories
-            baseDirPath = Path.of(BASE_DIR_WINDOWS);
+            baseDirPath = BASE_DIR_WINDOWS;
         } else {
             // not in production, use local target/test-classes folder in current working directory
-            baseDirPath = Path.of("", "target", "test-classes");
+            baseDirPath = BASE_DIR_TEST_CLASSES;
         }
 
         checkIfDirectoryExists(baseDirPath.toAbsolutePath(), "base");

@@ -25,9 +25,11 @@ import org.testcontainers.containers.RabbitMQContainer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -70,8 +72,7 @@ public class GitlabCommitMonitorTest {
         fakeDleChannel = createFakeDleListener(rabbitMQContainerHost, rabbitMQContainerAmqpPort);
 
         // write dynamically allocated message broker host and port to monitoring config file
-        final Path monitoringConfigFilePath = ContextPathUtils.getConfigDirPath().resolve(MONITORING_CONFIG_FILE_NAME);
-        updateDataSource(monitoringConfigFilePath, rabbitMQContainerHost, rabbitMQContainerAmqpPort);
+        updateDataSource(rabbitMQContainerHost, rabbitMQContainerAmqpPort);
 
         // start service
         ServiceMain.startService();
@@ -123,16 +124,20 @@ public class GitlabCommitMonitorTest {
         assertEquals(gitlabCommitMessages.size(), fakeDleNumberOfReceivedMessages);
     }
 
-    private void updateDataSource(final Path monitoringConfig,
-                                  final String messageBrokerHost,
+    private void updateDataSource(final String messageBrokerHost,
                                   final Integer messageBrokerPort) throws Exception {
+        final Path testResourcesPath = Path.of(Objects.requireNonNull(this.getClass().getResource("/")).toURI());
+        final Path originalConfigFilePath = testResourcesPath.resolve(MONITORING_CONFIG_FILE_NAME);
+        final Path testConfigFilePath = testResourcesPath.resolve("config").resolve(MONITORING_CONFIG_FILE_NAME);
+        Files.copy(originalConfigFilePath, testConfigFilePath);
+        final Path monitoringConfigPath = ContextPathUtils.getConfigDirPath().resolve(MONITORING_CONFIG_FILE_NAME);
         final Persister persister = new Persister();
-        final Config config = persister.read(Config.class, new File(monitoringConfig.toString()));
+        final Config config = persister.read(Config.class, new File(monitoringConfigPath.toString()));
         final Map<String, String> optionsMap = config.getDataSource(DATASOURCE_GITLAB).getOptionsMap();
         optionsMap.put(MessageBrokerDataSourceOptions.MessageBrokerServer.getKeyName(), messageBrokerHost);
         optionsMap.put(MessageBrokerDataSourceOptions.MessageBrokerPort.getKeyName(), messageBrokerPort.toString());
         config.getDataSource(DATASOURCE_GITLAB).setOptions(optionsMap);
-        persister.write(config, new File(monitoringConfig.toString()));
+        persister.write(config, new File(monitoringConfigPath.toString()));
     }
 
     private Channel createFakeDleListener(final String rabbitMQContainerHost, final Integer rabbitMQContainerAmqpPort)
