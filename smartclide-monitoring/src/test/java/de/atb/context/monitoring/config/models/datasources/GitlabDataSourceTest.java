@@ -28,7 +28,7 @@ public class GitlabDataSourceTest {
         final String expectedUsername = "guest";
         final String expectedPassword = "guest";
         final String expectedOutgoingQueue = "code_repo_recommendation_queue";
-        final URI uri = Objects.requireNonNull(this.getClass().getResource("/config")).toURI();
+        final URI uri = Objects.requireNonNull(this.getClass().getResource("/")).toURI();
         final String configDirPath = Path.of(uri).toAbsolutePath().toString();
 
         final String configFileName = "monitoring-config.xml";
