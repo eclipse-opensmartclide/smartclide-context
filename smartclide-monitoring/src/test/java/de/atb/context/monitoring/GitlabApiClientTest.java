@@ -14,7 +14,7 @@ import eu.smartclide.contexthandling.services.GitlabApiClient;
 
 public class GitlabApiClientTest {
 
-    private static final String gitlabBaseUri = "https://gitlab.atb-bremen.de";
+    private static final String gitlabBaseUri = "https://gitlab.dev.smartclide.eu";
     private GitlabApiClient gitlabApiClient;
 
     @Before
