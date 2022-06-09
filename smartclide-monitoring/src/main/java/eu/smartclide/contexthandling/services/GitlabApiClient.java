@@ -126,8 +126,9 @@ public class GitlabApiClient {
         JsonArray parentIds = commit.get("parent_ids").getAsJsonArray();
         if (parentIds.size() > 0) {
             logger.info("-----------------Found {} parent_ids with commit id {}", parentIds.size(), commit.get("id").getAsString());
+            logger.info("parent_ids: {}", parentIds);
             String parentCommitId = parentIds.get(0).getAsString();
-            logger.info("parent id: {}", parentCommitId);
+            logger.info("parent_ids[0]: {}", parentCommitId);
             String commitCreationDateStr = commit.get("created_at").getAsString();
             JsonObject parentCommit = getCommitById(projectId, parentCommitId);
             if (parentCommit.getAsJsonObject().has("created_at")) {
