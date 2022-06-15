@@ -130,10 +130,11 @@ public class GitlabApiClient {
             // consider first commitId from parentIds array
             // because Gitlab API always provides parent commit from original branch as a first element of the parent_ids array
             String parentCommitId = parentIds.get(0).getAsString();
-            String commitCreationDateStr = commit.get("created_at").getAsString();
             JsonObject parentCommit = getCommitById(projectId, parentCommitId);
-            if (parentCommit.getAsJsonObject().has("created_at")) {
-                String parentCommitCreationDateStr = parentCommit.getAsJsonObject().get("created_at").getAsString();
+
+            if (parentCommit.has("created_at")) {
+                String commitCreationDateStr = commit.get("created_at").getAsString();
+                String parentCommitCreationDateStr = parentCommit.get("created_at").getAsString();
 
                 try {
                     ZonedDateTime commitCreationDate = ZonedDateTime.parse(commitCreationDateStr, formatter);
