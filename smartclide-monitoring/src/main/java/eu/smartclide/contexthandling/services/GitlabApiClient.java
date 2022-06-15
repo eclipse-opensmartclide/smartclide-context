@@ -125,13 +125,11 @@ public class GitlabApiClient {
         // check if parent id exists for given commit
         JsonArray parentIds = commit.get("parent_ids").getAsJsonArray();
         if (parentIds.size() > 0) {
-            logger.info("-----------------Found {} parent_ids with commit id {}", parentIds.size(), commit.get("id").getAsString());
-            logger.info("parent_ids: {}", parentIds);
+            logger.info("Found {} parent_ids: {} with commit id {}", parentIds.size(), parentIds, commit.get("id").getAsString());
 
             // consider first commitId from parentIds array
-            // because Gitlab API always provides commit from original branch as first element of the parent_ids array
+            // because Gitlab API always provides parent commit from original branch as a first element of the parent_ids array
             String parentCommitId = parentIds.get(0).getAsString();
-            logger.info("parent_ids[0]: {}", parentCommitId);
             String commitCreationDateStr = commit.get("created_at").getAsString();
             JsonObject parentCommit = getCommitById(projectId, parentCommitId);
             if (parentCommit.getAsJsonObject().has("created_at")) {
