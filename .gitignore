@@ -12,3 +12,6 @@ pom.xml.versionsBackup
 .classpath
 .factorypath
 
+# MkDocs
+site/
+
