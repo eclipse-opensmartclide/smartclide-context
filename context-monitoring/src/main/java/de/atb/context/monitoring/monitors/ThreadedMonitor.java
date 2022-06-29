@@ -101,6 +101,8 @@ public abstract class ThreadedMonitor<P, A extends IMonitoringDataModel<?, ?>> e
 
     public abstract void monitor() throws Exception;
 
+    protected abstract boolean isIndexEnabled();
+
     public final void stop() {
         // if (this.isRunning()) {
         this.shutdown();
@@ -160,8 +162,10 @@ public abstract class ThreadedMonitor<P, A extends IMonitoringDataModel<?, ?>> e
         if (parser.parse(objectToParse)) {
             final Document document = parser.getDocument();
             this.raiseParsedEvent(objectToParse, document);
-            this.indexer.addDocumentToIndex(document);
-            this.raiseIndexedEvent(document);
+            if (isIndexEnabled()) {
+                this.indexer.addDocumentToIndex(document);
+                this.raiseIndexedEvent(document);
+            }
             final List<A> analysedModels = analyser.analyse(objectToParse);
             this.raiseAnalysedEvent(analysedModels, objectToParse, analyser.getDocument());
         }

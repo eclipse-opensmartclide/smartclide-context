@@ -78,6 +78,11 @@ public class MessageBrokerMonitor extends ScheduledExecutorThreadedMonitor<Strin
     }
 
     @Override
+    protected boolean isIndexEnabled() {
+        return false;
+    }
+
+    @Override
     protected void doMonitor(final InterpreterConfiguration setting) throws Exception {
         if (setting != null) {
             if ((this.dataSource.getUri() != null)) {

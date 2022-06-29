@@ -70,6 +70,11 @@ public class WebServiceMonitor extends PeriodicScheduledExecutorThreadedMonitor<
     }
 
     @Override
+    protected boolean isIndexEnabled() {
+        return false;
+    }
+
+    @Override
     protected void doMonitor(final InterpreterConfiguration setting) {
         if (setting != null) {
             this.logger.debug("Handling URI " + this.dataSource.getUri() + "...");
