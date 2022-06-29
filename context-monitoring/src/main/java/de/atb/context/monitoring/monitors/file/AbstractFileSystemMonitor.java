@@ -89,6 +89,11 @@ public abstract class AbstractFileSystemMonitor<P> extends ThreadedMonitor<P, IM
     }
 
     @Override
+    protected boolean isIndexEnabled() {
+        return true;
+    }
+
+    @Override
     public final void monitor() throws Exception {
         this.logger.info("Starting monitoring for path " + this.pathToMonitor);
         this.filesToDates.clear();
