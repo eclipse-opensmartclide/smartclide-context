@@ -1,3 +1,5 @@
 site_name: SmartCLIDE Context Handling Component
 repo_url: https://github.com/eclipse-researchlabs/smartclide-context
 
+nav:
+  - Context Handling: 'index.md'
