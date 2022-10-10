@@ -27,7 +27,7 @@ In order to build and push a container image that can be deployed, the following
 
 ## How to run Context Handling
 
-A sample configuration and docker-compose file can be found in the [samples folder](https://github.com/eclipse-researchlabs/smartclide-context/tree/main/samples).
+A sample configuration and docker-compose file can be found in the [samples folder](https://github.com/eclipse-opensmartclide/smartclide-context/tree/main/samples).
 
 You can run the sample with the following command: 
 
@@ -41,11 +41,11 @@ You can run the sample with the following command:
 
 **monitoring-config.xml**
 
-An example monitoring configuration can be found here: [monitoring-config.xml](https://github.com/eclipse-researchlabs/smartclide-context/blob/main/samples/config/monitoring-config.xml)
+An example monitoring configuration can be found here: [monitoring-config.xml](https://github.com/eclipse-opensmartclide/smartclide-context/blob/main/samples/config/monitoring-config.xml)
 
 **monitoring-config.xsd**
 
-The corresponding XSD file can be found here: [monitoring-config.xsd](https://github.com/eclipse-researchlabs/smartclide-context/blob/main/samples/config/monitoring-config.xsd)
+The corresponding XSD file can be found here: [monitoring-config.xsd](https://github.com/eclipse-opensmartclide/smartclide-context/blob/main/samples/config/monitoring-config.xsd)
 
 ### Description
 
