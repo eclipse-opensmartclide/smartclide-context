@@ -11,7 +11,7 @@ services:
       - smartclide-monitoring
   # smartclide-monitoring
   smartclide-monitoring:
-    image: ghcr.io/eclipse-researchlabs/smartclide/smartclide-monitoring:latest
+    image: ghcr.io/eclipse-opensmartclide/smartclide/smartclide-monitoring:latest
     depends_on:
       - rabbitmq
     volumes:
