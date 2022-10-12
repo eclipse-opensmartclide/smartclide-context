@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>de.atb.context</groupId>
+        <groupId>org.eclipse.opensmartclide.context</groupId>
         <artifactId>parent</artifactId>
         <version>2.0.0</version>
     </parent>
@@ -21,7 +21,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>de.atb.context</groupId>
+            <groupId>org.eclipse.opensmartclide.context</groupId>
             <artifactId>context-monitoring</artifactId>
             <version>2.0.0</version>
         </dependency>
@@ -65,7 +65,7 @@
                             <arg>-Djava.security.egd=file:/dev/./urandom</arg>
                             <arg>-cp</arg>
                             <arg>app/libs/*:app/resources:app/classes</arg>
-                            <arg>eu.smartclide.contexthandling.ServiceMain</arg>
+                            <arg>org.eclipse.opensmartclide.contexthandling.ServiceMain</arg>
                         </entrypoint>
                     </container>
                 </configuration>

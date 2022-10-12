@@ -10,17 +10,17 @@
 
     <datasources>
         <datasource id="datasource-dummy" type="file"
-                    monitor="de.atb.context.monitoring.monitors.file.FilePairSystemMonitor"
+                    monitor="org.eclipse.opensmartclide.context.monitoring.monitors.file.FilePairSystemMonitor"
                     uri="target/test-classes/filepairmonitor"
                     options="extensionOne=1&amp;extensionTwo=2"
-                    class="de.atb.context.monitoring.config.models.datasources.FilePairSystemDataSource"/>
+                    class="org.eclipse.opensmartclide.context.monitoring.config.models.datasources.FilePairSystemDataSource"/>
     </datasources>
 
     <interpreters>
         <interpreter id="interpreter-dummy">
             <configuration type="*"
-                           parser="de.atb.context.monitoring.parser.file.DummyFilePairParser"
-                           analyser="de.atb.context.monitoring.analyser.file.DummyFilePairAnalyser"/>
+                           parser="org.eclipse.opensmartclide.context.monitoring.parser.file.DummyFilePairParser"
+                           analyser="org.eclipse.opensmartclide.context.monitoring.analyser.file.DummyFilePairAnalyser"/>
         </interpreter>
     </interpreters>
 
