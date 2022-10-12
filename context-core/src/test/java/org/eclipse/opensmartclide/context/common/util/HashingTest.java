@@ -44,80 +44,6 @@ public class HashingTest {
   }
 
   @Test(timeout = 4000)
-  public void test09()  throws Throwable  {
-      // Undeclared exception!
-      try { 
-        Hashing.getSHA1Hash((String) null);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-    	  assertFalse(false);
-      }
-  }
-
-  @Test(timeout = 4000)
-  public void test10()  throws Throwable  {
-      // Undeclared exception!
-      try { 
-        Hashing.getSHA1Checksum((String) null);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-    	  assertFalse(false);
-      }
-  }
-
-  @Test(timeout = 4000)
-  public void test11()  throws Throwable  {
-      // Undeclared exception!
-      try { 
-        Hashing.getMD5Hash((String) null);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-    	  assertFalse(false);
-      }
-  }
-
-  @Test(timeout = 4000)
-  public void test12()  throws Throwable  {
-      // Undeclared exception!
-      try { 
-        Hashing.getMD5Checksum((String) null);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-    	  assertFalse(false);
-      }
-  }
-
-//  @Test(timeout = 4000)
-//  public void test13()  throws Throwable  {
-//      try { 
-//        Hashing.getFileHash((File) null, "7f138a09169b250e9dcb378140907378");
-//        fail("Expecting exception: NoSuchAlgorithmException");
-//      
-//      } catch(NoSuchAlgorithmException e) {
-//         //
-//         // 7f138a09169b250e9dcb378140907378 MessageDigest not available
-//         //
-//         assertThrownBy("sun.security.jca.GetInstance", e);
-//      }
-//  }
-
-  @Test(timeout = 4000)
   public void test14()  throws Throwable  {
       // Undeclared exception!
       try { 
@@ -182,20 +108,6 @@ public class HashingTest {
       String string0 = Hashing.getSHA256Hash("da39a3ee5e6b4b0d3255bfef95601890afd80709");
       assertNotNull(string0);
       assertEquals("07e23ede2756aa3f5f7cc9759117c4910875e032c27b8556a1e20626224f10ec", string0);
-  }
-
-  @Test(timeout = 4000)
-  public void test25()  throws Throwable  {
-      String string0 = Hashing.getMD5Hash("f1d3ff8443297732862df21dc4e57262");
-      assertEquals("02385956f2ded894a4f0b02c83a8ee3c", string0);
-      assertNotNull(string0);
-  }
-
-  @Test(timeout = 4000)
-  public void test28()  throws Throwable  {
-      String string0 = Hashing.getSHA1Hash("3P<IdhrVNR0?XHldx#?");
-      assertEquals("c5ae6ead5800745b2c8b7f2bcacf1c2c2242a02f", string0);
-      assertNotNull(string0);
   }
 
 }
