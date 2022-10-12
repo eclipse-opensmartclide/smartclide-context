@@ -27,8 +27,8 @@
          <host>localhost</host>
          <location>http://localhost:19004</location>
          <name>AmIMonitoringService</name>
-         <server>AmIMonitoringService</server>
-         <proxy>IAmIMonitoringService</proxy>
+         <server>org.eclipse.opensmartclide.context.services.AmIMonitoringService</server>
+         <proxy>org.eclipse.opensmartclideIAmIMonitoringService</proxy>
       </service>
       <service id="AmI-repository">
          <host>localhost</host>
