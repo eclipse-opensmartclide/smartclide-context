@@ -18,11 +18,11 @@
 	<interpreters>
 		<interpreter id="interpreter-desma">
 			<configuration type="vlv"
-				parser="de.atb.core.monitoring.parser.file.VlvParser"
-				analyser="de.atb.core.monitoring.analyser.file.VlvAnalyser" />
+				parser="org.eclipse.opensmartclide.core.monitoring.parser.file.VlvParser"
+				analyser="org.eclipse.opensmartclide.core.monitoring.analyser.file.VlvAnalyser" />
 			<configuration type="trf"
-				parser="de.atb.core.monitoring.parser.file.TrfParser"
-				analyser="de.atb.core.monitoring.analyser.file.TrfAnalyser" />
+				parser="org.eclipse.opensmartclide.core.monitoring.parser.file.TrfParser"
+				analyser="org.eclipse.opensmartclide.core.monitoring.analyser.file.TrfAnalyser" />
 		</interpreter>
 	</interpreters>
 	

@@ -27,15 +27,15 @@
          <host>localhost</host>
          <location>http://localhost:19004</location>
          <name>AmIMonitoringService</name>
-         <server>de.atb.context.services.AmIMonitoringService</server>
-         <proxy>de.atb.context.services.IAmIMonitoringService</proxy>
+         <server>AmIMonitoringService</server>
+         <proxy>IAmIMonitoringService</proxy>
       </service>
       <service id="AmI-repository">
          <host>localhost</host>
          <location>http://localhost:19005</location>
          <name>AmIRepositoryService</name>
-         <server>de.atb.context.services.dataLayer.AmIRepositoryService</server>
-         <proxy>de.atb.context.services.dataLayer.IAmIRepositoryService</proxy>
+         <server>org.eclipse.opensmartclide.context.services.dataLayer.AmIRepositoryService</server>
+         <proxy>org.eclipse.opensmartclide.services.dataLayer.IAmIRepositoryService</proxy>
       </service>
 	</services>
 </config>

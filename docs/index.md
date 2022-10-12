@@ -63,24 +63,24 @@ Each datasource entry has the following mandatory attributes
 - id:The unique name of the datasource
 - type:The type of the datasource. Possible values are: filesystem, webservice, database, messageBroker
 - monitor:The class of the monitor to be used. Possible values are:
-    - package de.atb.context.monitoring.monitors.database.DatabaseMonitor
-    - package de.atb.context.monitoring.monitors.file.FileSystemMonitor
-    - package de.atb.context.monitoring.monitors.file.FilePairSystemMonitor
-    - package de.atb.context.monitoring.monitors.file.FileTripletSystemMonitor
-    - package de.atb.context.monitoring.monitors.webservice.MessageBrokerMonitor
-    - package de.atb.context.monitoring.monitors.webservice.WebServiceMonitor
-    - package de.atb.context.monitoring.monitors.GitlabCommitMonitor
-    - package de.atb.context.monitoring.monitors.GitMonitor
+    - package DatabaseMonitor
+    - package FileSystemMonitor
+    - package FilePairSystemMonitor
+    - package FileTripletSystemMonitor
+    - package org.eclipse.opensmartclide.context.monitoring.monitors.webservice.MessageBrokerMonitor
+    - package WebServiceMonitor
+    - package GitlabCommitMonitor
+    - package org.eclipse.opensmartclide.context.monitoring.monitors.GitMonitor
 - options: Options for the datasource can be entered using this value. The options are dependent on the datasource to be used
 - uri:The uri of the data source to be monitored
 - class:The following datasource implementations are available
-    - package de.atb.context.monitoring.config.models.datasources.DatabaseDataSource
-    - package de.atb.context.monitoring.config.models.datasources.FilePairSystemDataSource
-    - package de.atb.context.monitoring.config.models.datasources.FileSystemDataSource
-    - package de.atb.context.monitoring.config.models.datasources.FileTripletSystemDataSource
-    - package de.atb.context.monitoring.config.models.datasources.MessageBrokerDataSource
-    - package de.atb.context.monitoring.config.models.datasources.WebServiceDataSource
-    - package de.atb.context.monitoring.config.models.datasources.GitlabDataSource
+    - package DatabaseDataSource
+    - package FilePairSystemDataSource
+    - package FileSystemDataSource
+    - package FileTripletSystemDataSource
+    - package MessageBrokerDataSource
+    - package WebServiceDataSource
+    - package GitlabDataSource
 
 #### interpreters
 
@@ -89,23 +89,23 @@ Each interpreter entry has the following mandatory attributes
 - id: The unique name of the interpreter
 - configuration
     - analyser: The analyser class to be used. The following implementations are available:
-        - package de.atb.context.monitoring.analyser.database.DatabaseAnalyser
-        - package de.atb.context.monitoring.analyser.file.FileAnalyser
-        - package de.atb.context.monitoring.analyser.file.FilePairAnalyser
-        - package de.atb.context.monitoring.analyser.file.FileTripletAnalyser
-        - package de.atb.context.monitoring.analyser.webservice.MessageBrokerAnalyser
-        - package de.atb.context.monitoring.analyser.webservice.WebServiceAnalyser
-        - package de.atb.context.monitoring.analyser.webserviceGitAnalyser
-        - package de.atb.context.monitoring.analyser.webservice.GitlabCommitAnalyser
+        - package DatabaseAnalyser
+        - package FileAnalyser
+        - package FilePairAnalyser
+        - package FileTripletAnalyser
+        - package org.eclipse.opensmartclide.context.monitoring.analyser.webservice.MessageBrokerAnalyser
+        - package WebServiceAnalyser
+        - package org.eclipse.opensmartclide.context.monitoring.analyser.webserviceGitAnalyser
+        - package org.eclipse.opensmartclide.context.monitoring.analyser.webservice.GitlabCommitAnalyser
     - parser: The parser class to be used. The following implementations are available:
-        - package de.atb.context.monitoring.parser.database.DatabaseParser
-        - package de.atb.context.monitoring.parser.file.FileParser
-        - package de.atb.context.monitoring.parser.file.FilePairParser
-        - package de.atb.context.monitoring.parser.file.FileTripletParser
-        - package de.atb.context.monitoring.parser.webservice.MessageBrokerParser
-        - package de.atb.context.monitoring.parser.webservice.WebServiceParser
-        - package de.atb.context.monitoring.parser.GitlabCommitParser
-        - package de.atb.context.monitoring.parser.GitParser
+        - package DatabaseParser
+        - package FileParser
+        - package FilePairParser
+        - package FileTripletParser
+        - package org.eclipse.opensmartclide.context.monitoring.parser.webservice.MessageBrokerParser
+        - package WebServiceParser
+        - package GitlabCommitParser
+        - package org.eclipse.opensmartclide.context.monitoring.parser.GitParser
 
     - type: Currently only used for File analyser and parser. Defines the file extensions to be used.
 
