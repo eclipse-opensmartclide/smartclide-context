@@ -9,10 +9,10 @@
 
 	<datasources>
 		<datasource id="datasource-desma" type="file"
-			monitor="FileSystemMonitor"
+			monitor=".org.eclipse.opensmartclide.context.monitoring.monitors.file.FileSystemMonitor"
 			uri="target/test-classes/filepairmonitor"
 			options="hiddenfiles=true"
-			class="FileSystemDataSource" />
+			class="org.eclipse.opensmartclide.context.monitoring.config.models.datasources.FileSystemDataSource" />
 	</datasources>
 
 	<interpreters>

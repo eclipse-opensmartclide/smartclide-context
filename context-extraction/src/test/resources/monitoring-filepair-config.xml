@@ -9,17 +9,17 @@
 
 	<datasources>
 		<datasource id="datasource-dummy" type="file"
-			monitor="FilePairSystemMonitor"
+			monitor="org.eclipse.opensmartclide.context.monitoring.monitors.file.FilePairSystemMonitor"
 			uri="target/test-classes/filepairmonitor"
 			options="extensionOne=1&amp;extensionTwo=2"
-			class="FilePairSystemDataSource" />
+			class="org.eclipse.opensmartclide.context.monitoring.config.models.datasources.FilePairSystemDataSource" />
 	</datasources>
 
 	<interpreters>
 		<interpreter id="interpreter-dummy">
 			<configuration type="*"
-				parser="DummyFilePairParser"
-				analyser="DummyFilePairAnalyser" />
+				parser="org.eclipse.opensmartclide.context.monitoring.parser.file.DummyFilePairParser"
+				analyser="org.eclipse.opensmartclide.context.monitoring.parser.file.DummyFilePairAnalyser" />
 		</interpreter>
 
 	</interpreters>
