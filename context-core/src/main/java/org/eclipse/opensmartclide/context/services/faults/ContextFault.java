@@ -25,7 +25,7 @@ import javax.xml.ws.WebFault;
  * @version $LastChangedRevision: 417 $
  *
  */
-@WebFault(faultBean = "ContextFault", name = "ContextFault", targetNamespace = "http://atb-bremen.de")
+@WebFault(faultBean = "org.eclipse.opensmartclide.context.services.faults.ContextFault", name = "ContextFault", targetNamespace = "http://atb-bremen.de")
 public class ContextFault extends RuntimeException {
 	private static final long serialVersionUID = 963073945982463366L;
 

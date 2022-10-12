@@ -15,9 +15,9 @@ public class ContextFaultTest {
   @Test(timeout = 4000)
   public void test00()  throws Throwable  {
       ContextFault contextFault0 = new ContextFault();
-      ContextFault contextFault1 = new ContextFault("ContextFault", (ContextFaultDetails) null, (Throwable) contextFault0);
+      ContextFault contextFault1 = new ContextFault("org.eclipse.opensmartclide.context.services.faults.ContextFault", (ContextFaultDetails) null, (Throwable) contextFault0);
       String string0 = contextFault1.getMessage();
-      assertEquals("ContextFault", string0);
+      assertEquals("org.eclipse.opensmartclide.context.services.faults.ContextFault", string0);
   }
 
   @Test(timeout = 4000)

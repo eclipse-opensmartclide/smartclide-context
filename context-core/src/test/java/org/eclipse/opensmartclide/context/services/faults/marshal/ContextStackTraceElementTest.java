@@ -44,7 +44,7 @@ public class ContextStackTraceElementTest {
 
   @Test(timeout = 4000)
   public void test01()  throws Throwable  {
-      ContextStackTraceElement contextStackTraceElement0 = new ContextStackTraceElement("0.", "ContextStackTraceElement", "0.", 0);
+      ContextStackTraceElement contextStackTraceElement0 = new ContextStackTraceElement("0.", "org.eclipse.opensmartclide.context.services.faults.marshal.ContextStackTraceElement", "0.", 0);
       StackTraceElement stackTraceElement0 = ContextStackTraceElement.toStackTraceElement(contextStackTraceElement0);
       ContextStackTraceElement contextStackTraceElement1 = ContextStackTraceElement.convert(stackTraceElement0);
       contextStackTraceElement1.methodName = "bJ6dLuJ48Z";
@@ -58,7 +58,7 @@ public class ContextStackTraceElementTest {
       contextStackTraceElement1.getMethodName();
       ContextStackTraceElement[] contextStackTraceElementArray0 = new ContextStackTraceElement[8];
       ContextStackTraceElement.toStackTraceElement(contextStackTraceElement1);
-      ContextStackTraceElement contextStackTraceElement2 = new ContextStackTraceElement("ContextStackTraceElement", "0.", "bJ6dLuJ48Z", 0);
+      ContextStackTraceElement contextStackTraceElement2 = new ContextStackTraceElement("org.eclipse.opensmartclide.context.services.faults.marshal.ContextStackTraceElement", "0.", "bJ6dLuJ48Z", 0);
       contextStackTraceElementArray0[0] = contextStackTraceElement2;
       contextStackTraceElementArray0[1] = contextStackTraceElement0;
       contextStackTraceElementArray0[2] = contextStackTraceElement0;
@@ -492,7 +492,7 @@ public class ContextStackTraceElementTest {
 
   @Test(timeout = 4000)
   public void test28()  throws Throwable  {
-      ContextStackTraceElement contextStackTraceElement0 = new ContextStackTraceElement("0.", "ContextStackTraceElement", "0.", 0);
+      ContextStackTraceElement contextStackTraceElement0 = new ContextStackTraceElement("0.", "org.eclipse.opensmartclide.context.services.faults.marshal.ContextStackTraceElement", "0.", 0);
       StackTraceElement stackTraceElement0 = ContextStackTraceElement.toStackTraceElement(contextStackTraceElement0);
       ContextStackTraceElement contextStackTraceElement1 = ContextStackTraceElement.convert(stackTraceElement0);
       contextStackTraceElement1.methodName = "bJ6dLuJ48Z";
@@ -506,7 +506,7 @@ public class ContextStackTraceElementTest {
       contextStackTraceElement1.getMethodName();
       ContextStackTraceElement[] contextStackTraceElementArray0 = new ContextStackTraceElement[8];
       ContextStackTraceElement.toStackTraceElement(contextStackTraceElement1);
-      ContextStackTraceElement contextStackTraceElement2 = new ContextStackTraceElement("ContextStackTraceElement", "0.", "bJ6dLuJ48Z", 0);
+      ContextStackTraceElement contextStackTraceElement2 = new ContextStackTraceElement("org.eclipse.opensmartclide.context.services.faults.marshal.ContextStackTraceElement", "0.", "bJ6dLuJ48Z", 0);
       contextStackTraceElementArray0[0] = contextStackTraceElement2;
       contextStackTraceElementArray0[1] = contextStackTraceElement0;
       contextStackTraceElementArray0[2] = contextStackTraceElement0;

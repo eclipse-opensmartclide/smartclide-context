@@ -81,7 +81,7 @@ public class ContextFaultDetailsTest {
   @Ignore
   public void test07()  throws Throwable  {
       ContextFaultDetails contextFaultDetails0 = new ContextFaultDetails();
-      contextFaultDetails0.causeName = "ContextFaultDetails";
+      contextFaultDetails0.causeName = "org.eclipse.opensmartclide.context.services.faults.marshal.ContextFaultDetails";
       // Undeclared exception!
       try { 
         contextFaultDetails0.asThrowable();

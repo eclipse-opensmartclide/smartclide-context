@@ -86,7 +86,7 @@ public class ConfigurationExceptionTest {
 
   @Test(timeout = 4000)
   public void test5()  throws Throwable  {
-      ConfigurationException configurationException0 = new ConfigurationException("ConfigurationException");
+      ConfigurationException configurationException0 = new ConfigurationException("org.eclipse.opensmartclide.context.common.exceptions.ConfigurationException");
       StackTraceElement[] stackTraceElementArray0 = configurationException0.getStackTrace();
       ConfigurationException configurationException1 = new ConfigurationException("", (Throwable) configurationException0, (Object[]) stackTraceElementArray0);
       assertFalse(configurationException1.equals((Object)configurationException0));
@@ -94,7 +94,7 @@ public class ConfigurationExceptionTest {
 
   @Test(timeout = 4000)
   public void test6()  throws Throwable  {
-      ConfigurationException configurationException0 = new ConfigurationException("ConfigurationException");
+      ConfigurationException configurationException0 = new ConfigurationException("org.eclipse.opensmartclide.context.common.exceptions.ConfigurationException");
       StackTraceElement[] stackTraceElementArray0 = configurationException0.getStackTrace();
       ConfigurationException configurationException1 = new ConfigurationException("", (Object[]) stackTraceElementArray0);
       assertFalse(configurationException1.equals((Object)configurationException0));
