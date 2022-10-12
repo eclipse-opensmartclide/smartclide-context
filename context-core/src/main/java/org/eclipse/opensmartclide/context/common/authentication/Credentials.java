@@ -57,14 +57,6 @@ public class Credentials {
 		this.password = password;
 	}
 
-	public final String getMD5HashedPassword() {
-		return Hashing.getMD5Hash(password);
-	}
-
-	public final String getSHA1HashedPassword() {
-		return Hashing.getSHA1Hash(password);
-	}
-
 	public final String getSHA256HashedPassword() {
 		return Hashing.getSHA256Hash(password);
 	}

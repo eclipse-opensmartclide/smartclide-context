@@ -33,37 +33,9 @@ import java.util.Formatter;
  */
 public class Hashing {
 
-	public static final String ALGORITHM_MD5 = "MD5";
-
-	public static final String ALGORITHM_SHA1 = "SHA-1";
-
 	public static final String ALGORITHM_SHA256 = "SHA-256";
 
 	private Hashing(){}
-
-	/**
-	 * Calculates the MD5 hash sum of the given string.
-	 *
-	 * @param toHash
-	 *            the string to get the MD5 hash for.
-	 * @return the MD5 hash for the specified string.
-     * @deprecated use {@link Hashing#getSHA256Hash(String)} instead.
-	 */
-	public static String getMD5Hash(final String toHash) {
-		return Hashing.getStringHash(toHash, Hashing.ALGORITHM_MD5);
-	}
-
-	/**
-	 * Calculates the SHA-1 hash sum of the given string.
-	 *
-	 * @param toHash
-	 *            the string to get the SHA-1 hash for.
-	 * @return the SHA-1 hash for the specified string.
-     * @deprecated use {@link Hashing#getSHA256Hash(String)} instead.
-	 */
-	public static String getSHA1Hash(final String toHash) {
-		return Hashing.getStringHash(toHash, Hashing.ALGORITHM_SHA1);
-	}
 
 	/**
 	 * Calculates the SHA-256 hash sum of the given string.
@@ -97,32 +69,6 @@ public class Hashing {
 	}
 
 	/**
-	 * Calculates the MD5 check sum of the given file.
-	 *
-	 * @param fileName
-	 *            the name (and path) of the file to calculate the MD5 checksum
-	 *            for.
-	 * @return the MD5 based checksum of the given file.
-     * @deprecated use {@link Hashing#getSHA256Checksum(String)} instead.
-	 */
-	public static String getMD5Checksum(final String fileName) {
-		return Hashing.getChecksum(new File(fileName), Hashing.ALGORITHM_MD5);
-	}
-
-	/**
-	 * Calculates the SHA-1 check sum of the given file.
-	 *
-	 * @param fileName
-	 *            the name (and path) of the file to calculate the SHA-1
-	 *            checksum for.
-	 * @return the SHA-1 based checksum of the given file.
-     * @deprecated use {@link Hashing#getSHA256Checksum(String)} instead.
-     */
-	public static String getSHA1Checksum(final String fileName) {
-		return Hashing.getChecksum(new File(fileName), Hashing.ALGORITHM_SHA1);
-	}
-
-	/**
 	 * Calculates the SHA-256 check sum of the given file.
 	 *
 	 * @param fileName
@@ -132,30 +78,6 @@ public class Hashing {
 	 */
 	public static String getSHA256Checksum(final String fileName) {
 		return Hashing.getChecksum(new File(fileName), Hashing.ALGORITHM_SHA256);
-	}
-
-	/**
-	 * Calculates the MD5 check sum of the given file.
-	 *
-	 * @param file
-	 *            the file to calculate the MD5 checksum for.
-	 * @return the MD5 based checksum of the given file.
-     * @deprecated use {@link Hashing#getSHA256Checksum(File)} instead.
-     */
-	public static String getMD5Checksum(final File file) {
-		return Hashing.getChecksum(file, Hashing.ALGORITHM_MD5);
-	}
-
-	/**
-	 * Calculates the SHA-1 check sum of the given file.
-	 *
-	 * @param file
-	 *            the file to calculate the SHA-1 checksum for.
-	 * @return the SHA-1 based checksum of the given file.
-     * @deprecated use {@link Hashing#getSHA256Checksum(File)} instead.
-     */
-	public static String getSHA1Checksum(final File file) {
-		return Hashing.getChecksum(file, Hashing.ALGORITHM_SHA1);
 	}
 
 	/**

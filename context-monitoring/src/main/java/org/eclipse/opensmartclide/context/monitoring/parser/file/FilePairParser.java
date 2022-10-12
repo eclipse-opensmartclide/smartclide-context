@@ -90,7 +90,7 @@ public abstract class FilePairParser extends IndexingParser<Pair<File, File>> {
         this.document.add(IndexedFields.createField(IndexedFileFields.FileSize,
             Long.toString(fileOne.length())));
         this.document.add(IndexedFields.createField(IndexedFileFields.Hash,
-            Hashing.getMD5Checksum(fileOne)));
+            Hashing.getSHA256Checksum(fileOne)));
         this.document.add(IndexedFields.createField(IndexedFields.MonitoredAt,
             DateTools.timeToString(new Date().getTime(),
                 DateTools.Resolution.SECOND)));

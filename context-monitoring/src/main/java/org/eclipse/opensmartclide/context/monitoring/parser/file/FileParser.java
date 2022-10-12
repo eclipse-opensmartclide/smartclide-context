@@ -81,7 +81,7 @@ public abstract class FileParser extends IndexingParser<File> {
         this.document.add(IndexedFields.createField(IndexedFileFields.FileSize,
             Long.toString(file.length())));
         this.document.add(IndexedFields.createField(IndexedFileFields.Hash,
-            Hashing.getMD5Checksum(file)));
+            Hashing.getSHA256Checksum(file)));
         this.document.add(IndexedFields.createField(IndexedFields.MonitoredAt,
             DateTools.timeToString(new Date().getTime(),
                 DateTools.Resolution.SECOND)));

@@ -66,49 +66,10 @@ public class CredentialsTest {
   }
 
   @Test(timeout = 4000)
-  public void test06()  throws Throwable  {
-      Credentials credentials0 = new Credentials();
-      // Undeclared exception!
-      try { 
-        credentials0.getSHA1HashedPassword();
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-    	  assertFalse(false);
-      }
-  }
-
-  @Test(timeout = 4000)
-  public void test07()  throws Throwable  {
-      Credentials credentials0 = new Credentials();
-      // Undeclared exception!
-      try { 
-        credentials0.getMD5HashedPassword();
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-    	  assertFalse(false);
-      }
-  }
-
-  @Test(timeout = 4000)
   public void test08()  throws Throwable  {
       Credentials credentials0 = new Credentials("", "k1Y*]s0");
       String string0 = credentials0.getSHA256HashedPassword();
       assertEquals("966a12e9889d78efc54cfee8573d196841e2eb7e254fed3cd27b3a616b5eee69", string0);
-  }
-
-  @Test(timeout = 4000)
-  public void test09()  throws Throwable  {
-      Credentials credentials0 = new Credentials("", "k1Y*]s0");
-      String string0 = credentials0.getMD5HashedPassword();
-      assertEquals("f0dba2340d507d5aa9414634af33af7e", string0);
   }
 
   @Test(timeout = 4000)
@@ -139,12 +100,5 @@ public class CredentialsTest {
       Credentials credentials0 = new Credentials();
       String string0 = credentials0.getPassword();
       assertNull(string0);
-  }
-
-  @Test(timeout = 4000)
-  public void test14()  throws Throwable  {
-      Credentials credentials0 = new Credentials("", "k1Y*]s0");
-      String string0 = credentials0.getSHA1HashedPassword();
-      assertEquals("e8f17df7d637bfe25d5b3b54a0e8df4f5259892e", string0);
   }
 }
