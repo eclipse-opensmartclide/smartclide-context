@@ -1,5 +1,5 @@
 # smartclide-context
-SmartCLIDE Context Handling Component
+OpenSmartCLIDE Context Handling Component
 
 ## Preconditions to build and run Context Handling
 
