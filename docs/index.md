@@ -63,24 +63,23 @@ Each datasource entry has the following mandatory attributes
 - id:The unique name of the datasource
 - type:The type of the datasource. Possible values are: filesystem, webservice, database, messageBroker
 - monitor:The class of the monitor to be used. Possible values are:
-    - package DatabaseMonitor
-    - package FileSystemMonitor
-    - package FilePairSystemMonitor
-    - package FileTripletSystemMonitor
+    - package org.eclipse.opensmartclide.context.monitoring.monitors.database.DatabaseMonitor
+    - package org.eclipse.opensmartclide.context.monitoring.monitors.file.FileSystemMonitor
+    - package org.eclipse.opensmartclide.context.monitoring.monitors.file.FilePairSystemMonitor
+    - package org.eclipse.opensmartclide.context.monitoring.monitors.file.FileTripletSystemMonitor
     - package org.eclipse.opensmartclide.context.monitoring.monitors.webservice.MessageBrokerMonitor
-    - package WebServiceMonitor
-    - package GitlabCommitMonitor
-    - package org.eclipse.opensmartclide.context.monitoring.monitors.GitMonitor
+    - package org.eclipse.opensmartclide.context.monitoring.monitors.webservice.WebServiceMonitor
+    - package org.eclipse.opensmartclide.context.monitoring.monitors.GitlabCommitMonitor
 - options: Options for the datasource can be entered using this value. The options are dependent on the datasource to be used
 - uri:The uri of the data source to be monitored
 - class:The following datasource implementations are available
-    - package DatabaseDataSource
-    - package FilePairSystemDataSource
-    - package FileSystemDataSource
-    - package FileTripletSystemDataSource
-    - package MessageBrokerDataSource
-    - package WebServiceDataSource
-    - package GitlabDataSource
+    - package org.eclipse.opensmartclide.context.monitoring.config.models.datasources.DatabaseDataSource
+    - package org.eclipse.opensmartclide.context.monitoring.config.models.datasources.FilePairSystemDataSource
+    - package org.eclipse.opensmartclide.context.monitoring.config.models.datasources.FileSystemDataSource
+    - package org.eclipse.opensmartclide.context.monitoring.config.models.datasources.FileTripletSystemDataSource
+    - package org.eclipse.opensmartclide.context.monitoring.config.models.datasources.MessageBrokerDataSource
+    - package org.eclipse.opensmartclide.context.monitoring.config.models.datasources.WebServiceDataSource
+    - package org.eclipse.opensmartclide.context.monitoring.config.models.datasources.GitlabDataSource
 
 #### interpreters
 
@@ -89,23 +88,22 @@ Each interpreter entry has the following mandatory attributes
 - id: The unique name of the interpreter
 - configuration
     - analyser: The analyser class to be used. The following implementations are available:
-        - package DatabaseAnalyser
-        - package FileAnalyser
-        - package FilePairAnalyser
-        - package FileTripletAnalyser
-        - package org.eclipse.opensmartclide.context.monitoring.analyser.webservice.MessageBrokerAnalyser
-        - package WebServiceAnalyser
+        - package org.eclipse.opensmartclide.context.monitoring.analyser.database.DatabaseAnalyser
+        - package org.eclipse.opensmartclide.context.monitoring.analyser.file.FileAnalyser
+        - package org.eclipse.opensmartclide.context.monitoring.analyser.file.FilePairAnalyser
+        - package org.eclipse.opensmartclide.context.monitoring.analyser.file.FileTripletAnalyser
+        - package org.eclipse.opensmartclide.context.monitoring.analyser.messagebroker.MessageBrokerAnalyser
+        - package org.eclipse.opensmartclide.context.monitoring.analyser.webservice.WebServiceAnalyser
         - package org.eclipse.opensmartclide.context.monitoring.analyser.webserviceGitAnalyser
         - package org.eclipse.opensmartclide.context.monitoring.analyser.webservice.GitlabCommitAnalyser
     - parser: The parser class to be used. The following implementations are available:
-        - package DatabaseParser
-        - package FileParser
-        - package FilePairParser
-        - package FileTripletParser
-        - package org.eclipse.opensmartclide.context.monitoring.parser.webservice.MessageBrokerParser
-        - package WebServiceParser
-        - package GitlabCommitParser
-        - package org.eclipse.opensmartclide.context.monitoring.parser.GitParser
+        - package org.eclipse.opensmartclide.context.monitoring.parser.database.DatabaseParser
+        - package org.eclipse.opensmartclide.context.monitoring.parser.file.FileParser
+        - package org.eclipse.opensmartclide.context.monitoring.parser.file.FilePairParser
+        - package org.eclipse.opensmartclide.context.monitoring.parser.file.FileTripletParser
+        - package org.eclipse.opensmartclide.context.monitoring.parser.messagebroker.MessageBrokerParser
+        - package org.eclipse.opensmartclide.context.monitoring.parser.webservice.WebServiceParser
+        - package org.eclipse.opensmartclide.context.monitoring.parser.GitlabCommitParser
 
     - type: Currently only used for File analyser and parser. Defines the file extensions to be used.
 
