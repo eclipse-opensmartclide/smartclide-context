@@ -45,7 +45,8 @@ import java.util.List;
 public interface IContextExtractionService extends IService {
 
 	@WebMethod(operationName = "extractContextFromMonitoringData") <T, D extends DataSource> ContextContainerWrapper extractContext(@WebParam(name = "monitoring-data") String rdfString,
-                                                                                                                                    @WebParam(name = "clazz") String clazz, @WebParam(name = "application-scenario") ApplicationScenario applicationScenario)
+                                                                                                                                    @WebParam(name = "clazz") String clazz,
+                                                                                                                                    @WebParam(name = "application-scenario") ApplicationScenario applicationScenario)
 			throws ContextFault;
 
 	@WebMethod(operationName = "getLastContextIdsByCount") List<String> getLastContextsIds(@WebParam(name = "application-scenario") ApplicationScenario applicationScenario,
