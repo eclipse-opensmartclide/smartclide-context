@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -111,7 +112,7 @@ public class GitlabCommitMonitorTest {
         assertEquals(1, data.size());
 
         final List<GitlabCommitMessage> gitlabCommitMessages = data.get(0).getGitlabCommitMessages();
-        Assert.assertArrayEquals(
+        assertArrayEquals(
                 FakeGitlabCommitAnalyser.FAKE_GITLAB_COMMIT_MESSAGES.toArray(),
                 gitlabCommitMessages.toArray()
         );
