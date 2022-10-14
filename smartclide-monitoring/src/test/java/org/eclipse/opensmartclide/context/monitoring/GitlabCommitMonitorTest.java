@@ -13,7 +13,10 @@ import org.eclipse.opensmartclide.context.services.IAmIMonitoringDataRepositoryS
 import org.eclipse.opensmartclide.context.services.manager.ServiceManager;
 import org.eclipse.opensmartclide.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper;
 import org.eclipse.opensmartclide.contexthandling.ServiceMain;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.simpleframework.xml.core.Persister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

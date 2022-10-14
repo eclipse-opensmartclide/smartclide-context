@@ -14,6 +14,7 @@ package org.eclipse.opensmartclide.context.monitoring.parser;
  * #L%
  */
 
+import org.apache.lucene.document.Document;
 import org.eclipse.opensmartclide.context.monitoring.config.models.DataSource;
 import org.eclipse.opensmartclide.context.monitoring.config.models.InterpreterConfiguration;
 import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.GitlabDataSource;
@@ -21,7 +22,6 @@ import org.eclipse.opensmartclide.context.monitoring.index.Indexer;
 import org.eclipse.opensmartclide.context.monitoring.models.IWebService;
 import org.eclipse.opensmartclide.context.monitoring.parser.webservice.WebServiceParser;
 import org.eclipse.opensmartclide.context.tools.ontology.AmIMonitoringConfiguration;
-import org.apache.lucene.document.Document;
 
 public class GitlabCommitParser extends WebServiceParser {
     public GitlabCommitParser(final DataSource dataSource,

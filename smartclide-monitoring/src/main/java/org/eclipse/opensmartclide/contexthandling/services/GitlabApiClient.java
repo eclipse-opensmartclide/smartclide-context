@@ -18,8 +18,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.eclipse.opensmartclide.context.monitoring.models.GitlabCommitMessage;
 import org.apache.http.HttpStatus;
+import org.eclipse.opensmartclide.context.monitoring.models.GitlabCommitMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

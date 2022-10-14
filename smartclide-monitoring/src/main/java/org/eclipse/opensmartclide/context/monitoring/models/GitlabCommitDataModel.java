@@ -14,15 +14,15 @@ package org.eclipse.opensmartclide.context.monitoring.models;
  * #L%
  */
 
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.jena.rdf.model.Model;
 import org.eclipse.opensmartclide.context.common.Version;
 import org.eclipse.opensmartclide.context.common.util.ApplicationScenario;
 import org.eclipse.opensmartclide.context.common.util.BusinessCase;
 import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.WebServiceDataSource;
 import org.eclipse.opensmartclide.context.monitoring.rdf.RdfHelper;
 import org.eclipse.opensmartclide.context.persistence.ModelOutputLanguage;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.jena.rdf.model.Model;
 import org.simpleframework.xml.Root;
 import thewebsemantic.Id;
 import thewebsemantic.Namespace;

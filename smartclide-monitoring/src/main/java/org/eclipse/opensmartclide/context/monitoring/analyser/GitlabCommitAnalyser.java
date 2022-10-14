@@ -14,6 +14,7 @@ package org.eclipse.opensmartclide.context.monitoring.analyser;
  * #L%
  */
 
+import org.apache.lucene.document.Document;
 import org.eclipse.opensmartclide.context.monitoring.analyser.webservice.WebServiceAnalyser;
 import org.eclipse.opensmartclide.context.monitoring.config.models.DataSource;
 import org.eclipse.opensmartclide.context.monitoring.config.models.InterpreterConfiguration;
@@ -24,7 +25,6 @@ import org.eclipse.opensmartclide.context.monitoring.models.GitlabCommitMessage;
 import org.eclipse.opensmartclide.context.monitoring.models.IWebService;
 import org.eclipse.opensmartclide.context.tools.ontology.AmIMonitoringConfiguration;
 import org.eclipse.opensmartclide.contexthandling.services.GitlabApiClient;
-import org.apache.lucene.document.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
