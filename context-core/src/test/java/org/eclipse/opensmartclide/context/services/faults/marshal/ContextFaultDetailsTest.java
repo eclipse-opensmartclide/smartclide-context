@@ -10,7 +10,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ContextFaultDetailsTest {

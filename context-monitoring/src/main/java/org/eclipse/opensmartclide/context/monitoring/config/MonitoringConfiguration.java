@@ -19,7 +19,6 @@ import org.eclipse.opensmartclide.context.common.Configuration;
 import org.eclipse.opensmartclide.context.common.exceptions.ConfigurationException;
 import org.eclipse.opensmartclide.context.monitoring.config.models.*;
 import org.eclipse.opensmartclide.context.tools.ontology.AmIMonitoringConfiguration;
-import org.eclipse.opensmartclide.context.monitoring.config.models.*;
 import org.simpleframework.xml.core.Persister;
 
 import java.io.ByteArrayInputStream;
