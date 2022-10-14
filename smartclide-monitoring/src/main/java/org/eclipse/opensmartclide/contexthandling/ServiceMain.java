@@ -14,11 +14,6 @@ package org.eclipse.opensmartclide.contexthandling;
  * #L%
  */
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Properties;
-
 import org.eclipse.opensmartclide.context.common.ContextPathUtils;
 import org.eclipse.opensmartclide.context.monitoring.models.IMonitoringDataModel;
 import org.eclipse.opensmartclide.context.services.AmIMonitoringService;
@@ -30,6 +25,11 @@ import org.eclipse.opensmartclide.context.services.wrapper.AmIMonitoringDataRepo
 import org.eclipse.opensmartclide.context.tools.ontology.AmIMonitoringConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Properties;
 
 public class ServiceMain {
 

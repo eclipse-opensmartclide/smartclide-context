@@ -14,8 +14,8 @@ package org.eclipse.opensmartclide.context.monitoring.config.models.datasources;
  * #L%
  */
 
-import org.eclipse.opensmartclide.context.monitoring.config.models.DataSource;
 import lombok.NoArgsConstructor;
+import org.eclipse.opensmartclide.context.monitoring.config.models.DataSource;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfType;
 

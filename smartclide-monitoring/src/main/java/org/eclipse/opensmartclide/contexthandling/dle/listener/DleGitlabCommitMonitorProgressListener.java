@@ -1,9 +1,5 @@
 package org.eclipse.opensmartclide.contexthandling.dle.listener;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.TimeoutException;
-
 /*-
  * #%L
  * SmartCLIDE Monitoring
@@ -19,10 +15,8 @@ import java.util.concurrent.TimeoutException;
  */
 
 import com.rabbitmq.client.Channel;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
-
 import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.GitlabDataSource;
 import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.MessageBrokerDataSourceOptions;
 import org.eclipse.opensmartclide.context.monitoring.events.MonitoringProgressListener;
@@ -32,6 +26,10 @@ import org.eclipse.opensmartclide.context.monitoring.models.IMonitoringDataModel
 import org.eclipse.opensmartclide.context.monitoring.models.IWebService;
 import org.eclipse.opensmartclide.context.monitoring.monitors.messagebroker.util.MessageBrokerUtil;
 import org.eclipse.opensmartclide.contexthandling.dle.model.CommitMessage;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 public class DleGitlabCommitMonitorProgressListener
         implements MonitoringProgressListener<IWebService, IMonitoringDataModel<?, ?>> {
@@ -81,10 +79,10 @@ public class DleGitlabCommitMonitorProgressListener
 
     private CommitMessage convertToCommitMessage(final GitlabCommitMessage gitlabCommitMessage) {
         return CommitMessage.builder()
-                        .repoId(gitlabCommitMessage.getRepository())
-                        .user(gitlabCommitMessage.getUser())
-                        .branch(gitlabCommitMessage.getBranch())
-                        .timeSinceLastCommit(gitlabCommitMessage.getTimeSinceLastCommit())
+                .repoId(gitlabCommitMessage.getRepository())
+                .user(gitlabCommitMessage.getUser())
+                .branch(gitlabCommitMessage.getBranch())
+                .timeSinceLastCommit(gitlabCommitMessage.getTimeSinceLastCommit())
                 .numberOfFilesModified(gitlabCommitMessage.getNoOfModifiedFiles())
                 .build();
     }
