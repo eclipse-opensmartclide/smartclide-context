@@ -41,7 +41,7 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
 
     public static MonitoringConfiguration getInstance() {
         if (SETTINGS.get(DEFAULT_FILE_NAME) == null) {
-            SETTINGS.put(DEFAULT_FILE_NAME, new MonitoringConfiguration(DEFAULT_FILE_NAME));
+                SETTINGS.put(DEFAULT_FILE_NAME, new MonitoringConfiguration(DEFAULT_FILE_NAME, null));
         }
         return SETTINGS.get(DEFAULT_FILE_NAME);
     }
@@ -55,7 +55,7 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
 
     public static MonitoringConfiguration getInstance(final String configFileName) {
         if (SETTINGS.get(configFileName) == null) {
-            SETTINGS.put(configFileName, new MonitoringConfiguration(configFileName));
+            SETTINGS.put(configFileName, new MonitoringConfiguration(configFileName, null));
         }
         return SETTINGS.get(configFileName);
     }
@@ -71,10 +71,6 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
         super(givenName, givenPath, Config.class, "Monitoring Configuration");
     }
 
-    private MonitoringConfiguration(final String givenName) {
-        super(givenName, null, Config.class, "Monitoring Configuration");
-    }
-
     private MonitoringConfiguration(final AmIMonitoringConfiguration config) {
         super(config, Config.class, "Monitoring Configuration");
     }
@@ -83,6 +79,7 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
         InputStream is = null;
         try {
             final String drmHandle = sysCaller.openDRMobject(configurationFileName, configurationLookupPath, "read");
+            logger.debug("drm handle value: {}", drmHandle);
             if (drmHandle != null) {
                 final byte[] readConfig = sysCaller.getDRMobject(configurationFileName, configurationLookupPath);
                 if (readConfig != null) {
@@ -92,6 +89,8 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
                     logger.info("{} loaded!", configurationFileName);
                 }
                 sysCaller.closeDRMobject(drmHandle);
+            } else {
+                throw new NullPointerException("Read config file fails due to null DRM object.");
             }
         } catch (final Exception e) {
             logger.error("Could not serialize the {} file {}", configurationName, configurationFileName, e);
