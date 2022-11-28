@@ -41,7 +41,7 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
 
     public static MonitoringConfiguration getInstance() {
         if (SETTINGS.get(DEFAULT_FILE_NAME) == null) {
-                SETTINGS.put(DEFAULT_FILE_NAME, new MonitoringConfiguration(DEFAULT_FILE_NAME, null));
+                SETTINGS.put(DEFAULT_FILE_NAME, new MonitoringConfiguration(DEFAULT_FILE_NAME, "/"));
         }
         return SETTINGS.get(DEFAULT_FILE_NAME);
     }
