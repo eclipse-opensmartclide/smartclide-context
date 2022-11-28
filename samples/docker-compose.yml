@@ -18,21 +18,6 @@ services:
       # configuration files are mounted to '/opt/smartclide/config'
       # see org.eclipse.opensmartclide.contexthandling.ServiceMain for other options
       - ./config:/opt/smartclide/config
-    # waits for rabbitmq datasource to be available before starting smartclide-monitoring
-    entrypoint:
-      [
-        "/entrypoint.d/wait-for-it.sh",
-        "rabbitmq:5672",
-        "--strict",
-        "-t",
-        "30",
-        "--",
-        "java",
-        "-Djava.security.egd=file:/dev/./urandom",
-        "-cp",
-        "app/libs/*:app/resources:app/classes",
-        "org.eclipse.opensmartclide.contexthandling.ServiceMain",
-      ]
     networks:
       - smartclide-monitoring
 
