@@ -24,9 +24,13 @@ import org.simpleframework.xml.core.Persister;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Settings
@@ -40,8 +44,15 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
     private static final String DEFAULT_FILE_NAME = "monitoring-config.xml";
 
     public static MonitoringConfiguration getInstance() {
+        final URI uri;
+        try {
+            uri = Objects.requireNonNull(MonitoringConfiguration.class.getResource("/")).toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        final String DEFAULT_FILE_PATH = Path.of(uri).toAbsolutePath().toString();
         if (SETTINGS.get(DEFAULT_FILE_NAME) == null) {
-                SETTINGS.put(DEFAULT_FILE_NAME, new MonitoringConfiguration(DEFAULT_FILE_NAME, "/"));
+                SETTINGS.put(DEFAULT_FILE_NAME, new MonitoringConfiguration(DEFAULT_FILE_NAME, DEFAULT_FILE_PATH));
         }
         return SETTINGS.get(DEFAULT_FILE_NAME);
     }
