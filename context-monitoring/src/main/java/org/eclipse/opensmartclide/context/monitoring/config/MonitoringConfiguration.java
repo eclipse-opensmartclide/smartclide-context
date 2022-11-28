@@ -53,13 +53,6 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
         return SETTINGS.get(config.getId());
     }
 
-    public static MonitoringConfiguration getInstance(final String configFileName) {
-        if (SETTINGS.get(configFileName) == null) {
-            SETTINGS.put(configFileName, new MonitoringConfiguration(configFileName, null));
-        }
-        return SETTINGS.get(configFileName);
-    }
-
     public static MonitoringConfiguration getInstance(final String configFileName, final String configFilePath) {
         if (SETTINGS.get(configFileName) == null) {
             SETTINGS.put(configFileName, new MonitoringConfiguration(configFileName, configFilePath));
