@@ -36,7 +36,7 @@ public class GitlabDataSourceTest {
         final String configFileName = "monitoring-config.xml";
 
         //final MonitoringConfiguration config = MonitoringConfiguration.getInstance(configFileName, configDirPath);
-        final MonitoringConfiguration config = MonitoringConfiguration.getInstance(configFileName, null);
+        final MonitoringConfiguration config = MonitoringConfiguration.getInstance();
         final List<Monitor> monitors = config.getMonitors();
 
         assertThat(config, is(notNullValue()));
