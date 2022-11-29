@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -129,7 +130,7 @@ public class GitlabCommitMonitorTest {
         final Path testResourcesPath = Path.of(Objects.requireNonNull(this.getClass().getResource("/")).toURI());
         final Path originalConfigFilePath = testResourcesPath.resolve(MONITORING_CONFIG_FILE_NAME);
         final Path testConfigFilePath = testResourcesPath.resolve("config").resolve(MONITORING_CONFIG_FILE_NAME);
-        Files.copy(originalConfigFilePath, testConfigFilePath);
+        Files.copy(originalConfigFilePath, testConfigFilePath, StandardCopyOption.REPLACE_EXISTING);
         final Path monitoringConfigPath = ContextPathUtils.getConfigDirPath().resolve(MONITORING_CONFIG_FILE_NAME);
         final Persister persister = new Persister();
         final Config config = persister.read(Config.class, new File(monitoringConfigPath.toString()));
