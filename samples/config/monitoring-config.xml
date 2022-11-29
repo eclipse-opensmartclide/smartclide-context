@@ -4,26 +4,31 @@
         xsi:schemaLocation="http://www.atb-bremen.de monitoring-config.xsd">
 
     <indexes>
-        <index id="index-git" location="target/indexes/git"/>
+        <index id="index-gitlab" location="/opt/smartclide/data/indexes/gitlab"/>
     </indexes>
 
     <datasources>
-        <datasource id="datasource-git" type="messagebroker"
-                    monitor="org.eclipse.opensmartclide.context.monitoring.monitors.GitMonitor"
-                    uri=""
-                    options="server=rabbitmq&amp;port=5672&amp;exchange=smartclide-monitoring&amp;topic=monitoring.git.*&amp;dle-topic=dle.git.commits"
-                    class="org.eclipse.opensmartclide.context.monitoring.config.models.datasources.MessageBrokerDataSource"/>
+        <!--Change the value of "token" in the "options" to a valid GitLab API access token-->
+        <datasource id="datasource-gitlab"
+                    type="webservice"
+                    monitor="org.eclipse.opensmartclide.context.monitoring.monitors.GitlabCommitMonitor"
+                    uri="https://gitlab.com"
+                    options="interval=60000&amp;startDelay=5000&amp;token=CHANGE_ME&amp;server=rabbitmq&amp;port=5672&amp;username=guest&amp;password=guest&amp;outgoing-queue=code_repo_recommendation_queue&amp;outgoing-durable=false"
+                    class="org.eclipse.opensmartclide.context.monitoring.config.models.datasources.GitlabDataSource"/>
     </datasources>
 
     <interpreters>
-        <interpreter id="interpreter-git">
+        <interpreter id="interpreter-gitlab">
             <configuration type="*"
-                           parser="org.eclipse.opensmartclide.context.monitoring.parser.GitParser"
-                           analyser="org.eclipse.opensmartclide.context.monitoring.analyser.GitAnalyser"/>
+                           parser="org.eclipse.opensmartclide.context.monitoring.parser.GitlabCommitParser"
+                           analyser="org.eclipse.opensmartclide.context.monitoring.analyser.GitlabCommitAnalyser"/>
         </interpreter>
     </interpreters>
 
     <monitors>
-        <monitor id="monitor-git" datasource="datasource-git" interpreter="interpreter-git" index="index-git"/>
+        <monitor id="monitor-gitlab"
+                 datasource="datasource-gitlab"
+                 interpreter="interpreter-gitlab"
+                 index="index-gitlab"/>
     </monitors>
 </config>

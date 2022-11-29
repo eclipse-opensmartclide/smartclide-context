@@ -46,14 +46,6 @@
                     <to>
                         <image>ghcr.io/eclipse-opensmartclide/smartclide/${project.artifactId}:latest</image>
                     </to>
-                    <extraDirectories>
-                        <permissions>
-                            <permission>
-                                <file>/entrypoint.d/wait-for-it.sh</file>
-                                <mode>755</mode>
-                            </permission>
-                        </permissions>
-                    </extraDirectories>
                     <container>
                         <ports>
                             <port>19001</port>
