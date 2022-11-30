@@ -18,6 +18,13 @@ services:
       # configuration files are mounted to '/opt/smartclide/config'
       # see org.eclipse.opensmartclide.contexthandling.ServiceMain for other options
       - ./config:/opt/smartclide/config
+    # wait 5 seconds for rabbitmq to start before starting smartclide-monitoring
+    entrypoint:
+      [
+        "sh",
+        "-c",
+        "sleep 5s && java -Djava.security.egd=file:/dev/./urandom -cp app/libs/*:app/resources:app/classes org.eclipse.opensmartclide.contexthandling.ServiceMain",
+      ]
     networks:
       - smartclide-monitoring
 
