@@ -2,14 +2,12 @@ package org.eclipse.opensmartclide.context.monitoring.config.models.datasources;
 
 import org.eclipse.opensmartclide.context.monitoring.config.MonitoringConfiguration;
 import org.eclipse.opensmartclide.context.monitoring.config.models.DataSource;
-import org.eclipse.opensmartclide.context.monitoring.config.models.Monitor;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,9 +33,7 @@ public class GitlabDataSourceTest {
 
         final String configFileName = "monitoring-config.xml";
 
-        //final MonitoringConfiguration config = MonitoringConfiguration.getInstance(configFileName, configDirPath);
-        final MonitoringConfiguration config = MonitoringConfiguration.getInstance();
-        final List<Monitor> monitors = config.getMonitors();
+        final MonitoringConfiguration config = MonitoringConfiguration.getInstance(configFileName, configDirPath);
 
         assertThat(config, is(notNullValue()));
         assertThat(config.getDataSources(), is(notNullValue()));

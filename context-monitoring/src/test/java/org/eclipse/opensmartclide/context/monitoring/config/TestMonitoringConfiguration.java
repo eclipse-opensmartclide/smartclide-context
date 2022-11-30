@@ -1,22 +1,18 @@
 package org.eclipse.opensmartclide.context.monitoring.config;
 
-import static org.junit.Assert.assertTrue;
+import org.eclipse.opensmartclide.context.monitoring.config.models.*;
+import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.nio.file.Path;
 import java.util.List;
 
-import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.DatabaseDataSource;
-import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.FilePairSystemDataSource;
-import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.FileSystemDataSource;
-import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.FileTripletSystemDataSource;
-import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.WebServiceDataSource;
-import org.eclipse.opensmartclide.context.monitoring.config.models.DataSource;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import org.eclipse.opensmartclide.context.monitoring.config.models.DataSourceType;
-import org.eclipse.opensmartclide.context.monitoring.config.models.Interpreter;
-import org.eclipse.opensmartclide.context.monitoring.config.models.Monitor;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TestMonitoringConfiguration
@@ -88,4 +84,20 @@ public class TestMonitoringConfiguration {
 			assertTrue("DataSource '" + monitor.getDataSourceId() + "' not configured!", foundInterpreterForMonitor);
 		}
 	}
+
+    @Test
+    public final void readConfigurationFileTest() {
+        final MonitoringConfiguration config = MonitoringConfiguration.getInstance();
+        assertThat(config, is(notNullValue()));
+
+        assertThat(config.getDataSources(), is(notNullValue()));
+        final List<Monitor> monitors = config.getMonitors();
+        assertFalse(monitors.isEmpty());
+
+        final List<Index> indexes = config.getIndexes();
+        assertFalse(indexes.isEmpty());
+
+        final List<Interpreter> interpreters = config.getInterpreters();
+        assertFalse(interpreters.isEmpty());
+    }
 }

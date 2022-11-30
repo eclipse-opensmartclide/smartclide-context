@@ -16,21 +16,18 @@ package org.eclipse.opensmartclide.context.monitoring.config;
 
 
 import org.eclipse.opensmartclide.context.common.Configuration;
+import org.eclipse.opensmartclide.context.common.ContextPathUtils;
 import org.eclipse.opensmartclide.context.common.exceptions.ConfigurationException;
 import org.eclipse.opensmartclide.context.monitoring.config.models.*;
 import org.eclipse.opensmartclide.context.tools.ontology.AmIMonitoringConfiguration;
 import org.simpleframework.xml.core.Persister;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Settings
@@ -44,21 +41,15 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
     private static final String DEFAULT_FILE_NAME = "monitoring-config.xml";
 
     public static MonitoringConfiguration getInstance() {
-        final URI uri;
-        try {
-            uri = Objects.requireNonNull(MonitoringConfiguration.class.getResource("/")).toURI();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        final String DEFAULT_FILE_PATH = Path.of(uri).toAbsolutePath().toString();
+        final Path DEFAULT_FILE_PATH = ContextPathUtils.getConfigDirPath().resolve(DEFAULT_FILE_NAME);
         if (SETTINGS.get(DEFAULT_FILE_NAME) == null) {
-                SETTINGS.put(DEFAULT_FILE_NAME, new MonitoringConfiguration(DEFAULT_FILE_NAME, DEFAULT_FILE_PATH));
+            SETTINGS.put(DEFAULT_FILE_NAME, new MonitoringConfiguration(DEFAULT_FILE_NAME, DEFAULT_FILE_PATH.toString()));
         }
         return SETTINGS.get(DEFAULT_FILE_NAME);
     }
 
     public static MonitoringConfiguration getInstance(final AmIMonitoringConfiguration config) {
-        if (SETTINGS.get(config) == null) {
+        if (SETTINGS.get(config.getId()) == null) {
             SETTINGS.put(config.getId(), new MonitoringConfiguration(config));
         }
         return SETTINGS.get(config.getId());
@@ -80,32 +71,21 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
     }
 
     protected void readConfigurationFile() {
-        InputStream is = null;
-        try {
-            final String drmHandle = sysCaller.openDRMobject(configurationFileName, configurationLookupPath, "read");
-            logger.debug("drm handle value: {}", drmHandle);
-            if (drmHandle != null) {
-                final byte[] readConfig = sysCaller.getDRMobject(configurationFileName, configurationLookupPath);
-                if (readConfig != null) {
-                    is = new ByteArrayInputStream(readConfig);
+        final String drmHandle = sysCaller.openDRMobject(configurationFileName, configurationLookupPath, "read");
+        logger.debug("drm handle value: {}", drmHandle);
+        if (drmHandle != null) {
+            final byte[] readConfig = sysCaller.getDRMobject(configurationFileName, configurationLookupPath);
+            if (readConfig != null) {
+                try (InputStream is = new ByteArrayInputStream(readConfig)) {
                     this.configurationBean = new Persister().read(this.configurationClass, is);
-                    is.close();
                     logger.info("{} loaded!", configurationFileName);
-                }
-                sysCaller.closeDRMobject(drmHandle);
-            } else {
-                throw new NullPointerException("Read config file fails due to null DRM object.");
-            }
-        } catch (final Exception e) {
-            logger.error("Could not serialize the {} file {}", configurationName, configurationFileName, e);
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (final IOException e) {
-                    logger.error(e.getMessage(), e);
+                } catch (Exception e) {
+                    throw new RuntimeException("Runtime exception while reading byte data from input stream", e);
                 }
             }
+            sysCaller.closeDRMobject(drmHandle);
+        } else {
+            throw new NullPointerException("Read config file fails due to null DRM object.");
         }
     }
 
