@@ -20,7 +20,7 @@ public class TestServiceConfiguration {
 
 	@Test
 	public void testGetInstance() {
-        String filepath = Path.of("src", "test", "resources", "services-config.xml").toAbsolutePath().toString();
+        String filepath = Path.of("src", "test", "resources", "config", "services-config.xml").toAbsolutePath().toString();
 		SWServiceContainer serviceContainer = new SWServiceContainer(
 				"AmI-repository", filepath);
 		String val = "";

@@ -41,7 +41,7 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
     private static final String DEFAULT_FILE_NAME = "monitoring-config.xml";
 
     public static MonitoringConfiguration getInstance() {
-        final Path DEFAULT_FILE_PATH = ContextPathUtils.getConfigDirPath().resolve(DEFAULT_FILE_NAME);
+        final Path DEFAULT_FILE_PATH = ContextPathUtils.getConfigDirPath();
         if (SETTINGS.get(DEFAULT_FILE_NAME) == null) {
             SETTINGS.put(DEFAULT_FILE_NAME, new MonitoringConfiguration(DEFAULT_FILE_NAME, DEFAULT_FILE_PATH.toString()));
         }
@@ -72,21 +72,22 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
 
     protected void readConfigurationFile() {
         final String drmHandle = sysCaller.openDRMobject(configurationFileName, configurationLookupPath, "read");
-        logger.debug("drm handle value: {}", drmHandle);
-        if (drmHandle != null) {
-            final byte[] readConfig = sysCaller.getDRMobject(configurationFileName, configurationLookupPath);
-            if (readConfig != null) {
-                try (InputStream is = new ByteArrayInputStream(readConfig)) {
-                    this.configurationBean = new Persister().read(this.configurationClass, is);
-                    logger.info("{} loaded!", configurationFileName);
-                } catch (Exception e) {
-                    throw new RuntimeException("Runtime exception while reading byte data from input stream", e);
-                }
-            }
-            sysCaller.closeDRMobject(drmHandle);
-        } else {
-            throw new NullPointerException("Read config file fails due to null DRM object.");
+        if (drmHandle == null) {
+            logger.error("config file with name: {} at given location: {} does not exist", configurationFileName, configurationLookupPath);
+            throw new RuntimeException("Read config file fails due to null DRM object.");
         }
+        final byte[] readConfig = sysCaller.getDRMobject(configurationFileName, configurationLookupPath);
+        if (readConfig == null) {
+            logger.error("Reading config file with name: {} at given location: {} fails", configurationFileName, configurationLookupPath);
+            throw new RuntimeException("Read config file fails due to null readConfig object.");
+        }
+        try (InputStream is = new ByteArrayInputStream(readConfig)) {
+            this.configurationBean = new Persister().read(this.configurationClass, is);
+            logger.info("{} loaded!", configurationFileName);
+        } catch (Exception e) {
+            throw new RuntimeException("Runtime exception while reading byte data from input stream", e);
+        }
+        sysCaller.closeDRMobject(drmHandle);
     }
 
     @Override

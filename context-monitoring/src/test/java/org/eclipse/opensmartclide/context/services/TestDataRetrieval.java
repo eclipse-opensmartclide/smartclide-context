@@ -40,7 +40,7 @@ public class TestDataRetrieval {
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
-        final Path configDir = Path.of("src", "test", "resources").toAbsolutePath();
+        final Path configDir = Path.of("src", "test", "resources", "config").toAbsolutePath();
         final String monitoringConfig = configDir.resolve("monitoring-config.xml").toString();
         final String serviceConfig = configDir.resolve("services-config.xml").toString();
 

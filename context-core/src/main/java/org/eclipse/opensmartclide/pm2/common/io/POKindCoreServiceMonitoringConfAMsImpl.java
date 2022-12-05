@@ -13,26 +13,20 @@ package org.eclipse.opensmartclide.pm2.common.io;
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
+import org.eclipse.opensmartclide.pm2.common.application.ObjectKinds;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.eclipse.opensmartclide.pm2.common.application.ObjectKinds;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public final class POKindCoreServiceMonitoringConfAMsImpl implements
         POKindCoreServiceMonitoringConfAMs {
-    public final Logger logger = LoggerFactory.getLogger(POKindCoreServiceMonitoringConfAMsImpl.class);
 	// currently it only checks whether the file exists. In case it exists
 	// returns true
 	public boolean POKindCoreServiceConfOpenAM(String name, String path,
 			ObjectKinds kind) {
 		File file = new File(path + File.separator + name);
-        if(!file.exists()) {
-            logger.error("config file with name: {} at given location: {} does not exist", name, path);
-        }
 		return file.exists();
 	}
 
