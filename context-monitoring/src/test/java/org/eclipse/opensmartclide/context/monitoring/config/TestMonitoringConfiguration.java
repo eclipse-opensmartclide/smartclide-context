@@ -1,5 +1,6 @@
 package org.eclipse.opensmartclide.context.monitoring.config;
 
+import org.eclipse.opensmartclide.context.common.ContextPathUtils;
 import org.eclipse.opensmartclide.context.monitoring.config.models.DataSource;
 import org.eclipse.opensmartclide.context.monitoring.config.models.DataSourceType;
 import org.eclipse.opensmartclide.context.monitoring.config.models.Interpreter;
@@ -29,8 +30,8 @@ public class TestMonitoringConfiguration {
 
 	@BeforeClass
 	public static void beforeClass() {
-        String absolutefilePath = Path.of("src", "test", "resources", "config").toAbsolutePath().toString();
-        settings = MonitoringConfiguration.getInstance("monitoring-config.xml", absolutefilePath);
+        final Path configFilePath = ContextPathUtils.getConfigDirPath();
+        settings = MonitoringConfiguration.getInstance("monitoring-config.xml", configFilePath.toString());
 		dataSources = settings.getDataSources();
 		monitors = settings.getMonitors();
 		interpreters = settings.getInterpreters();

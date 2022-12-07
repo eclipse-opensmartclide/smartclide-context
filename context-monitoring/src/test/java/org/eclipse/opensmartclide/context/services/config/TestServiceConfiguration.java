@@ -2,8 +2,7 @@ package org.eclipse.opensmartclide.context.services.config;
 
 import static org.junit.Assert.assertTrue;
 
-import java.nio.file.Path;
-
+import org.eclipse.opensmartclide.context.common.ContextPathUtils;
 import org.junit.Test;
 
 import org.eclipse.opensmartclide.context.services.SWServiceContainer;
@@ -20,9 +19,9 @@ public class TestServiceConfiguration {
 
 	@Test
 	public void testGetInstance() {
-        String filepath = Path.of("src", "test", "resources", "config", "services-config.xml").toAbsolutePath().toString();
+        String configFilePath = ContextPathUtils.getConfigDirPath().resolve("services-config.xml").toString();
 		SWServiceContainer serviceContainer = new SWServiceContainer(
-				"AmI-repository", filepath);
+				"AmI-repository", configFilePath);
 		String val = "";
 
 		ISWService monitoringService = serviceContainer.getService();

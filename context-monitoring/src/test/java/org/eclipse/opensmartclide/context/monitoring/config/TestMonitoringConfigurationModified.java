@@ -1,5 +1,6 @@
 package org.eclipse.opensmartclide.context.monitoring.config;
 
+import org.eclipse.opensmartclide.context.common.ContextPathUtils;
 import org.eclipse.opensmartclide.context.monitoring.config.models.Index;
 import org.eclipse.opensmartclide.context.monitoring.config.models.Interpreter;
 import org.eclipse.opensmartclide.context.monitoring.config.models.Monitor;
@@ -30,7 +31,7 @@ public class TestMonitoringConfigurationModified {
 
     @BeforeClass
     public static void beforeClass() {
-        configDir = Path.of("src", "test", "resources", "config").toAbsolutePath();
+        configDir = ContextPathUtils.getConfigDirPath();
     }
 
     @Test

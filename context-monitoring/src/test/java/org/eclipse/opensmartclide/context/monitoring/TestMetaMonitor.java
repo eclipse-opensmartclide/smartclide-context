@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.opensmartclide.context.common.ContextPathUtils;
 import org.eclipse.opensmartclide.context.monitoring.config.models.DataSource;
 import org.eclipse.opensmartclide.context.monitoring.index.Indexer;
 import org.junit.AfterClass;
@@ -41,8 +42,8 @@ public class TestMetaMonitor {
 
 	@BeforeClass
 	public static void beforeClass() {
-        final Path configDir = Path.of("src", "test", "resources", "config").toAbsolutePath();
-	    config = MonitoringConfiguration.getInstance("monitoring-config.xml", configDir.toString());
+        final Path configFilePath = ContextPathUtils.getConfigDirPath();
+	    config = MonitoringConfiguration.getInstance("monitoring-config.xml", configFilePath.toString());
 	}
 
 	@Test

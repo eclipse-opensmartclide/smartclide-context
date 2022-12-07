@@ -1,5 +1,6 @@
 package org.eclipse.opensmartclide.context.services;
 
+import org.eclipse.opensmartclide.context.common.ContextPathUtils;
 import org.eclipse.opensmartclide.context.monitoring.models.IMonitoringDataModel;
 import org.eclipse.opensmartclide.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper;
 import org.eclipse.opensmartclide.context.services.faults.ContextFault;
@@ -40,9 +41,9 @@ public class TestDataRetrieval {
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
-        final Path configDir = Path.of("src", "test", "resources", "config").toAbsolutePath();
-        final String monitoringConfig = configDir.resolve("monitoring-config.xml").toString();
-        final String serviceConfig = configDir.resolve("services-config.xml").toString();
+        final Path configFilePath = ContextPathUtils.getConfigDirPath();
+        final String monitoringConfig = configFilePath.resolve("monitoring-config.xml").toString();
+        final String serviceConfig = configFilePath.resolve("services-config.xml").toString();
 
 		AmIMonitoringConfiguration amionfig = new AmIMonitoringConfiguration();
 		amionfig.setId("TEST_PES");

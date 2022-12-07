@@ -1,5 +1,6 @@
 package org.eclipse.opensmartclide.context.services;
 
+import org.eclipse.opensmartclide.context.common.ContextPathUtils;
 import org.eclipse.opensmartclide.context.common.util.ApplicationScenario;
 import org.eclipse.opensmartclide.context.common.util.BusinessCase;
 import org.eclipse.opensmartclide.context.common.util.TimeFrame;
@@ -19,7 +20,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -40,8 +41,6 @@ public class TestMonitoringDataRepositoryService {
     private static IAmIMonitoringDataRepositoryService<DummyMonitoringDataModel> service;
     private static final String postId = "myPostProcessorId";
     private static final String preId = "myPreProcessorId";
-    private static File configFile;
-
     private static final Logger logger = LoggerFactory
         .getLogger(TestMonitoringDataRepositoryService.class);
 
@@ -50,13 +49,9 @@ public class TestMonitoringDataRepositoryService {
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
-        String absolutefilePath = new File("").getAbsolutePath();
-        configFile = new File(
-            absolutefilePath.concat(File.separator + "src" + File.separator + "test" + File.separator + "resources"
-                + File.separator + "config" + File.separator + "services-config.xml"));
-        String filepath = configFile.getPath();
+        final Path configFilePath = ContextPathUtils.getConfigDirPath().resolve("services-config.xml");
         SWServiceContainer serviceContainer = new SWServiceContainer(
-            "AmI-repository", filepath);
+            "AmI-repository", configFilePath.toString());
         server = ServiceManager.registerWebservice(serviceContainer);
         service = ServiceManager.getWebservice(serviceContainer);
     }

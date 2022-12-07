@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 import org.apache.cxf.endpoint.Server;
+import org.eclipse.opensmartclide.context.common.ContextPathUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -39,9 +40,8 @@ public class TestMonitoringService {
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
-        final Path configDir = Path.of("src", "test", "resources", "config").toAbsolutePath();
-        final String monitoringConfig = configDir.resolve("monitoring-config.xml").toString();
-        final String serviceConfig = configDir.resolve("services-config.xml").toString();
+        final Path configFilePath = ContextPathUtils.getConfigDirPath();
+        final String monitoringConfig = configFilePath.resolve("monitoring-config.xml").toString();
 
         AmIMonitoringConfiguration amionfig = new AmIMonitoringConfiguration();
 		amionfig.setId("TEST_PES");
