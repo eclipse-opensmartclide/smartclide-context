@@ -42,8 +42,8 @@ public class TestMetaMonitor {
 
 	@BeforeClass
 	public static void beforeClass() {
-        final Path configFilePath = ContextPathUtils.getConfigDirPath();
-	    config = MonitoringConfiguration.getInstance("monitoring-config.xml", configFilePath.toString());
+        final Path configDirPath = ContextPathUtils.getConfigDirPath();
+	    config = MonitoringConfiguration.getInstance("monitoring-config.xml", configDirPath.toString());
 	}
 
 	@Test

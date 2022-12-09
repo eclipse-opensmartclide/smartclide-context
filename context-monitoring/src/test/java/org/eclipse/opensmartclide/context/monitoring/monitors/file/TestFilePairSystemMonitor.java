@@ -40,9 +40,9 @@ public class TestFilePairSystemMonitor {
 
 	@BeforeClass
 	public static void beforeClass() throws ConfigurationException {
-        final Path configFilePath = ContextPathUtils.getConfigDirPath();
+        final Path configDirPath = ContextPathUtils.getConfigDirPath();
 
-		config = MonitoringConfiguration.getInstance("monitoring-config.xml", configFilePath.toString());
+		config = MonitoringConfiguration.getInstance("monitoring-config.xml", configDirPath.toString());
 
 		monitor = config.getMonitor("monitor-dummy");
 		Assert.assertTrue("No monitors 'monitor-dummy' specified!", config.getMonitor("monitor-dummy") != null);

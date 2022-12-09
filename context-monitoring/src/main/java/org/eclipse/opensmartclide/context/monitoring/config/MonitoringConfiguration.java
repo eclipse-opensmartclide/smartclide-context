@@ -73,19 +73,22 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
     protected void readConfigurationFile() {
         final String drmHandle = sysCaller.openDRMobject(configurationFileName, configurationLookupPath, "read");
         if (drmHandle == null) {
-            logger.error("config file with name: {} at given location: {} does not exist", configurationFileName, configurationLookupPath);
-            throw new RuntimeException("Read config file fails due to null DRM object.");
+            throw new RuntimeException("Read config file with name: " + configurationFileName + " at given location: " +
+                configurationLookupPath + " fails due to null DRM object.");
         }
         final byte[] readConfig = sysCaller.getDRMobject(configurationFileName, configurationLookupPath);
         if (readConfig == null) {
-            logger.error("Reading config file with name: {} at given location: {} fails", configurationFileName, configurationLookupPath);
-            throw new RuntimeException("Read config file fails due to null readConfig object.");
+            throw new RuntimeException("Read config file with name: " + configurationFileName + " at given location: " +
+                configurationLookupPath + " fails due to null readConfig object.");
         }
         try (InputStream is = new ByteArrayInputStream(readConfig)) {
             this.configurationBean = new Persister().read(this.configurationClass, is);
             logger.info("{} loaded!", configurationFileName);
         } catch (Exception e) {
             throw new RuntimeException("Runtime exception while reading byte data from input stream", e);
+        }
+        if (!sysCaller.closeDRMobject(drmHandle)) {
+            throw new RuntimeException("Runtime exception while closing DRM object.");
         }
         sysCaller.closeDRMobject(drmHandle);
     }

@@ -30,8 +30,8 @@ public class TestMonitoringConfiguration {
 
 	@BeforeClass
 	public static void beforeClass() {
-        final Path configFilePath = ContextPathUtils.getConfigDirPath();
-        settings = MonitoringConfiguration.getInstance("monitoring-config.xml", configFilePath.toString());
+        final Path configDirPath = ContextPathUtils.getConfigDirPath();
+        settings = MonitoringConfiguration.getInstance("monitoring-config.xml", configDirPath.toString());
 		dataSources = settings.getDataSources();
 		monitors = settings.getMonitors();
 		interpreters = settings.getInterpreters();

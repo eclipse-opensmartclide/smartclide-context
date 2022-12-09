@@ -1,15 +1,14 @@
 package org.eclipse.opensmartclide.context.monitoring.config;
 
 import org.eclipse.opensmartclide.context.common.ContextPathUtils;
+import org.eclipse.opensmartclide.context.monitoring.config.models.DataSource;
 import org.eclipse.opensmartclide.context.monitoring.config.models.Index;
 import org.eclipse.opensmartclide.context.monitoring.config.models.Interpreter;
 import org.eclipse.opensmartclide.context.monitoring.config.models.Monitor;
-import org.eclipse.opensmartclide.context.services.TestDataRetrieval;
 import org.eclipse.opensmartclide.context.tools.ontology.AmIMonitoringConfiguration;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,15 +22,18 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
 
-public class TestMonitoringConfigurationModified {
+public class TestGetInstanceForMonitoringConfiguration {
 
-    private static Path configDir;
-    private static final Logger logger = LoggerFactory.getLogger(TestDataRetrieval.class);
+    private static Path configDirPath;
     private static final String CONFIG_FILE_NAME = "monitoring-config.xml";
+    private static final String EXPECTED_DATASOURCE_ID = "datasource-dummy";
+    private static final String EXPECTED_INDEX_ID = "index-dummy";
+    private static final String EXPECTED_INTERPRETER_ID = "interpreter-dummy";
+    private static final String EXPECTED_MONITOR_ID = "monitor-dummy";
 
     @BeforeClass
     public static void beforeClass() {
-        configDir = ContextPathUtils.getConfigDirPath();
+        configDirPath = ContextPathUtils.getConfigDirPath();
     }
 
     @Test
@@ -41,8 +43,8 @@ public class TestMonitoringConfigurationModified {
     }
 
     @Test
-    public final void readConfigurationFileWithAmIConfig() {
-        final String monitoringConfig = configDir.resolve(CONFIG_FILE_NAME).toString();
+    public final void readConfigurationFileWithAmIConfig() throws IOException {
+        final String monitoringConfig = configDirPath.resolve(CONFIG_FILE_NAME).toString();
 
         final AmIMonitoringConfiguration amiConfiguration = new AmIMonitoringConfiguration();
         amiConfiguration.setId("TEST_PES");
@@ -54,7 +56,7 @@ public class TestMonitoringConfigurationModified {
 
     @Test
     public final void readConfigurationFileWithGivenFileConfig() {
-        final MonitoringConfiguration config = MonitoringConfiguration.getInstance(CONFIG_FILE_NAME, configDir.toString());
+        final MonitoringConfiguration config = MonitoringConfiguration.getInstance(CONFIG_FILE_NAME, configDirPath.toString());
         this.commonTests(config);
     }
 
@@ -70,16 +72,24 @@ public class TestMonitoringConfigurationModified {
 
         final List<Interpreter> interpreters = config.getInterpreters();
         assertFalse(interpreters.isEmpty());
+
+        for (Monitor monitor : config.getMonitors()) {
+            Assert.assertEquals(EXPECTED_MONITOR_ID, monitor.getId());
+
+            DataSource ds = config.getDataSource(monitor.getDataSourceId());
+            Assert.assertEquals(EXPECTED_DATASOURCE_ID, ds.getId());
+
+            Interpreter interpreter = config.getInterpreter(monitor.getInterpreterId());
+            Assert.assertEquals(EXPECTED_INTERPRETER_ID, interpreter.getId());
+
+            Index index = config.getIndex(monitor.getIndexId());
+            Assert.assertEquals(EXPECTED_INDEX_ID, index.getId());
+        }
     }
 
-    private static String readFile(String filename) {
+    private static String readFile(String filename) throws IOException {
         File f = new File(filename);
-        try {
-            byte[] bytes = Files.readAllBytes(f.toPath());
-            return new String(bytes, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
-        return "";
+        byte[] bytes = Files.readAllBytes(f.toPath());
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 }
