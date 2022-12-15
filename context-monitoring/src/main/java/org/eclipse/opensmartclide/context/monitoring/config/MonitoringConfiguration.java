@@ -85,12 +85,13 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
             this.configurationBean = new Persister().read(this.configurationClass, is);
             logger.info("{} loaded!", configurationFileName);
         } catch (Exception e) {
-            throw new RuntimeException("Runtime exception while reading byte data from input stream", e);
+            throw new RuntimeException("Read config file with name: " + configurationFileName + " at given location: " +
+                configurationLookupPath + " fails while reading byte data from input stream", e);
         }
         if (!sysCaller.closeDRMobject(drmHandle)) {
-            throw new RuntimeException("Runtime exception while closing DRM object.");
+            throw new RuntimeException("Read config file with name: " + configurationFileName + " at given location: " +
+                configurationLookupPath + " fails while closing DRM object.");
         }
-        sysCaller.closeDRMobject(drmHandle);
     }
 
     @Override
