@@ -2,6 +2,7 @@ package org.eclipse.opensmartclide.context.monitoring.monitors.file;
 
 import java.nio.file.Path;
 
+import org.eclipse.opensmartclide.context.common.ContextPathUtils;
 import org.eclipse.opensmartclide.context.common.exceptions.ConfigurationException;
 import org.eclipse.opensmartclide.context.monitoring.MetaMonitor;
 import org.eclipse.opensmartclide.context.monitoring.config.MonitoringConfiguration;
@@ -39,10 +40,9 @@ public class TestFilePairSystemMonitor {
 
 	@BeforeClass
 	public static void beforeClass() throws ConfigurationException {
-        String absoluteFilePath =
-            Path.of("src", "test", "resources", "filepairmonitor").toAbsolutePath().toString();
+        final Path configDirPath = ContextPathUtils.getConfigDirPath();
 
-		config = MonitoringConfiguration.getInstance("monitoring-config.xml", absoluteFilePath);
+		config = MonitoringConfiguration.getInstance("monitoring-config.xml", configDirPath.toString());
 
 		monitor = config.getMonitor("monitor-dummy");
 		Assert.assertTrue("No monitors 'monitor-dummy' specified!", config.getMonitor("monitor-dummy") != null);

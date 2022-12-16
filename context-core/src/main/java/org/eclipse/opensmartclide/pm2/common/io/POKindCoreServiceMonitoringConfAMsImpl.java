@@ -13,16 +13,15 @@ package org.eclipse.opensmartclide.pm2.common.io;
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
+import org.eclipse.opensmartclide.pm2.common.application.ObjectKinds;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.eclipse.opensmartclide.pm2.common.application.ObjectKinds;
-
 public final class POKindCoreServiceMonitoringConfAMsImpl implements
         POKindCoreServiceMonitoringConfAMs {
-
 	// currently it only checks whether the file exists. In case it exists
 	// returns true
 	public boolean POKindCoreServiceConfOpenAM(String name, String path,

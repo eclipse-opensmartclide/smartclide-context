@@ -16,14 +16,15 @@ package org.eclipse.opensmartclide.context.monitoring.config;
 
 
 import org.eclipse.opensmartclide.context.common.Configuration;
+import org.eclipse.opensmartclide.context.common.ContextPathUtils;
 import org.eclipse.opensmartclide.context.common.exceptions.ConfigurationException;
 import org.eclipse.opensmartclide.context.monitoring.config.models.*;
 import org.eclipse.opensmartclide.context.tools.ontology.AmIMonitoringConfiguration;
 import org.simpleframework.xml.core.Persister;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,24 +41,18 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
     private static final String DEFAULT_FILE_NAME = "monitoring-config.xml";
 
     public static MonitoringConfiguration getInstance() {
+        final Path DEFAULT_FILE_PATH = ContextPathUtils.getConfigDirPath();
         if (SETTINGS.get(DEFAULT_FILE_NAME) == null) {
-            SETTINGS.put(DEFAULT_FILE_NAME, new MonitoringConfiguration(DEFAULT_FILE_NAME));
+            SETTINGS.put(DEFAULT_FILE_NAME, new MonitoringConfiguration(DEFAULT_FILE_NAME, DEFAULT_FILE_PATH.toString()));
         }
         return SETTINGS.get(DEFAULT_FILE_NAME);
     }
 
     public static MonitoringConfiguration getInstance(final AmIMonitoringConfiguration config) {
-        if (SETTINGS.get(config) == null) {
+        if (SETTINGS.get(config.getId()) == null) {
             SETTINGS.put(config.getId(), new MonitoringConfiguration(config));
         }
         return SETTINGS.get(config.getId());
-    }
-
-    public static MonitoringConfiguration getInstance(final String configFileName) {
-        if (SETTINGS.get(configFileName) == null) {
-            SETTINGS.put(configFileName, new MonitoringConfiguration(configFileName));
-        }
-        return SETTINGS.get(configFileName);
     }
 
     public static MonitoringConfiguration getInstance(final String configFileName, final String configFilePath) {
@@ -71,38 +66,31 @@ public final class MonitoringConfiguration extends Configuration<Config> impleme
         super(givenName, givenPath, Config.class, "Monitoring Configuration");
     }
 
-    private MonitoringConfiguration(final String givenName) {
-        super(givenName, null, Config.class, "Monitoring Configuration");
-    }
-
     private MonitoringConfiguration(final AmIMonitoringConfiguration config) {
         super(config, Config.class, "Monitoring Configuration");
     }
 
     protected void readConfigurationFile() {
-        InputStream is = null;
-        try {
-            final String drmHandle = sysCaller.openDRMobject(configurationFileName, configurationLookupPath, "read");
-            if (drmHandle != null) {
-                final byte[] readConfig = sysCaller.getDRMobject(configurationFileName, configurationLookupPath);
-                if (readConfig != null) {
-                    is = new ByteArrayInputStream(readConfig);
-                    this.configurationBean = new Persister().read(this.configurationClass, is);
-                    is.close();
-                    logger.info("{} loaded!", configurationFileName);
-                }
-                sysCaller.closeDRMobject(drmHandle);
-            }
-        } catch (final Exception e) {
-            logger.error("Could not serialize the {} file {}", configurationName, configurationFileName, e);
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (final IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
+        final String drmHandle = sysCaller.openDRMobject(configurationFileName, configurationLookupPath, "read");
+        if (drmHandle == null) {
+            throw new RuntimeException("Read config file with name: " + configurationFileName + " at given location: " +
+                configurationLookupPath + " fails due to null DRM object.");
+        }
+        final byte[] readConfig = sysCaller.getDRMobject(configurationFileName, configurationLookupPath);
+        if (readConfig == null) {
+            throw new RuntimeException("Read config file with name: " + configurationFileName + " at given location: " +
+                configurationLookupPath + " fails due to null readConfig object.");
+        }
+        try (InputStream is = new ByteArrayInputStream(readConfig)) {
+            this.configurationBean = new Persister().read(this.configurationClass, is);
+            logger.info("{} loaded!", configurationFileName);
+        } catch (Exception e) {
+            throw new RuntimeException("Read config file with name: " + configurationFileName + " at given location: " +
+                configurationLookupPath + " fails while reading byte data from input stream", e);
+        }
+        if (!sysCaller.closeDRMobject(drmHandle)) {
+            throw new RuntimeException("Read config file with name: " + configurationFileName + " at given location: " +
+                configurationLookupPath + " fails while closing DRM object.");
         }
     }
 

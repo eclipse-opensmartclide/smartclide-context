@@ -1,22 +1,18 @@
 package org.eclipse.opensmartclide.context.monitoring.config;
 
-import static org.junit.Assert.assertTrue;
+import org.eclipse.opensmartclide.context.common.ContextPathUtils;
+import org.eclipse.opensmartclide.context.monitoring.config.models.DataSource;
+import org.eclipse.opensmartclide.context.monitoring.config.models.DataSourceType;
+import org.eclipse.opensmartclide.context.monitoring.config.models.Interpreter;
+import org.eclipse.opensmartclide.context.monitoring.config.models.Monitor;
+import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.nio.file.Path;
 import java.util.List;
 
-import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.DatabaseDataSource;
-import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.FilePairSystemDataSource;
-import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.FileSystemDataSource;
-import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.FileTripletSystemDataSource;
-import org.eclipse.opensmartclide.context.monitoring.config.models.datasources.WebServiceDataSource;
-import org.eclipse.opensmartclide.context.monitoring.config.models.DataSource;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import org.eclipse.opensmartclide.context.monitoring.config.models.DataSourceType;
-import org.eclipse.opensmartclide.context.monitoring.config.models.Interpreter;
-import org.eclipse.opensmartclide.context.monitoring.config.models.Monitor;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TestMonitoringConfiguration
@@ -34,8 +30,8 @@ public class TestMonitoringConfiguration {
 
 	@BeforeClass
 	public static void beforeClass() {
-        String absolutefilePath = Path.of("src", "test", "resources").toAbsolutePath().toString();
-        settings = MonitoringConfiguration.getInstance("monitoring-config.xml", absolutefilePath);
+        final Path configDirPath = ContextPathUtils.getConfigDirPath();
+        settings = MonitoringConfiguration.getInstance("monitoring-config.xml", configDirPath.toString());
 		dataSources = settings.getDataSources();
 		monitors = settings.getMonitors();
 		interpreters = settings.getInterpreters();

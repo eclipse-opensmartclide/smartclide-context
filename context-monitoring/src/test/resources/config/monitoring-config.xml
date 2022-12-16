@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config xmlns="http://www.atb-bremen.de"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.atb-bremen.de ../monitoring-config.xsd">
+        xsi:schemaLocation="http://www.atb-bremen.de monitoring-config.xsd">
 
     <indexes>
-        <index id="index-dummy" location="target/indexes/dummy"></index>
+        <index id="index-dummy" location="target/indexes/dummy"/>
     </indexes>
 
     <datasources>
@@ -18,10 +18,9 @@
     <interpreters>
         <interpreter id="interpreter-dummy">
             <configuration type="*"
-                           parser="DummyFilePairParser"
-                           analyser="DummyFilePairAnalyser"/>
+                           parser="org.eclipse.opensmartclide.context.monitoring.parser.file.DummyFilePairParser"
+                           analyser="org.eclipse.opensmartclide.context.monitoring.analyser.file.DummyFilePairAnalyser"/>
         </interpreter>
-
     </interpreters>
 
     <monitors>

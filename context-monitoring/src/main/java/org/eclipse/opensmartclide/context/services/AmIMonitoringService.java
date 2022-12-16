@@ -68,11 +68,6 @@ public final class AmIMonitoringService extends DeployableService implements IAm
         initializeServices();
     }
 
-    public AmIMonitoringService(final String configFile) {
-        this.config = MonitoringConfiguration.getInstance(configFile);
-        initializeServices();
-    }
-
     @Override
     public void start() {
         logger.info(String.format("Starting %s ...", this.getClass()

@@ -1,5 +1,6 @@
 package org.eclipse.opensmartclide.context.services;
 
+import org.eclipse.opensmartclide.context.common.ContextPathUtils;
 import org.eclipse.opensmartclide.context.monitoring.models.IMonitoringDataModel;
 import org.eclipse.opensmartclide.context.services.wrapper.AmIMonitoringDataRepositoryServiceWrapper;
 import org.eclipse.opensmartclide.context.services.faults.ContextFault;
@@ -36,13 +37,13 @@ public class TestDataRetrieval {
 	private static IAmIMonitoringDataRepositoryService<IMonitoringDataModel<?, ?>> reposService;
 
 	@BeforeClass
-	public static void beforeClass() {
+	public static void beforeClass() throws IOException {
         Properties props = System.getProperties();
         props.setProperty("org.apache.cxf.stax.allowInsecureParser", "true");
 
-        final Path configDir = Path.of("src", "test", "resources").toAbsolutePath();
-        final String monitoringConfig = configDir.resolve("monitoring-config.xml").toString();
-        final String serviceConfig = configDir.resolve("services-config.xml").toString();
+        final Path configDirPath = ContextPathUtils.getConfigDirPath();
+        final String monitoringConfig = configDirPath.resolve("monitoring-config.xml").toString();
+        final String serviceConfig = configDirPath.resolve("services-config.xml").toString();
 
 		AmIMonitoringConfiguration amionfig = new AmIMonitoringConfiguration();
 		amionfig.setId("TEST_PES");
@@ -66,15 +67,10 @@ public class TestDataRetrieval {
 		service.configureService(amionfig);
 	}
 
-	private static String readFile(String filename) {
+	private static String readFile(String filename) throws IOException {
 		File f = new File(filename);
-		try {
-			byte[] bytes = Files.readAllBytes(f.toPath());
-			return new String(bytes, StandardCharsets.UTF_8);
-		} catch (IOException e) {
-            logger.error(e.getMessage(), e);
-		}
-        return "";
+        byte[] bytes = Files.readAllBytes(f.toPath());
+        return new String(bytes, StandardCharsets.UTF_8);
 	}
 
 	@Test
