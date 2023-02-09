@@ -40,7 +40,7 @@ jobs:
       - name: Get short commit SHA
         if: ${{ github.event_name == 'push' }}
         id: get_short_commit_SHA
-        run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+        run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
 
       - name: Build Image
         if: ${{ github.event_name == 'push' }}
@@ -53,7 +53,7 @@ jobs:
       - name: Get tag name
         if: ${{ github.event_name == 'release' }}
         id: get_tag_name
-        run: echo "::set-output name=TAG_NAME::${{ github.event.release.tag_name }}"
+        run: echo "TAG_NAME=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
 
       - name: Build Image for Release
         if: ${{ github.event_name == 'release' }}
