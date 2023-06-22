@@ -16,7 +16,7 @@
     <name>ATB Context Extraction Core Lib</name>
 
     <properties>
-        <cxf.version>3.5.5</cxf.version>
+        <cxf.version>3.6.1</cxf.version>
         <jena.version>4.8.0</jena.version>
         <log4j.version>2.20.0</log4j.version>
     </properties>
