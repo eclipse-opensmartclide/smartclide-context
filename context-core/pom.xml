@@ -17,7 +17,7 @@
 
     <properties>
         <cxf.version>3.6.1</cxf.version>
-        <jena.version>4.8.0</jena.version>
+        <jena.version>4.9.0</jena.version>
         <log4j.version>2.20.0</log4j.version>
     </properties>
 
