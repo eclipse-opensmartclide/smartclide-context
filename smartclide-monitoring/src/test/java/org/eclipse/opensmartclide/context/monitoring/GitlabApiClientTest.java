@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 
 public class GitlabApiClientTest {
 
-    private static final String gitlabBaseUri = "https://gitlab.dev.smartclide.eu";
+    private static final String gitlabBaseUri = "https://gitlab.com";
     private GitlabApiClient gitlabApiClient;
 
     @Before
