@@ -41,7 +41,7 @@ public class GitlabApiClient {
     private static final Logger logger = LoggerFactory.getLogger(GitlabApiClient.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
     private static final ZonedDateTime initialSinceDate = ZonedDateTime.of(2022, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
-    private static final String membershipParam = "&membership=true&owned=true&topic=smartclide";
+    private static final String membershipParam = "&membership=true&topic=smartclide";
     private static final String paginationParam = "&per_page=100";
     private static final String refNameParam = "&ref_name=";
     private static final String sinceParam = "&since=";
