@@ -1,0 +1,33 @@
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: run-tests
+
+on:
+  push
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 11
+
+      - name: Cache Maven Packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('./**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Run Tests
+        env:
+          SMARTCLIDE_CONTEXT_GITLAB_API_TOKEN: ${{ secrets.GITLAB_DEV_SMARTCLIDE_EU_API_TOKEN }}
+        run: mvn --file pom.xml --batch-mode test
