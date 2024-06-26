@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.eclipse.opensmartclide.context</groupId>
         <artifactId>parent</artifactId>
-        <version>2.0.0</version>
+        <version>2.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>context-core</artifactId>
@@ -77,7 +77,7 @@
             <version>2.0.7</version>
         </dependency>
 
-        <!-- Apache CXF ! -->
+        <!-- Apache CXF -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
@@ -100,23 +100,23 @@
             <artifactId>cxf-rt-transports-http-hc</artifactId>
             <version>${cxf.version}</version>
         </dependency>
-        <!-- end Apache CXF ! -->
+        <!-- end Apache CXF -->
 
-        <!-- SimpleXMLFramework ! -->
+        <!-- SimpleXMLFramework -->
         <dependency>
             <groupId>org.simpleframework</groupId>
             <artifactId>simple-xml</artifactId>
             <version>2.7.1</version>
         </dependency>
-        <!-- End SimpleXMLFramework ! -->
+        <!-- End SimpleXMLFramework -->
 
-        <!-- JSON Support ! -->
+        <!-- JSON Support -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.11.0</version>
         </dependency>
-        <!-- END_JSON Support ! -->
+        <!-- END_JSON Support -->
 
         <dependency>
             <groupId>org.projectlombok</groupId>

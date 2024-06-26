@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.eclipse.opensmartclide.context</groupId>
         <artifactId>parent</artifactId>
-        <version>2.0.0</version>
+        <version>2.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>smartclide-monitoring</artifactId>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>org.eclipse.opensmartclide.context</groupId>
             <artifactId>context-monitoring</artifactId>
-            <version>2.0.0</version>
+            <version>2.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -36,15 +36,33 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <!--don't publish smartclide-specific module to maven package registry-->
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>${jib-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <!--automatically build and push image during maven deploy phase-->
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <from>
                         <image>eclipse-temurin:11.0.17_8-jre-jammy</image>
                     </from>
                     <to>
-                        <image>ghcr.io/eclipse-opensmartclide/smartclide/${project.artifactId}:latest</image>
+                        <image>ghcr.io/eclipse-opensmartclide/smartclide/${project.artifactId}:${project.version}</image>
                     </to>
                     <container>
                         <ports>
